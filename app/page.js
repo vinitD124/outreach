@@ -52,17 +52,17 @@ export default function Home() {
   const testimonials = [
     {
       name: "Dr. Sonal Patel",
-      role: "Lead Dermatologist & Founder",
+      role: "Lead Dermatologist",
       clinic: "Radiance Skin & Laser Clinic",
-      quote: "Working with Vinit transformed our online presence. The private demo approach meant we saw our exact website live before paying. Inquiries increased by over 300% within the first month.",
-      avatar: "/img/bg-img-1.png"
+      quote: "The private prototype demo changed everything for our practice. We saw our exact website live before investing. Our patient inquiries increased by over 300% within the first month.",
+      avatar: "/img/bg-img-1.webp"
     },
     {
       name: "Dr. Ankit Mehta",
       role: "Chief Dental Surgeon",
       clinic: "Apex Dental & Implant Centre",
       quote: "The speed and attention to detail is unmatched. Our patients constantly compliment the easy 1-tap WhatsApp booking flow. It feels like an Apple-grade product.",
-      avatar: "/img/bg-img-2.png"
+      avatar: "/img/bg-img-2.webp"
     }
   ];
 
@@ -75,14 +75,14 @@ export default function Home() {
     <div className="min-h-screen bg-[#050711] text-slate-100 selection:bg-blue-600 selection:text-white font-sans antialiased overflow-x-hidden">
 
       {/* ========================================================================= */}
-      {/* 1. HERO SECTION (Matches Reference 1: Supastars with bg-grad-1) */}
+      {/* 1. HERO SECTION (Matches Reference 1: Supastars with bg-grad-1.webp) */}
       {/* ========================================================================= */}
       <section className="relative min-h-[96vh] flex flex-col justify-between overflow-hidden">
         
         {/* User's Uploaded Background Image */}
         <div className="absolute inset-0 -z-0">
           <Image 
-            src="/img/bg-grad-1.png" 
+            src="/img/bg-grad-1.webp" 
             alt="Hero Background Aura" 
             fill 
             priority
@@ -319,55 +319,60 @@ export default function Home() {
 
 
       {/* ========================================================================= */}
-      {/* 4. IMPACT METRICS GRID SECTION (Matches Reference 1 Middle Section) */}
+      {/* 4. REDESIGNED SLEEK IMPACT METRICS SECTION (Clean & Uncluttered) */}
       {/* ========================================================================= */}
-      <section id="numbers" className="max-w-7xl mx-auto px-4 sm:px-6 py-16 text-left">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+      <section id="numbers" className="max-w-7xl mx-auto px-4 sm:px-6 py-20 text-left">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
-          <div className="lg:col-span-5 space-y-4">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-              Not just any number,<br />
-              you can also get it<br />
-              even more
+          <div className="lg:col-span-5 space-y-5">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300 text-xs font-mono">
+              <Sparkles size={12} className="text-blue-400" />
+              <span>PERFORMANCE BENCHMARKS</span>
+            </div>
+
+            <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-[1.08]">
+              Engineered for impact,<br />
+              proven in numbers.
             </h2>
-            <p className="text-sm text-slate-400 max-w-sm pt-2">
-              Every website we build is engineered with obsessive focus on speed, doctor credibility, and patient conversion.
+            <p className="text-sm text-slate-400 leading-relaxed max-w-md">
+              Every practice platform is built with obsessive attention to sub-second load speeds, doctor authority, and patient conversion.
             </p>
-            <div className="pt-4">
+            <div className="pt-2">
               <a 
                 href="https://wa.me/916356182998"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-slate-950 font-bold text-xs hover:bg-slate-100 transition-all shadow-md"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-slate-950 font-bold text-xs hover:bg-slate-100 transition-all shadow-lg shadow-white/10 active:scale-[0.98]"
               >
-                Let&apos;s Talk &rarr;
+                <span>Discuss Your Project</span>
+                <ArrowRight size={14} />
               </a>
             </div>
           </div>
 
           <div className="lg:col-span-7 grid grid-cols-2 gap-4">
-            <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
-              <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">Speed Metric</span>
-              <p className="text-3xl sm:text-4xl font-extrabold text-white font-mono">&lt; 0.4s</p>
-              <p className="text-xs text-slate-400">Average page load on 4G mobile devices</p>
+            <div className="p-7 rounded-2xl bg-white/[0.03] border border-white/[0.08] hover:border-white/20 transition-all backdrop-blur-sm">
+              <p className="text-3xl sm:text-4xl font-extrabold text-white font-mono tracking-tight">&lt; 0.4s</p>
+              <p className="text-sm font-semibold text-slate-200 mt-2">Edge Speed</p>
+              <p className="text-xs text-slate-400 mt-1">Sub-second load times on mobile 4G</p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
-              <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Conversion</span>
-              <p className="text-3xl sm:text-4xl font-extrabold text-white font-mono">100%</p>
-              <p className="text-xs text-slate-400">Direct WhatsApp & reception call integration</p>
+            <div className="p-7 rounded-2xl bg-white/[0.03] border border-white/[0.08] hover:border-white/20 transition-all backdrop-blur-sm">
+              <p className="text-3xl sm:text-4xl font-extrabold text-emerald-400 font-mono tracking-tight">100%</p>
+              <p className="text-sm font-semibold text-slate-200 mt-2">Conversion Ready</p>
+              <p className="text-xs text-slate-400 mt-1">Direct 1-tap WhatsApp booking</p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
-              <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">Turnaround</span>
-              <p className="text-3xl sm:text-4xl font-extrabold text-white font-mono">72 Hrs</p>
-              <p className="text-xs text-slate-400">From concept brief to working private demo</p>
+            <div className="p-7 rounded-2xl bg-white/[0.03] border border-white/[0.08] hover:border-white/20 transition-all backdrop-blur-sm">
+              <p className="text-3xl sm:text-4xl font-extrabold text-blue-400 font-mono tracking-tight">72h</p>
+              <p className="text-sm font-semibold text-slate-200 mt-2">Working Prototype</p>
+              <p className="text-xs text-slate-400 mt-1">Live demo built before commitment</p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
-              <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">Architecture</span>
-              <p className="text-3xl sm:text-4xl font-extrabold text-white font-mono">Zero</p>
-              <p className="text-xs text-slate-400">Templates or slow WordPress dependencies</p>
+            <div className="p-7 rounded-2xl bg-white/[0.03] border border-white/[0.08] hover:border-white/20 transition-all backdrop-blur-sm">
+              <p className="text-3xl sm:text-4xl font-extrabold text-slate-100 font-mono tracking-tight">Zero</p>
+              <p className="text-sm font-semibold text-slate-200 mt-2">Template Bloat</p>
+              <p className="text-xs text-slate-400 mt-1">100% handcrafted Next.js code</p>
             </div>
           </div>
 
@@ -376,56 +381,51 @@ export default function Home() {
 
 
       {/* ========================================================================= */}
-      {/* 5. TESTIMONIAL & CASE SHOWCASE (Matches Reference 1 Bottom Card) */}
+      {/* 5. REDESIGNED SLEEK TESTIMONIAL SHOWCASE (High-End & Polished) */}
       {/* ========================================================================= */}
       <section id="testimonial" className="max-w-7xl mx-auto px-4 sm:px-6 py-12 text-left">
-        <div className="bg-[#0b0f20] border border-slate-800 rounded-[32px] p-8 sm:p-14 shadow-2xl relative overflow-hidden">
+        <div className="bg-gradient-to-br from-[#0c1228] via-[#090e1f] to-[#060913] border border-white/[0.08] rounded-[32px] p-8 sm:p-14 shadow-2xl relative overflow-hidden">
           
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8 border-b border-slate-800/80 pb-6">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl font-serif text-blue-400 font-bold">❝</span>
-              <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-                See How We Bring Your Idea Into Reality
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-10 border-b border-white/[0.06] pb-6">
+            <div className="space-y-1">
+              <span className="text-xs font-mono text-blue-400 uppercase tracking-widest">Client Feedback</span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                See How We Bring Ideas Into Reality
               </h2>
             </div>
 
             <div className="flex items-center gap-2">
               <button 
                 onClick={() => setTestimonialIdx((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1))}
-                className="w-10 h-10 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-white hover:bg-slate-800 transition-all active:scale-[0.95]"
+                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-all active:scale-[0.95]"
               >
                 <ChevronLeft size={18} />
               </button>
               <button 
                 onClick={() => setTestimonialIdx((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1))}
-                className="w-10 h-10 rounded-full bg-white text-slate-950 flex items-center justify-center hover:bg-slate-100 transition-all active:scale-[0.95] shadow-md"
+                className="w-10 h-10 rounded-full bg-white text-slate-950 flex items-center justify-center hover:bg-slate-200 transition-all active:scale-[0.95] shadow-md"
               >
                 <ChevronRight size={18} />
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-            <div className="md:col-span-4 flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 overflow-hidden relative shadow-lg">
-                <Image 
-                  src={testimonials[testimonialIdx].avatar}
-                  alt={testimonials[testimonialIdx].name}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div>
-                <p className="font-bold text-white text-base">{testimonials[testimonialIdx].name}</p>
-                <p className="text-xs text-blue-400">{testimonials[testimonialIdx].role}</p>
-                <p className="text-[11px] text-slate-400">{testimonials[testimonialIdx].clinic}</p>
-              </div>
-            </div>
-
-            <div className="md:col-span-8">
-              <p className="text-base sm:text-lg text-slate-300 leading-relaxed italic">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            <div className="lg:col-span-8">
+              <p className="text-lg sm:text-2xl text-slate-100 font-medium leading-relaxed tracking-tight">
                 &ldquo;{testimonials[testimonialIdx].quote}&rdquo;
               </p>
+            </div>
+
+            <div className="lg:col-span-4 flex items-center gap-4 lg:border-l lg:border-white/[0.08] lg:pl-8">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 overflow-hidden relative shadow-lg shrink-0 border border-white/20 flex items-center justify-center text-white font-bold text-lg font-mono">
+                {testimonials[testimonialIdx].name.split(' ').map(n => n[0]).join('')}
+              </div>
+              <div>
+                <p className="font-bold text-white text-base leading-tight">{testimonials[testimonialIdx].name}</p>
+                <p className="text-xs text-blue-400 mt-1">{testimonials[testimonialIdx].role}</p>
+                <p className="text-[11px] text-slate-400 mt-0.5">{testimonials[testimonialIdx].clinic}</p>
+              </div>
             </div>
           </div>
 
