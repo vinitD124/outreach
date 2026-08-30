@@ -324,13 +324,8 @@ export default function Home() {
       <section id="numbers" className="max-w-7xl mx-auto px-4 sm:px-6 py-20 text-left">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
-          <div className="lg:col-span-5 space-y-5">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300 text-xs font-mono">
-              <Sparkles size={12} className="text-blue-400" />
-              <span>PERFORMANCE BENCHMARKS</span>
-            </div>
-
-            <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-[1.08]">
+          <div className="lg:col-span-5 space-y-4">
+            <h2 className="text-3xl sm:text-5xl font-bold text-white tracking-tight leading-[1.08]">
               Engineered for impact,<br />
               proven in numbers.
             </h2>
@@ -351,27 +346,27 @@ export default function Home() {
           </div>
 
           <div className="lg:col-span-7 grid grid-cols-2 gap-4">
-            <div className="p-7 rounded-2xl bg-white/[0.03] border border-white/[0.08] hover:border-white/20 transition-all backdrop-blur-sm">
-              <p className="text-3xl sm:text-4xl font-extrabold text-white font-mono tracking-tight">&lt; 0.4s</p>
-              <p className="text-sm font-semibold text-slate-200 mt-2">Edge Speed</p>
+            <div className="p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/15 transition-all">
+              <p className="text-3xl sm:text-4xl font-light text-white font-mono tracking-tight">&lt; 0.4s</p>
+              <p className="text-sm font-medium text-slate-300 mt-2">Edge Speed</p>
               <p className="text-xs text-slate-400 mt-1">Sub-second load times on mobile 4G</p>
             </div>
 
-            <div className="p-7 rounded-2xl bg-white/[0.03] border border-white/[0.08] hover:border-white/20 transition-all backdrop-blur-sm">
-              <p className="text-3xl sm:text-4xl font-extrabold text-emerald-400 font-mono tracking-tight">100%</p>
-              <p className="text-sm font-semibold text-slate-200 mt-2">Conversion Ready</p>
+            <div className="p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/15 transition-all">
+              <p className="text-3xl sm:text-4xl font-light text-white font-mono tracking-tight">100%</p>
+              <p className="text-sm font-medium text-slate-300 mt-2">Conversion Ready</p>
               <p className="text-xs text-slate-400 mt-1">Direct 1-tap WhatsApp booking</p>
             </div>
 
-            <div className="p-7 rounded-2xl bg-white/[0.03] border border-white/[0.08] hover:border-white/20 transition-all backdrop-blur-sm">
-              <p className="text-3xl sm:text-4xl font-extrabold text-blue-400 font-mono tracking-tight">72h</p>
-              <p className="text-sm font-semibold text-slate-200 mt-2">Working Prototype</p>
+            <div className="p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/15 transition-all">
+              <p className="text-3xl sm:text-4xl font-light text-white font-mono tracking-tight">72h</p>
+              <p className="text-sm font-medium text-slate-300 mt-2">Working Prototype</p>
               <p className="text-xs text-slate-400 mt-1">Live demo built before commitment</p>
             </div>
 
-            <div className="p-7 rounded-2xl bg-white/[0.03] border border-white/[0.08] hover:border-white/20 transition-all backdrop-blur-sm">
-              <p className="text-3xl sm:text-4xl font-extrabold text-slate-100 font-mono tracking-tight">Zero</p>
-              <p className="text-sm font-semibold text-slate-200 mt-2">Template Bloat</p>
+            <div className="p-7 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/15 transition-all">
+              <p className="text-3xl sm:text-4xl font-light text-white font-mono tracking-tight">Zero</p>
+              <p className="text-sm font-medium text-slate-300 mt-2">Template Bloat</p>
               <p className="text-xs text-slate-400 mt-1">100% handcrafted Next.js code</p>
             </div>
           </div>
