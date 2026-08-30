@@ -71,7 +71,12 @@ export async function GET(request, { params }) {
 
     return new NextResponse(html, {
       headers: {
-        'Content-Type': 'text/html',
+        'Content-Type': 'text/html; charset=utf-8',
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'SAMEORIGIN',
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+        'Cross-Origin-Opener-Policy': 'same-origin',
+        'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
       },
     });
   } catch (error) {
