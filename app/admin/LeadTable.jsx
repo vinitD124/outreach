@@ -34,11 +34,11 @@ export default function LeadTable({ leads }) {
   async function handleSendEmail(e) {
     e.preventDefault();
     setIsSending(true);
-    
+
     const formData = new FormData(e.target);
     const emailBody = formData.get('emailBody');
     const emailSubject = formData.get('emailSubject');
-    
+
     // Bulk or Single?
     const targets = bulkMode ? Array.from(selectedIds) : [selectedLead.id];
     let successCount = 0;
@@ -57,7 +57,7 @@ export default function LeadTable({ leads }) {
             bodyTemplate: emailBody
           })
         });
-        
+
         if (res.ok) {
           setEmailStatus(prev => ({ ...prev, [lead.id]: 'sent' }));
           successCount++;
@@ -68,7 +68,7 @@ export default function LeadTable({ leads }) {
       // Delay 500ms between emails to prevent SMTP spam blocks
       if (targets.length > 1) await new Promise(r => setTimeout(r, 500));
     }
-    
+
     setIsSending(false);
     setSelectedLead(null);
     setBulkMode(false);
@@ -83,7 +83,7 @@ export default function LeadTable({ leads }) {
   async function handleUpdateLead(e) {
     e.preventDefault();
     setIsSaving(true);
-    
+
     const formData = new FormData(e.target);
     const data = {
       clinicname: formData.get('clinicname'),
@@ -91,7 +91,7 @@ export default function LeadTable({ leads }) {
       email: formData.get('email'),
       phone: formData.get('phone'),
     };
-    
+
     try {
       await updateLead(editingLead.id, data);
       setEditingLead(null);
@@ -116,17 +116,17 @@ export default function LeadTable({ leads }) {
     // Check if any selected leads are missing emails
     const selectedLeads = leads.filter(l => selectedIds.has(l.id));
     const missingEmails = selectedLeads.filter(l => !l.email);
-    
+
     if (missingEmails.length > 0) {
       const proceed = confirm(`${missingEmails.length} of your selected leads are missing email addresses. Do you want to send to the remaining ${selectedLeads.length - missingEmails.length} leads?`);
       if (!proceed) return;
     }
-    
+
     if (selectedLeads.length - missingEmails.length === 0) {
       toast.error("None of the selected leads have an email address.");
       return;
     }
-    
+
     setBulkMode(true);
     setSelectedLead(null);
   }
@@ -135,7 +135,7 @@ export default function LeadTable({ leads }) {
 
   return (
     <div className="w-full relative pb-20">
-      
+
       {/* Floating Bulk Action Bar */}
       {selectedIds.size > 0 && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 bg-slate-900 border border-slate-700 shadow-xl rounded-lg py-2 px-4 flex items-center gap-4 animate-in slide-in-from-bottom-10 fade-in duration-200">
@@ -144,7 +144,7 @@ export default function LeadTable({ leads }) {
             <span className="text-sm font-medium">Selected</span>
           </div>
           <div className="h-4 w-[1px] bg-slate-700"></div>
-          <button 
+          <button
             onClick={openBulkComposer}
             className="flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-900 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors shadow-sm"
           >
@@ -164,33 +164,33 @@ export default function LeadTable({ leads }) {
               </h3>
               <button onClick={() => { setSelectedLead(null); setBulkMode(false); }} className="text-slate-400 hover:text-slate-900 transition-colors"><X size={16} /></button>
             </div>
-            
+
             <form onSubmit={handleSendEmail} className="p-6 space-y-5 flex-1 bg-white">
               <div className="grid gap-5 bg-slate-50 p-5 rounded-lg border border-slate-100">
                 <div>
                   <label className="block text-[11px] font-medium text-slate-500 mb-1.5 uppercase tracking-widest">Subject Line</label>
-                  <input 
-                    type="text" 
-                    name="emailSubject" 
-                    required 
-                    defaultValue="I built this for {{clinicname}}" 
-                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md text-slate-900 outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 text-sm transition-all" 
+                  <input
+                    type="text"
+                    name="emailSubject"
+                    required
+                    defaultValue="I built this for {{clinicname}}"
+                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md text-slate-900 outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 text-sm transition-all"
                   />
                   <p className="text-[10px] text-slate-400 mt-2">Available tags: <code className="bg-slate-200 text-slate-700 px-1 py-0.5 rounded font-mono">{'{{clinicname}}'}</code> <code className="bg-slate-200 text-slate-700 px-1 py-0.5 rounded font-mono">{'{{doctorname}}'}</code></p>
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-[11px] font-medium text-slate-500 mb-1.5 uppercase tracking-widest">Message Body</label>
-                <textarea 
-                  name="emailBody" 
-                  required 
+                <textarea
+                  name="emailBody"
+                  required
                   rows="12"
                   defaultValue={`Hi {{doctorname}},\n\nI came across {{clinicname}} while looking at practices in {{area}} and had an idea for how you could be presented online.\n\nRather than sending you a proposal, I actually built a private website concept specifically for your practice.\n\n[VIEW THE WEBSITE I BUILT →]\n${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/{{slug}}\n\nIt takes about 30 seconds to look through, and it was made specifically for {{clinicname}} — not a generic template.\n\nIf you like the direction, we can talk. If not, no problem at all.\n\nVinit Dharaiya\nIndependent Web Developer\nWhatsApp: +91 6356 182 998`}
-                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md text-slate-800 text-[13px] outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 font-mono resize-none transition-all leading-relaxed" 
+                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md text-slate-800 text-[13px] outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 font-mono resize-none transition-all leading-relaxed"
                 />
               </div>
-              
+
               <div className="pt-2 flex justify-end gap-2">
                 <button type="button" onClick={() => { setSelectedLead(null); setBulkMode(false); }} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-md transition-colors">Cancel</button>
                 <button type="submit" disabled={isSending} className="px-4 py-2 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-md transition-colors flex items-center gap-2">
@@ -210,11 +210,11 @@ export default function LeadTable({ leads }) {
               <tr>
                 <th className="px-4 py-3 w-10">
                   <div className="flex items-center justify-center">
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       checked={isAllSelected}
                       onChange={toggleAll}
-                      className="w-3.5 h-3.5 rounded-sm border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer" 
+                      className="w-3.5 h-3.5 rounded-sm border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer"
                     />
                   </div>
                 </th>
@@ -240,75 +240,75 @@ export default function LeadTable({ leads }) {
                 leads.map((lead) => {
                   const isChecked = selectedIds.has(lead.id);
                   const isSent = emailStatus[lead.id] === 'sent' || lead.emailsent;
-                  
+
                   return (
-                  <tr key={lead.id} className={`transition-colors group ${isChecked ? 'bg-slate-50/80' : 'hover:bg-slate-50/50'}`}>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center justify-center">
-                        <input 
-                          type="checkbox" 
-                          checked={isChecked}
-                          onChange={() => toggleSelect(lead.id)}
-                          className="w-3.5 h-3.5 rounded-sm border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer" 
-                        />
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="font-medium text-slate-900 text-[13px]">{lead.clinicname}</div>
-                      <div className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5 max-w-[280px] truncate">
-                        <MapPin size={10} className="shrink-0 text-slate-400" /> {lead.address || 'No address'}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="text-slate-900 text-[13px] font-mono">{lead.email || <span className="text-orange-500 italic font-sans text-xs">Missing</span>}</div>
-                      <div className="text-[11px] text-slate-500 font-mono mt-0.5">{lead.phone || '-'}</div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <a href={`/${lead.slug}`} target="_blank" className="text-slate-600 hover:text-slate-900 hover:underline flex items-center gap-1 text-[13px] w-fit">
-                        /{lead.slug} <ExternalLink size={12} className="text-slate-400" />
-                      </a>
-                    </td>
-                    <td className="px-4 py-3">
-                      {lead.demovisited ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium tracking-wide bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                          <CheckCircle2 size={10} /> VISITED
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium tracking-wide bg-slate-100 text-slate-500 border border-slate-200">
-                          <Clock size={10} /> UNSEEN
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button 
-                          onClick={() => setEditingLead(lead)}
-                          className="p-1.5 rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-colors"
-                          title="Edit"
-                        >
-                          <Edit3 size={14} />
-                        </button>
-                        <button 
-                          onClick={() => openComposer(lead)}
-                          disabled={isSent}
-                          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
-                            isSent 
-                              ? 'bg-slate-50 text-emerald-600 cursor-not-allowed' 
-                              : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-300 hover:text-slate-900 shadow-sm'
-                          }`}
-                        >
-                          {isSent ? <><CheckCircle2 size={12} /> Sent</> : <><Send size={12} /> Pitch</>}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                )})
+                    <tr key={lead.id} className={`transition-colors group ${isChecked ? 'bg-slate-50/80' : 'hover:bg-slate-50/50'}`}>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-center">
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => toggleSelect(lead.id)}
+                            className="w-3.5 h-3.5 rounded-sm border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer"
+                          />
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="font-medium text-slate-900 text-[13px]">{lead.clinicname}</div>
+                        <div className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5 max-w-[280px] truncate">
+                          <MapPin size={10} className="shrink-0 text-slate-400" /> {lead.address || 'No address'}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="text-slate-900 text-[13px] font-mono">{lead.email || <span className="text-orange-500 italic font-sans text-xs">Missing</span>}</div>
+                        <div className="text-[11px] text-slate-500 font-mono mt-0.5">{lead.phone || '-'}</div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <a href={`/${lead.slug}`} target="_blank" className="text-slate-600 hover:text-slate-900 hover:underline flex items-center gap-1 text-[13px] w-fit">
+                          /{lead.slug} <ExternalLink size={12} className="text-slate-400" />
+                        </a>
+                      </td>
+                      <td className="px-4 py-3">
+                        {lead.demovisited ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium tracking-wide bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                            <CheckCircle2 size={10} /> VISITED
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium tracking-wide bg-slate-100 text-slate-500 border border-slate-200">
+                            <Clock size={10} /> UNSEEN
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => setEditingLead(lead)}
+                            className="p-1.5 rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                            title="Edit"
+                          >
+                            <Edit3 size={14} />
+                          </button>
+                          <button
+                            onClick={() => openComposer(lead)}
+                            disabled={isSent}
+                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${isSent
+                                ? 'bg-slate-50 text-emerald-600 cursor-not-allowed'
+                                : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-300 hover:text-slate-900 shadow-sm'
+                              }`}
+                          >
+                            {isSent ? <><CheckCircle2 size={12} /> Sent</> : <><Send size={12} /> Pitch</>}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })
               )}
             </tbody>
           </table>
         </div>
       </div>
-      
+
       {/* Edit Lead Modal */}
       {editingLead && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -317,7 +317,7 @@ export default function LeadTable({ leads }) {
               <h3 className="font-semibold text-sm text-slate-900">Edit Lead</h3>
               <button onClick={() => setEditingLead(null)} className="text-slate-400 hover:text-slate-900 transition-colors"><X size={16} /></button>
             </div>
-            
+
             <form onSubmit={handleUpdateLead} className="p-6 space-y-4">
               <div>
                 <label className="block text-[11px] font-medium text-slate-500 mb-1.5 uppercase tracking-widest">Clinic Name</label>
@@ -335,7 +335,7 @@ export default function LeadTable({ leads }) {
                 <label className="block text-[11px] font-medium text-slate-500 mb-1.5 uppercase tracking-widest">Phone / WhatsApp</label>
                 <input type="text" name="phone" defaultValue={editingLead.phone} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md text-sm outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 transition-all text-slate-900 font-mono" />
               </div>
-              
+
               <div className="pt-2 flex justify-end gap-2">
                 <button type="button" onClick={() => setEditingLead(null)} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-md transition-colors">Cancel</button>
                 <button type="submit" disabled={isSaving} className="px-4 py-2 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-md transition-colors flex items-center gap-2">
