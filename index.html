@@ -1244,42 +1244,17 @@
       .hero__id,
       .hero__trust,
       .hero__seal {
-        opacity: 0;
-        transform: translateY(16px);
-        animation: fadeUp .8s var(--ease) forwards
-      }
-
-      .hero__seal {
-        transform: scale(.85);
-        animation-name: sealIn
-      }
-
-      @keyframes sealIn {
-        to {
-          opacity: 1;
-          transform: scale(1)
-        }
-      }
-
-      .hero__id {
-        animation-delay: 1.05s
-      }
-
-      .hero__trust {
-        animation-delay: 1.15s
-      }
-
-      .hero__seal {
-        animation-delay: 1.25s
+        opacity: 1;
+        transform: none;
       }
 
       .hero__seal svg {
-        animation: sealSpin 22s linear infinite
+        animation: sealSpin 22s linear infinite;
       }
 
       @keyframes sealSpin {
         to {
-          transform: rotate(360deg)
+          transform: rotate(360deg);
         }
       }
     }
