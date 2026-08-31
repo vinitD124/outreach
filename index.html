@@ -123,14 +123,11 @@
     html {
       -webkit-text-size-adjust: 100%;
       scroll-behavior: smooth;
-      overflow-x: hidden !important;
-      max-width: 100vw;
-      width: 100%;
     }
 
     @media (prefers-reduced-motion: reduce) {
       html {
-        scroll-behavior: auto
+        scroll-behavior: auto;
       }
     }
 
@@ -142,10 +139,7 @@
       font-size: 16.5px;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden !important;
-      max-width: 100vw;
-      width: 100%;
-      position: relative;
+      overflow-x: clip;
     }
 
     /* ── Custom cursor (desktop only) ── */
@@ -1927,6 +1921,20 @@
       color: #b9c8d6
     }
 
+    .doorway {
+      view-timeline-name: --door;
+      view-timeline-axis: block;
+    }
+
+    .door {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--r-media);
+      aspect-ratio: 16 / 9.2;
+      view-timeline-name: --door;
+      view-timeline-axis: block;
+    }
+
     @media (prefers-reduced-motion: no-preference) {
       @supports (animation-timeline: view()) {
         .door {
@@ -1976,18 +1984,19 @@
           var(--nib-glow) 47%, var(--nib-glow) 49%,
           var(--ink-pale) 58%, var(--ink-pale) 100%);
       background-size: 230% 100%;
-      background-position: 0 0;
+      background-position: 100% 0;
       background-repeat: no-repeat;
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
       padding-bottom: .1em;
       filter: blur(0) drop-shadow(0 2px 16px rgba(0, 0, 0, .45));
-      transition: background-position 1.4s var(--ease);
+      transition: background-position 1.4s var(--ease), filter 1.4s var(--ease);
     }
 
     .door__quote.ink-w.is-lit {
-      background-position: 0 0
+      background-position: 0 0 !important;
+      filter: blur(0) drop-shadow(0 2px 16px rgba(0, 0, 0, .45)) !important;
     }
 
     @supports (animation-timeline: view()) {
@@ -1997,8 +2006,8 @@
         .door__quote.ink-w {
           background-position: 100% 0;
           animation: inkIn linear both, riseIn linear both, deblur linear both;
-          animation-timeline: --door, --door, --door;
-          animation-range: cover 8% cover 56%, cover 0% cover 14%, cover 0% cover 44%;
+          animation-timeline: view(), view(), view();
+          animation-range: entry 15% cover 56%, entry 10% cover 30%, entry 10% cover 50%;
         }
 
         @keyframes riseIn {
@@ -2026,8 +2035,8 @@
 
         .door__by {
           animation: riseIn linear both;
-          animation-timeline: --door;
-          animation-range: cover 12% cover 30%
+          animation-timeline: view();
+          animation-range: entry 15% cover 40%
         }
       }
     }
@@ -5698,8 +5707,12 @@
       }
 
       /* ---- sticky stack: the covered card settles back, the rail follows ---- */
-      const stackCards = $("#stack .step");
+      const stackCards = $$("#stack .step");
       const railItems = $$("#rail .rail__item");
+      const stackEl = $("#stack");
+      const railFill = $(".steps__fill", stackEl);
+      const railNib = $(".steps__nib", stackEl);
+
       if (stackCards.length && "IntersectionObserver" in window) {
         let current = -1;
         const paint = (active) => {
@@ -5718,9 +5731,27 @@
           entries.forEach((entry) => {
             if (entry.isIntersecting) paint(stackCards.indexOf(entry.target));
           });
-        }, { rootMargin: "-50% 0px -50% 0px", threshold: 0 });
+        }, { rootMargin: "-40% 0px -40% 0px", threshold: 0.1 });
         stackCards.forEach((card) => so.observe(card));
         paint(0); // first step reads as live before you scroll
+      }
+
+      /* Dynamic rail fill on scroll */
+      if (stackEl && railFill) {
+        const updateStackRail = () => {
+          const rect = stackEl.getBoundingClientRect();
+          const vh = window.innerHeight;
+          const start = vh * 0.75;
+          const end = vh * 0.25;
+          const progress = Math.min(Math.max((start - rect.top) / (rect.height + (start - end)), 0), 1);
+          railFill.style.transform = `scaleY(${progress})`;
+          if (railNib) {
+            railNib.style.opacity = progress > 0.05 && progress < 0.98 ? '1' : '0';
+            railNib.style.transform = `translateY(${progress * (rect.height - 20)}px)`;
+          }
+        };
+        window.addEventListener("scroll", updateStackRail, { passive: true });
+        updateStackRail();
       }
 
       /* ---- hero pointer parallax: one rAF loop, writes CSS vars only ---- */
