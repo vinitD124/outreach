@@ -1974,8 +1974,8 @@
       background-clip: text;
       color: transparent;
       padding-bottom: .1em;
-      filter: blur(0) drop-shadow(0 2px 16px rgba(0, 0, 0, .45));
-      transition: background-position 1.4s var(--ease);
+      filter: drop-shadow(0 2px 16px rgba(0, 0, 0, .45));
+      transition: background-position 1.2s var(--ease);
     }
 
     .door__quote.ink-w.is-lit {
@@ -1985,12 +1985,11 @@
     @supports (animation-timeline: view()) {
       @media (prefers-reduced-motion: no-preference) and (min-width: 900px) {
 
-        /* it resolves out of a blur first, then the ink writes across it */
         .door__quote.ink-w {
           background-position: 100% 0;
-          animation: inkIn linear both, riseIn linear both, deblur linear both;
-          animation-timeline: view(), view(), view();
-          animation-range: entry 15% cover 56%, entry 10% cover 30%, entry 10% cover 50%;
+          animation: inkIn linear both, riseIn linear both;
+          animation-timeline: view(), view();
+          animation-range: entry 15% cover 56%, entry 10% cover 30%;
         }
 
         @keyframes riseIn {
@@ -2002,17 +2001,6 @@
           to {
             opacity: 1;
             transform: none;
-          }
-        }
-
-        /* the blur clears over most of the band, so it sharpens as slowly as it writes */
-        @keyframes deblur {
-          from {
-            filter: blur(14px) drop-shadow(0 2px 16px rgba(0, 0, 0, .45));
-          }
-
-          to {
-            filter: blur(0) drop-shadow(0 2px 16px rgba(0, 0, 0, .45));
           }
         }
 
