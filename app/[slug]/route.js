@@ -53,7 +53,13 @@ export async function GET(request, { params }) {
       whatsapp: whatsappToUse.replace(/\D/g, ''),
       email: lead.email,
       address: addressToUse,
-      area: addressToUse.split(',').pop().trim() || 'Ahmedabad',
+      // pop() gave "Gujarat" for every lead. The locality sits just before
+      // "Ahmedabad" in the address.
+      area: (() => {
+        const p = addressToUse.split(',').map(s => s.trim()).filter(Boolean);
+        const i = p.findIndex(s => /ahmedabad/i.test(s));
+        return (i > 0 ? p[i - 1] : p[0]) || 'Ahmedabad';
+      })(),
       hours: {
         mon: ["08:00", "19:00"],
         tue: ["08:00", "19:00"],

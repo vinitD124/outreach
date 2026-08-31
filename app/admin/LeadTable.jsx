@@ -23,11 +23,15 @@ export default function LeadTable({ leads }) {
   };
 
   // Toggle all visible leads
+  // Select-all targets only leads worth sending to: reachable, and not
+  // already pitched. Selecting every row re-pitches people who already
+  // got the email.
   const toggleAll = () => {
-    if (selectedIds.size === leads.length && leads.length > 0) {
+    const sendable = leads.filter(l => l.email && !l.emailsent);
+    if (sendable.length > 0 && selectedIds.size >= sendable.length) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(leads.map(l => l.id)));
+      setSelectedIds(new Set(sendable.map(l => l.id)));
     }
   };
 
@@ -42,10 +46,13 @@ export default function LeadTable({ leads }) {
     // Bulk or Single?
     const targets = bulkMode ? Array.from(selectedIds) : [selectedLead.id];
     let successCount = 0;
+    const failures = [];
+    const skipped = [];
 
     for (const targetId of targets) {
       const lead = leads.find(l => l.id === targetId);
-      if (!lead || !lead.email) continue;
+      if (!lead) continue;
+      if (!lead.email) { skipped.push(lead.clinicname || targetId); continue; }
 
       try {
         const res = await fetch('/api/email', {
@@ -61,22 +68,35 @@ export default function LeadTable({ leads }) {
         if (res.ok) {
           setEmailStatus(prev => ({ ...prev, [lead.id]: 'sent' }));
           successCount++;
+        } else {
+          const data = await res.json().catch(() => ({}));
+          failures.push(`${lead.clinicname}: ${data.error || 'HTTP ' + res.status}`);
+          setEmailStatus(prev => ({ ...prev, [lead.id]: 'failed' }));
         }
       } catch (err) {
-        console.error("Error sending to " + lead.email);
+        failures.push(`${lead.clinicname}: ${err.message || 'network error'}`);
+        setEmailStatus(prev => ({ ...prev, [lead.id]: 'failed' }));
       }
-      // Delay 500ms between emails to prevent SMTP spam blocks
-      if (targets.length > 1) await new Promise(r => setTimeout(r, 500));
+      // Gmail throttles bursts from a personal account. 500ms was fast
+      // enough to get flagged; 3s keeps a run of 55 clear of it.
+      if (targets.length > 1) await new Promise(r => setTimeout(r, 3000));
     }
 
     setIsSending(false);
     setSelectedLead(null);
     setBulkMode(false);
     setSelectedIds(new Set());
-    if (targets.length > 1) {
+
+    if (failures.length) {
+      console.error('Failed sends:\n' + failures.join('\n'));
+      toast.error(`${successCount} sent, ${failures.length} failed. First: ${failures[0]}`, { duration: 12000 });
+    } else if (targets.length > 1) {
       toast.success(`Successfully sent ${successCount} emails!`);
     } else if (successCount === 1) {
       toast.success('Pitch sent successfully!');
+    }
+    if (skipped.length) {
+      toast.warning(`${skipped.length} skipped, no email address on file.`);
     }
   }
 
