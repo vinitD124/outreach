@@ -1932,7 +1932,7 @@
       color: #b9c8d6;
     }
 
-    @media (prefers-reduced-motion: no-preference) and (min-width: 900px) {
+    @media (prefers-reduced-motion: no-preference) {
       @supports (animation-timeline: view()) {
         .door {
           clip-path: inset(0 0 0 0 round var(--r-media));
@@ -2006,7 +2006,7 @@
     }
 
     @supports (animation-timeline: view()) {
-      @media (prefers-reduced-motion: no-preference) and (min-width: 900px) {
+      @media (prefers-reduced-motion: no-preference) {
 
         /* it resolves out of a blur first, then the ink writes across it */
         .door__quote.ink-w {
