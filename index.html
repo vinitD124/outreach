@@ -1935,38 +1935,38 @@
       view-timeline-axis: block;
     }
 
-    @media (prefers-reduced-motion: no-preference) {
+    @media (prefers-reduced-motion: no-preference) and (min-width: 769px) {
       @supports (animation-timeline: view()) {
         .door {
           clip-path: inset(0 0 0 0 round var(--r-media));
           animation: doorOpen linear both;
           animation-timeline: view();
-          animation-range: entry 4% cover 44%
+          animation-range: entry 4% cover 44%;
         }
 
         @keyframes doorOpen {
           from {
-            clip-path: inset(0 33% 0 33% round 999px 999px var(--r-media) var(--r-media))
+            clip-path: inset(0 33% 0 33% round 999px 999px var(--r-media) var(--r-media));
           }
 
           to {
-            clip-path: inset(0 0 0 0 round var(--r-media))
+            clip-path: inset(0 0 0 0 round var(--r-media));
           }
         }
 
         .door img {
           animation: doorZoom linear both;
           animation-timeline: view();
-          animation-range: entry 0% cover 72%
+          animation-range: entry 0% cover 72%;
         }
 
         @keyframes doorZoom {
           from {
-            transform: scale(1.22)
+            transform: scale(1.22);
           }
 
           to {
-            transform: scale(1)
+            transform: scale(1);
           }
         }
       }
@@ -2978,14 +2978,16 @@
     @media (max-width:940px) {
       .quotes {
         grid-auto-flow: column;
-        grid-auto-columns: minmax(268px, 82%);
+        grid-auto-columns: minmax(268px, 85%);
         grid-template-columns: none;
         overflow-x: auto;
         scroll-snap-type: x mandatory;
         padding-bottom: 14px;
-        margin-inline: calc(var(--pad) * -1);
-        padding-inline: var(--pad);
-        scrollbar-width: none
+        margin-inline: 0;
+        padding-inline: 0;
+        scrollbar-width: none;
+        max-width: 100%;
+        box-sizing: border-box;
       }
 
       .quotes::-webkit-scrollbar {
