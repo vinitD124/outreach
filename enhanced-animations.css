@@ -1,0 +1,408 @@
+/* =====================================================================
+   ENHANCED SMOOTH SCROLL ANIMATIONS
+   Add this to your existing styles for buttery-smooth scroll effects
+   ===================================================================== */
+
+/* 1. SMOOTH SCROLL BEHAVIOR */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* 2. ENHANCED RAIL ANIMATION - Much smoother blue line effect */
+.steps__fill {
+  position: absolute;
+  left: 5px;
+  top: 10px;
+  bottom: 10px;
+  width: 2px; /* Slightly thicker for better visibility */
+  background: linear-gradient(
+    to bottom,
+    var(--accent-bright),
+    var(--accent)
+  );
+  transform-origin: top;
+  transform: scaleY(0);
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--accent) 40%, transparent));
+  transition: filter 0.3s ease;
+}
+
+.steps__nib {
+  position: absolute;
+  left: 5px;
+  top: 10px;
+  bottom: 10px;
+  width: 1px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.steps__nib::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: var(--accent-bright);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent),
+    0 0 20px 6px color-mix(in srgb, var(--accent) 60%, transparent),
+    0 0 40px 10px color-mix(in srgb, var(--accent) 30%, transparent);
+  animation: nibPulse 2s ease-in-out infinite;
+}
+
+@keyframes nibPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+/* Smoother scroll-driven animation */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .steps__fill {
+      animation: fillRailSmooth ease-out both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 85%;
+    }
+
+    @keyframes fillRailSmooth {
+      0% {
+        transform: scaleY(0);
+        filter: drop-shadow(0 0 12px color-mix(in srgb, var(--accent) 60%, transparent));
+      }
+      100% {
+        transform: scaleY(1);
+        filter: drop-shadow(0 0 8px color-mix(in srgb, var(--accent) 40%, transparent));
+      }
+    }
+
+    .steps__nib {
+      opacity: 1;
+      animation: runNibSmooth ease-out both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 85%;
+    }
+
+    @keyframes runNibSmooth {
+      0% {
+        transform: translateY(0);
+        opacity: 0;
+      }
+      5% {
+        opacity: 1;
+      }
+      95% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+    }
+  }
+}
+
+/* 3. ENHANCED STEP DOT ANIMATIONS */
+.step__dot {
+  position: absolute;
+  left: calc(-1 * clamp(30px, 4vw, 54px));
+  top: 6px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--line);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent);
+}
+
+.step.is-active .step__dot,
+.step.is-done .step__dot {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.step.is-active .step__dot {
+  transform: scale(1.3);
+  animation: dotGlow 2s ease-in-out infinite;
+}
+
+@keyframes dotGlow {
+  0%, 100% {
+    box-shadow:
+      0 0 0 8px color-mix(in srgb, var(--accent) 20%, transparent),
+      0 0 20px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 0 12px color-mix(in srgb, var(--accent) 10%, transparent),
+      0 0 30px color-mix(in srgb, var(--accent) 60%, transparent);
+  }
+}
+
+/* 4. SECTION ENTRANCE ANIMATIONS - Smoother reveals */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--i, 0) * 100ms);
+  will-change: opacity, transform;
+}
+
+.reveal.is-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 5. PARALLAX SCROLL EFFECTS */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+
+    /* Hero parallax */
+    .hero__media {
+      animation: heroFloat linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 50vh;
+    }
+
+    @keyframes heroFloat {
+      to {
+        transform: translateY(-40px);
+      }
+    }
+
+    /* Floating elements gentle drift */
+    .hero__id,
+    .hero__trust {
+      animation: cardFloat linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 60vh;
+    }
+
+    @keyframes cardFloat {
+      to {
+        transform: translateY(-24px);
+      }
+    }
+
+    /* About section parallax */
+    .about__media {
+      animation: aboutDrift linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 30%;
+    }
+
+    @keyframes aboutDrift {
+      from {
+        transform: translateY(40px);
+      }
+      to {
+        transform: translateY(-20px);
+      }
+    }
+  }
+}
+
+/* 6. ENHANCED INK EFFECT - Smoother gradient reveal */
+.ink {
+  --ink-solid: var(--ink);
+  --ink-pale: color-mix(in srgb, var(--ink) 20%, var(--bg));
+  --nib-glow: var(--accent-bright);
+  background-image: linear-gradient(
+    100deg,
+    var(--ink-solid) 0%,
+    var(--ink-solid) 38%,
+    var(--nib-glow) 46%,
+    var(--nib-glow) 50%,
+    var(--ink-pale) 60%,
+    var(--ink-pale) 100%
+  );
+  background-size: 250% 100%;
+  background-position: 100% 0;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.08em;
+  transition: background-position 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .step .ink {
+      animation: inkInSmooth ease-out both;
+      animation-timeline: view();
+    }
+
+    .step .ink--label {
+      animation-range: entry 16% cover 45%;
+    }
+
+    .step .ink--head {
+      animation-range: entry 22% cover 58%;
+    }
+
+    .step .ink--body {
+      animation-range: entry 28% cover 70%;
+    }
+
+    @keyframes inkInSmooth {
+      0% {
+        background-position: 100% 0;
+        opacity: 0.3;
+      }
+      100% {
+        background-position: 0 0;
+        opacity: 1;
+      }
+    }
+  }
+}
+
+/* 7. SMOOTH CARD HOVER EFFECTS */
+.quote,
+.svc__row,
+.contact__left-card,
+.contact__form-card {
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease;
+}
+
+.quote:hover,
+.contact__left-card:hover,
+.contact__form-card:hover {
+  transform: translateY(-6px);
+}
+
+/* 8. ENHANCED BUTTON MAGNETIC EFFECT */
+.btn.magnetic {
+  transition:
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s ease;
+}
+
+.btn.magnetic:hover {
+  transform: translateY(-2px);
+}
+
+.btn.magnetic:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* 9. SMOOTH NAVIGATION PROGRESS */
+.nav__progress {
+  transition: transform 0.1s ease-out;
+}
+
+/* 10. ENHANCED DOORWAY ANIMATION */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .door {
+      animation: doorOpenSmooth cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 2% cover 50%;
+    }
+
+    @keyframes doorOpenSmooth {
+      0% {
+        clip-path: inset(0 35% 0 35% round 999px 999px var(--r-media) var(--r-media));
+        filter: brightness(0.7);
+      }
+      100% {
+        clip-path: inset(0 0 0 0 round var(--r-media));
+        filter: brightness(1);
+      }
+    }
+
+    .door img {
+      animation: doorZoomSmooth cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 75%;
+    }
+
+    @keyframes doorZoomSmooth {
+      0% {
+        transform: scale(1.18);
+        filter: var(--img-filter) brightness(0.8);
+      }
+      100% {
+        transform: scale(1);
+        filter: var(--img-filter);
+      }
+    }
+  }
+}
+
+/* 11. SMOOTH SECTION TRANSITIONS */
+.section {
+  opacity: 1;
+  transition: opacity 0.6s ease-out;
+}
+
+/* 12. ENHANCED GLASS CARD EFFECTS */
+.hero__id,
+.hero__trust,
+.hero__seal {
+  transition:
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__id:hover,
+  .hero__trust:hover {
+    transform: translateY(-4px) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .55),
+      inset 0 0 0 1px rgba(255, 255, 255, .1),
+      0 20px 40px -10px rgba(12, 35, 60, 0.2);
+  }
+}
+
+/* 13. SMOOTH STATS COUNTER GLOW */
+.stat {
+  position: relative;
+}
+
+.stat::after {
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 14. ENHANCED SCROLL SNAP FOR REVIEWS */
+.quotes::-webkit-scrollbar {
+  height: 8px;
+}
+
+.quotes::-webkit-scrollbar-track {
+  background: color-mix(in srgb, var(--line) 30%, transparent);
+  border-radius: 4px;
+}
+
+.quotes::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.quotes::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-bright);
+}
