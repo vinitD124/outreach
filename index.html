@@ -1947,114 +1947,52 @@
     }
 
 
-    /* Creative blue energy sweep effect - elegant and subtle */
-    .door__quote.ink-w {
+    /* =====================================================================
+   THE QUOTE. Each word hinges up into place behind its own mask, one
+   after the next, so the sentence reads itself aloud as you arrive.
+   No glow: the only shadow is the one keeping white type legible on
+   the photograph. Specificity is raised past the generic .split rules
+   at the foot of this stylesheet so the slower timing survives.
+   ===================================================================== */
+    .door__quote {
       color: #ffffff;
-      padding-bottom: .1em;
-      position: relative;
-      filter: blur(20px) drop-shadow(0 4px 24px rgba(95, 168, 224, .5));
-      opacity: 0;
-      transform: translateY(40px) scale(0.93);
-      transition:
-        filter 2s cubic-bezier(0.16, 1, 0.3, 1),
-        opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 2s cubic-bezier(0.16, 1, 0.3, 1),
-        text-shadow 2s cubic-bezier(0.16, 1, 0.3, 1);
-      text-shadow:
-        0 0 40px rgba(95, 168, 224, .6),
-        0 0 20px rgba(143, 208, 255, .4),
-        0 2px 4px rgba(0, 0, 0, .3);
+      text-shadow: 0 2px 20px rgba(4, 10, 18, .5);
     }
 
-    .door__quote.ink-w.is-lit {
-      filter: blur(0px) drop-shadow(0 2px 16px rgba(255, 255, 255, .8)) !important;
-      opacity: 1 !important;
-      transform: translateY(0) scale(1) !important;
-      text-shadow:
-        0 0 30px rgba(143, 208, 255, .15),
-        0 0 15px rgba(255, 255, 255, .3),
-        0 2px 8px rgba(0, 0, 0, .4) !important;
-    }
+    @media (prefers-reduced-motion: no-preference) {
 
-    @supports (animation-timeline: view()) {
-      @media (prefers-reduced-motion: no-preference) {
+      /* deeper reserve than the generic mask: the words tilt as they land */
+      .door__quote.split .w {
+        padding-bottom: .2em;
+        margin-bottom: -.2em;
+      }
 
-        /* Creative elegant reveal with subtle blue energy */
-        .door__quote.ink-w {
-          animation:
-            riseIn cubic-bezier(0.16, 1, 0.3, 1) both,
-            deblur cubic-bezier(0.16, 1, 0.3, 1) both;
-          animation-timeline: view(), view();
-          animation-range:
-            entry 4% cover 52%,
-            entry 4% cover 55%;
-        }
+      .door__quote.split .w>i {
+        transform: perspective(780px) translateY(114%) rotateX(-56deg);
+        transform-origin: 50% 100%;
+        opacity: 0;
+        transition:
+          transform 1.15s cubic-bezier(.19, 1, .22, 1),
+          opacity .72s ease;
+        transition-delay: calc(var(--d, 0) * 78ms);
+      }
 
-        @keyframes riseIn {
-          0% {
-            opacity: 0;
-            transform: translateY(40px) scale(0.92);
-          }
-          50% {
-            opacity: 0.7;
-          }
-          100% {
-            opacity: 1;
-            transform: none;
-          }
-        }
+      .door__quote.split.is-in .w>i {
+        transform: perspective(780px) translateY(0) rotateX(0deg);
+        opacity: 1;
+      }
 
-        /* Elegant blur with blue energy transition */
-        @keyframes deblur {
-          0% {
-            filter: blur(24px) drop-shadow(0 6px 32px rgba(95, 168, 224, .5));
-            text-shadow:
-              0 0 50px rgba(95, 168, 224, .8),
-              0 0 30px rgba(143, 208, 255, .6),
-              0 4px 8px rgba(0, 0, 0, .3);
-          }
-          30% {
-            filter: blur(16px) drop-shadow(0 5px 26px rgba(120, 188, 234, .5));
-            text-shadow:
-              0 0 45px rgba(120, 188, 234, .7),
-              0 0 25px rgba(180, 218, 244, .5),
-              0 3px 6px rgba(0, 0, 0, .3);
-          }
-          65% {
-            filter: blur(6px) drop-shadow(0 3px 20px rgba(200, 228, 250, .4));
-            text-shadow:
-              0 0 35px rgba(143, 208, 255, .3),
-              0 0 18px rgba(255, 255, 255, .4),
-              0 2px 6px rgba(0, 0, 0, .35);
-          }
-          100% {
-            filter: blur(0px) drop-shadow(0 2px 16px rgba(255, 255, 255, .8));
-            text-shadow:
-              0 0 30px rgba(143, 208, 255, .15),
-              0 0 15px rgba(255, 255, 255, .3),
-              0 2px 8px rgba(0, 0, 0, .4);
-          }
-        }
+      /* the credit waits for the sentence to finish before it signs off */
+      .door__by {
+        opacity: 0;
+        transform: translateY(12px);
+        transition: opacity .9s var(--ease), transform .9s var(--ease);
+        transition-delay: 1.25s;
+      }
 
-        /* Subtle floating animation after quote reveals */
-        .door__quote.ink-w.is-lit {
-          animation: gentleFloat 6s ease-in-out infinite;
-        }
-
-        @keyframes gentleFloat {
-          0%, 100% {
-            transform: translateY(0) scale(1);
-          }
-          50% {
-            transform: translateY(-8px) scale(1.01);
-          }
-        }
-
-        .door__by {
-          animation: riseIn cubic-bezier(0.16, 1, 0.3, 1) both;
-          animation-timeline: view();
-          animation-range: entry 10% cover 35%;
-        }
+      .door__quote.is-in+.door__by {
+        opacity: 1;
+        transform: none;
       }
     }
 
@@ -4796,7 +4734,7 @@
                 alt="Dr. Elena Marsh talking with a patient in the consulting room" fetchpriority="high" />
             </figure>
             <p class="hero__id">
-              <b>Dr. Elena Marsh</b><span>General Physician</span>
+              <b>Dr. Elena Marsh</b><span>Lead Consultant</span>
             </p>
             <p class="hero__trust">
               <span class="hero__trust__avatars" aria-hidden="true">
@@ -4928,8 +4866,8 @@
           loading="lazy" />
         <span class="door__veil" aria-hidden="true"></span>
         <div class="door__copy">
-          <p class="door__quote ink-w">Good medicine starts with somebody who has the time to listen.</p>
-          <p class="door__by">Dr. Elena Marsh, General Physician</p>
+          <p class="door__quote split" data-split>Good medicine starts with somebody who has the time to listen.</p>
+          <p class="door__by">Dr. Elena Marsh, Senior Practitioner</p>
         </div>
       </div>
     </section>
@@ -4996,7 +4934,7 @@
           <p class="lede ink-a" style="--i:1">Dr. Elena Marsh brings years of dedicated practice to every consultation. Whether it is a routine checkup, a new concern, or a long-term condition, you see the same doctor each visit and leave with a clear plan — always.</p>
           <div class="sig reveal" style="--i:2">
             <i class="ph-duotone ph-hand-heart" style="font-size:28px; color:var(--accent)" aria-hidden="true"></i>
-            <span><b>Dr. Elena Marsh</b><br /><span>General Physician</span></span>
+            <span><b>Dr. Elena Marsh</b><br /><span>Lead Consultant</span></span>
           </div>
         </div>
       </div>
@@ -5735,12 +5673,7 @@
         }
       }
 
-      /* ---- the doorway quote finishes white even without a scroll timeline ---- */
-      const quote = document.querySelector(".door__quote");
-      if (quote && 'IntersectionObserver' in window) {
-        new IntersectionObserver(([e]) => quote.classList.toggle('is-lit', e.isIntersecting),
-          { rootMargin: '-20% 0px -20% 0px', threshold: 0 }).observe(quote);
-      } else if (quote) { quote.classList.add('is-lit'); }
+      /* ---- the doorway quote rides the shared .split reveal, below ---- */
 
       /* ---- services index: the list drives the picture beside it smoothly ---- */
       const svc = $("#svc");
