@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { Map, Users, Settings, LogOut, Upload, Zap } from 'lucide-react';
+import { Map, Users, LogOut, Upload, Zap } from 'lucide-react';
+import { signOut } from './actions';
 
 export default function AdminLayout({ children }) {
   return (
@@ -34,17 +35,15 @@ export default function AdminLayout({ children }) {
             <Upload size={18} className="text-slate-400 group-hover:text-blue-600 transition-colors" />
             <span>Bulk Import</span>
           </Link>
-          <Link href="/admin/settings" className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-all font-medium border border-transparent hover:border-slate-100 group">
-            <Settings size={18} className="text-slate-400 group-hover:text-blue-600 transition-colors" />
-            <span>Settings</span>
-          </Link>
         </nav>
 
         <div className="p-4 border-t border-slate-100/50 m-4">
-          <button className="flex items-center gap-3 px-4 py-3 w-full text-slate-500 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all font-medium group border border-transparent hover:border-red-100">
-            <LogOut size={18} className="text-slate-400 group-hover:text-red-500 transition-colors" />
-            <span>Sign Out</span>
-          </button>
+          <form action={signOut}>
+            <button type="submit" className="flex items-center gap-3 px-4 py-3 w-full text-slate-500 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all font-medium group border border-transparent hover:border-red-100">
+              <LogOut size={18} className="text-slate-400 group-hover:text-red-500 transition-colors" />
+              <span>Sign Out</span>
+            </button>
+          </form>
         </div>
       </aside>
 

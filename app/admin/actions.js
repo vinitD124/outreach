@@ -2,6 +2,8 @@
 
 import pool from '@/lib/db';
 import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 export async function updateLead(leadId, data) {
   await pool.query(
@@ -39,4 +41,10 @@ export async function bulkImportLeads(leads) {
     );
   }
   revalidatePath('/admin');
+}
+
+export async function signOut() {
+  const cookieStore = await cookies();
+  cookieStore.delete('outreach_auth');
+  redirect('/login');
 }
