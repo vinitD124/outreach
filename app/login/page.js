@@ -1,20 +1,26 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { COOKIE_NAME, TTL_MS, createSession } from '@/lib/auth';
 
 export default function LoginPage() {
   async function handleLogin(formData) {
     'use server';
-    
+
     const password = formData.get('password');
     const masterPassword = process.env.ADMIN_PASS;
-    
-    if (password === masterPassword) {
+
+    if (masterPassword && password === masterPassword) {
+      // A signed value rather than a fixed string, so the cookie cannot be
+      // typed by hand in devtools.
+      const session = await createSession();
+      if (!session) return;
       const cookieStore = await cookies();
-      cookieStore.set('outreach_auth', 'authenticated', { 
+      cookieStore.set(COOKIE_NAME, session, {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
+        sameSite: 'lax',
         path: '/',
-        maxAge: 60 * 60 * 24 * 7 // 1 week
+        maxAge: TTL_MS / 1000,
       });
       redirect('/admin');
     }

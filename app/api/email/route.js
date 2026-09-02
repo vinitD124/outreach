@@ -1,9 +1,19 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import nodemailer from 'nodemailer';
 import pool from '@/lib/db';
+import { COOKIE_NAME, verifySession } from '@/lib/auth';
 
 export async function POST(request) {
   try {
+    // Checked here as well as in the proxy. This endpoint sends real mail on
+    // real SMTP credentials, so it should not depend on a matcher pattern in
+    // another file staying correct.
+    const jar = await cookies();
+    if (!(await verifySession(jar.get(COOKIE_NAME)?.value))) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { leadId, subjectTemplate, bodyTemplate } = await request.json();
 
     if (!leadId) {
