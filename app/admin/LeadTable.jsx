@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Mail, FileText, CheckCircle2, Clock, MapPin, X, Edit3, Save, Send, ExternalLink, Search, Copy, Eye } from 'lucide-react';
+import { Mail, FileText, CheckCircle2, Clock, MapPin, X, Edit3, Save, Send, ExternalLink, Search, Copy, Eye, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { updateLead } from './actions';
 
@@ -43,7 +43,13 @@ export default function LeadTable({ leads }) {
   const [filter, setFilter] = useState('all');
   const [query, setQuery] = useState('');
   const [sentProgress, setSentProgress] = useState(null);
+  // In-app replacement for window.confirm, which renders the deployment
+  // hostname and looks nothing like the rest of the app.
+  const [ask, setAsk] = useState(null);
   const selectAllRef = useRef(null);
+
+  const confirmDialog = (opts) => new Promise((resolve) => setAsk({ ...opts, resolve }));
+  const answer = (value) => { if (ask) { ask.resolve(value); setAsk(null); } };
 
   /* ---- counts for the filter chips and the stat row ---- */
   const counts = useMemo(() => {
@@ -218,12 +224,18 @@ export default function LeadTable({ leads }) {
     setSelectedLead(lead);
   }
 
-  function openBulkComposer() {
+  async function openBulkComposer() {
     const missingEmails = selectedLeads.filter((l) => !l.email);
     const pitched = selectedLeads.filter((l) => l.email && wasPitched(l));
 
     if (missingEmails.length > 0) {
-      const proceed = confirm(`${missingEmails.length} of your selected leads are missing email addresses. Do you want to send to the remaining ${selectedLeads.length - missingEmails.length} leads?`);
+      const proceed = await confirmDialog({
+        title: 'Some leads have no email',
+        body: `${missingEmails.length} of the ${selectedLeads.length} leads you selected have no email address on file. They can't be pitched.`,
+        names: missingEmails.map((l) => l.clinicname),
+        confirmLabel: `Send to the other ${selectedLeads.length - missingEmails.length}`,
+        cancelLabel: 'Go back',
+      });
       if (!proceed) return;
     }
 
@@ -231,12 +243,14 @@ export default function LeadTable({ leads }) {
     // the selection rather than cancelling the whole send.
     let resend = false;
     if (pitched.length > 0) {
-      const names = pitched.slice(0, 3).map((l) => l.clinicname).join(', ');
-      resend = confirm(
-        `${pitched.length} of your selected leads were already pitched` +
-        `${names ? ` (${names}${pitched.length > 3 ? ', …' : ''})` : ''}.\n\n` +
-        `OK — send to them again.\nCancel — skip them and send to the rest.`
-      );
+      resend = await confirmDialog({
+        title: pitched.length === 1 ? 'This lead was already pitched' : `${pitched.length} leads were already pitched`,
+        body: 'They have had this email once already. Sending again will overwrite the record of when the first one went out.',
+        names: pitched.map((l) => l.clinicname),
+        confirmLabel: 'Email them again',
+        cancelLabel: 'Skip them, send to the rest',
+        tone: 'danger',
+      });
       if (!resend) {
         const keep = new Set(selectedIds);
         pitched.forEach((l) => keep.delete(l.id));
@@ -334,6 +348,57 @@ export default function LeadTable({ leads }) {
           >
             <Send size={14} /> Bulk Pitch
           </button>
+        </div>
+      )}
+
+      {/* ---------- Confirm dialog ---------- */}
+      {ask && (
+        <div
+          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
+          onClick={() => answer(false)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-2xl w-full max-w-md border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6">
+              <div className="flex items-start gap-3">
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${ask.tone === 'danger' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'}`}>
+                  <AlertTriangle size={18} />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-slate-900 text-[15px] leading-snug">{ask.title}</h3>
+                  <p className="text-[13px] text-slate-500 mt-1.5 leading-relaxed">{ask.body}</p>
+                </div>
+              </div>
+
+              {ask.names?.length > 0 && (
+                <ul className="mt-4 bg-slate-50 border border-slate-100 rounded-lg p-3 max-h-36 overflow-y-auto space-y-1">
+                  {ask.names.slice(0, 8).map((n, i) => (
+                    <li key={i} className="text-[12px] text-slate-700 font-medium truncate">{n || 'Untitled lead'}</li>
+                  ))}
+                  {ask.names.length > 8 && (
+                    <li className="text-[11px] text-slate-400 pt-1">and {ask.names.length - 8} more</li>
+                  )}
+                </ul>
+              )}
+            </div>
+
+            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-2">
+              <button
+                onClick={() => answer(false)}
+                className="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:text-slate-900 transition-colors"
+              >
+                {ask.cancelLabel || 'Cancel'}
+              </button>
+              <button
+                onClick={() => answer(true)}
+                className={`px-4 py-2 text-sm font-medium text-white rounded-md transition-colors ${ask.tone === 'danger' ? 'bg-red-600 hover:bg-red-700' : 'bg-slate-900 hover:bg-slate-800'}`}
+              >
+                {ask.confirmLabel || 'Continue'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
