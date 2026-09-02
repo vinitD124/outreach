@@ -4808,8 +4808,8 @@
               <i class="ph-duotone ph-map-pin" aria-hidden="true"></i>
               <span data-c="address">214 Wilder Avenue, Suite 3, Northbrook</span>
             </p>
-            <a class="deskbar__link" id="desk-directions"
-              href="https://www.openstreetmap.org/?mlat=37.7769&amp;mlon=-122.4197#map=16/37.7769/-122.4197"
+            <a class="deskbar__link" id="desk-directions" data-c="dir-href"
+              href="https://www.google.com/maps/dir/?api=1&amp;destination=214%20Wilder%20Avenue%2C%20Northbrook"
               target="_blank" rel="noopener" aria-label="Get directions to the clinic on map">
               <i class="ph-duotone ph-navigation-arrow" aria-hidden="true"></i>
               <span>Get directions</span>
@@ -5221,18 +5221,21 @@
 
         <!-- Bottom Stage: Luxury Ambient Location Canvas with Floating Clinic Card -->
         <div class="contact__map-banner reveal" style="--i:3">
+          <!-- src is rebound from CLINIC.address on load. The hardcoded bbox
+               here used to pin every clinic to San Francisco. -->
           <iframe title="Map showing clinic location" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-            src="https://www.openstreetmap.org/export/embed.html?bbox=-122.4361%2C37.7684%2C-122.4032%2C37.7853&layer=mapnik&marker=37.7769%2C-122.4197"></iframe>
+            data-c="map-src"
+            src="https://www.google.com/maps?q=214%20Wilder%20Avenue%2C%20Northbrook&amp;output=embed"></iframe>
 
           <!-- Floating Doctor & Location Card -->
           <div class="map-floating-card">
             <div class="map-card__head">
               <img class="map-card__avatar"
                 src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=facearea&facepad=2.6&w=120&h=120&q=80"
-                width="48" height="48" alt="Dr. Rajesh Kumar" loading="lazy" />
+                width="48" height="48" alt="" loading="lazy" />
               <div class="map-card__head-meta">
                 <span class="map-card__name">Dr. Eleanor Marsh</span>
-                <span class="map-card__role">Wilder Avenue Surgery</span>
+                <span class="map-card__role" data-c="clinic-full">Wilder Avenue Surgery</span>
                 <div class="map-card__rating">
                   <i class="ph-duotone ph-star-fill" aria-hidden="true"></i>
                   <span><b>4.9</b> (1,420+ patients)</span>
@@ -5241,8 +5244,8 @@
             </div>
 
             <div class="map-card__actions">
-              <a class="btn btn--accent btn--sm magnetic map-card__btn" id="directions"
-                href="https://www.openstreetmap.org/?mlat=37.7769&amp;mlon=-122.4197#map=16/37.7769/-122.4197"
+              <a class="btn btn--accent btn--sm magnetic map-card__btn" id="directions" data-c="dir-href"
+                href="https://www.google.com/maps/dir/?api=1&amp;destination=214%20Wilder%20Avenue%2C%20Northbrook"
                 target="_blank" rel="noopener">
                 <i class="ph-duotone ph-navigation-arrow" aria-hidden="true"></i><span>Get directions</span>
               </a>
@@ -5458,14 +5461,21 @@
       };
 
       /* ---- text bindings ---- */
+      const clinicFull = (CLINIC.name + " " + (CLINIC.suffix || "")).trim();
+      // The map used to be a hardcoded San Francisco bbox. Drive it off the
+      // clinic's own address instead - a place query needs no API key.
+      const mapQuery = encodeURIComponent(CLINIC.address || CLINIC.area || clinicFull);
+
       const bind = {
         name: CLINIC.name, suffix: CLINIC.suffix, tagline: CLINIC.tagline, address: CLINIC.address, area: CLINIC.area,
-        "tel-text": CLINIC.phone, "email-text": CLINIC.email
+        "clinic-full": clinicFull, "tel-text": CLINIC.phone, "email-text": CLINIC.email
       };
       $$("[data-c]").forEach((el) => {
         el.dataset.c.split(/\s+/).forEach((key) => {
           if (key === "tel-href") el.setAttribute("href", "tel:" + CLINIC.phoneRaw);
           else if (key === "email-href") el.setAttribute("href", "mailto:" + CLINIC.email);
+          else if (key === "map-src") el.setAttribute("src", "https://www.google.com/maps?q=" + mapQuery + "&output=embed");
+          else if (key === "dir-href") el.setAttribute("href", "https://www.google.com/maps/dir/?api=1&destination=" + mapQuery);
           else if (bind[key] !== undefined) el.textContent = bind[key];
         });
       });
