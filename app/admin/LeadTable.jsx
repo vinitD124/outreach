@@ -36,6 +36,10 @@ export default function LeadTable({ leads }) {
   const [isSaving, setIsSaving] = useState(false);
   const [emailStatus, setEmailStatus] = useState({});
   const [bulkMode, setBulkMode] = useState(false);
+  // Set only when you explicitly confirm a re-send. Without it the send loop
+  // skips anyone already pitched, so ticking a "Sent" row by hand cannot
+  // quietly mail the same doctor twice.
+  const [allowResend, setAllowResend] = useState(false);
   const [filter, setFilter] = useState('all');
   const [query, setQuery] = useState('');
   const [sentProgress, setSentProgress] = useState(null);
@@ -65,6 +69,13 @@ export default function LeadTable({ leads }) {
   // Only these are worth a pitch: reachable, and not already pitched.
   const sendable = useMemo(() => visible.filter((l) => l.email && !l.emailsent), [visible]);
   const selectedCount = selectedIds.size;
+
+  const wasPitched = (l) => Boolean(l.emailsent) || emailStatus[l.id] === 'sent';
+  const selectedLeads = useMemo(() => leads.filter((l) => selectedIds.has(l.id)), [leads, selectedIds]);
+  // Counted so the two never overlap — a lead with no email is reported once,
+  // under "no email", even if it was pitched before the address was cleared.
+  const selectedNoEmail = selectedLeads.filter((l) => !l.email).length;
+  const selectedPitched = selectedLeads.filter((l) => l.email && wasPitched(l)).length;
 
   /* Select-all reflects the sendable rows it actually controls. Comparing it
      against every row is why the box never looked checked. */
@@ -110,12 +121,16 @@ export default function LeadTable({ leads }) {
     const targets = bulkMode ? Array.from(selectedIds) : [selectedLead.id];
     let successCount = 0;
     const failures = [];
-    const skipped = [];
+    const skippedNoEmail = [];
+    const skippedPitched = [];
 
     for (let i = 0; i < targets.length; i++) {
       const lead = leads.find((l) => l.id === targets[i]);
       if (!lead) continue;
-      if (!lead.email) { skipped.push(lead.clinicname || targets[i]); continue; }
+      if (!lead.email) { skippedNoEmail.push(lead.clinicname || targets[i]); continue; }
+      // The row button is disabled once a lead is pitched, but a hand-ticked
+      // checkbox used to walk straight past that and mail them twice.
+      if (!allowResend && wasPitched(lead)) { skippedPitched.push(lead.clinicname || targets[i]); continue; }
 
       if (targets.length > 1) setSentProgress({ done: i, total: targets.length, name: lead.clinicname });
 
@@ -149,8 +164,7 @@ export default function LeadTable({ leads }) {
 
     setIsSending(false);
     setSentProgress(null);
-    setSelectedLead(null);
-    setBulkMode(false);
+    closeComposer();
     setSelectedIds(new Set());
 
     if (failures.length) {
@@ -161,8 +175,11 @@ export default function LeadTable({ leads }) {
     } else if (successCount === 1) {
       toast.success('Pitch sent successfully!');
     }
-    if (skipped.length) {
-      toast.warning(`${skipped.length} skipped, no email address on file.`);
+    if (skippedNoEmail.length) {
+      toast.warning(`${skippedNoEmail.length} skipped, no email address on file.`);
+    }
+    if (skippedPitched.length) {
+      toast.warning(`${skippedPitched.length} skipped, already pitched.`);
     }
     // Pull the fresh emailsent / emailsentat values instead of relying on
     // local state that disappears on reload.
@@ -202,19 +219,51 @@ export default function LeadTable({ leads }) {
   }
 
   function openBulkComposer() {
-    const selectedLeads = leads.filter((l) => selectedIds.has(l.id));
     const missingEmails = selectedLeads.filter((l) => !l.email);
+    const pitched = selectedLeads.filter((l) => l.email && wasPitched(l));
 
     if (missingEmails.length > 0) {
       const proceed = confirm(`${missingEmails.length} of your selected leads are missing email addresses. Do you want to send to the remaining ${selectedLeads.length - missingEmails.length} leads?`);
       if (!proceed) return;
     }
-    if (selectedLeads.length - missingEmails.length === 0) {
-      toast.error('None of the selected leads have an email address.');
+
+    // Already-pitched leads need a deliberate yes. Declining drops them from
+    // the selection rather than cancelling the whole send.
+    let resend = false;
+    if (pitched.length > 0) {
+      const names = pitched.slice(0, 3).map((l) => l.clinicname).join(', ');
+      resend = confirm(
+        `${pitched.length} of your selected leads were already pitched` +
+        `${names ? ` (${names}${pitched.length > 3 ? ', …' : ''})` : ''}.\n\n` +
+        `OK — send to them again.\nCancel — skip them and send to the rest.`
+      );
+      if (!resend) {
+        const keep = new Set(selectedIds);
+        pitched.forEach((l) => keep.delete(l.id));
+        setSelectedIds(keep);
+        if (keep.size === 0) {
+          toast.error('Everyone selected has already been pitched. Nothing left to send.');
+          return;
+        }
+      }
+    }
+    setAllowResend(resend);
+
+    const reachable = selectedLeads.filter((l) => l.email && (resend || !wasPitched(l)));
+    if (reachable.length === 0) {
+      toast.error('None of the selected leads can be pitched right now.');
       return;
     }
     setBulkMode(true);
     setSelectedLead(null);
+  }
+
+  // One place to close the composer, so allowResend can never leak into the
+  // next send.
+  function closeComposer() {
+    setSelectedLead(null);
+    setBulkMode(false);
+    setAllowResend(false);
   }
 
   return (
@@ -297,14 +346,28 @@ export default function LeadTable({ leads }) {
                 <Mail className="text-slate-400" size={16} />
                 {bulkMode ? `Bulk Pitch (${selectedCount} selected)` : `Pitch ${selectedLead.clinicname}`}
               </h3>
-              <button onClick={() => { setSelectedLead(null); setBulkMode(false); }} disabled={isSending} className="text-slate-400 hover:text-slate-900 transition-colors disabled:opacity-40"><X size={16} /></button>
+              <button onClick={closeComposer} disabled={isSending} className="text-slate-400 hover:text-slate-900 transition-colors disabled:opacity-40"><X size={16} /></button>
             </div>
 
-            {bulkMode && (
-              <div className="px-6 py-3 bg-amber-50/60 border-b border-amber-100 text-[12px] text-amber-800 font-medium">
-                Sends one at a time with a 3 second gap — about {Math.ceil((selectedCount * 3) / 60)} min for {selectedCount}. Keep this tab open until it finishes.
-              </div>
-            )}
+            {bulkMode && (() => {
+              const willSend = selectedCount - selectedNoEmail - (allowResend ? 0 : selectedPitched);
+              return (
+                <div className={`px-6 py-3 border-b text-[12px] font-medium ${allowResend && selectedPitched > 0 ? 'bg-red-50/70 border-red-100 text-red-800' : 'bg-amber-50/60 border-amber-100 text-amber-800'}`}>
+                  <div>
+                    Sending to <b>{willSend}</b> of {selectedCount} selected — one at a time with a 3 second gap,
+                    about {Math.ceil((willSend * 3) / 60)} min. Keep this tab open until it finishes.
+                  </div>
+                  {selectedPitched > 0 && (
+                    <div className="mt-1">
+                      {allowResend
+                        ? `${selectedPitched} already pitched and WILL BE EMAILED AGAIN.`
+                        : `${selectedPitched} already pitched — skipped.`}
+                    </div>
+                  )}
+                  {selectedNoEmail > 0 && <div className="mt-1">{selectedNoEmail} have no email — skipped.</div>}
+                </div>
+              );
+            })()}
 
             <form onSubmit={handleSendEmail} className="p-6 space-y-5 flex-1 bg-white">
               <div className="grid gap-5 bg-slate-50 p-5 rounded-lg border border-slate-100">
@@ -337,7 +400,7 @@ export default function LeadTable({ leads }) {
                   {sentProgress ? `Sending ${sentProgress.done + 1} of ${sentProgress.total} — ${sentProgress.name}` : ''}
                 </span>
                 <div className="flex gap-2">
-                  <button type="button" onClick={() => { setSelectedLead(null); setBulkMode(false); }} disabled={isSending} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-md transition-colors disabled:opacity-40">Cancel</button>
+                  <button type="button" onClick={closeComposer} disabled={isSending} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-md transition-colors disabled:opacity-40">Cancel</button>
                   <button type="submit" disabled={isSending} className="px-4 py-2 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-md transition-colors flex items-center gap-2 disabled:opacity-60">
                     {isSending ? 'Sending...' : <><Send size={14} /> Send Pitch</>}
                   </button>
