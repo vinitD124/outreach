@@ -15843,3 +15843,30 @@ a.mapboxgl-ctrl-logo {
   .demo-note.is-open .demo-note__card { transform: none; }
   .demo-note.is-open .demo-note__avatar::after { animation: none; }
 }
+
+/* --------------------------------------------------------------------
+   Why-choose-us cards on a phone.
+
+   The title reserves two lines (min-height: 2.6em) so that four cards
+   standing side by side all start their description at the same height.
+   The cards are col-xl-3 col-md-6, so below 768px they stack one per
+   row - there is no neighbour left to line up with, and the reserved
+   second line just opens a gap between the heading and the sentence
+   under it. A one-line title like "Reports Explained Simply" was
+   carrying about 26px of empty space plus its 18px margin.
+   -------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .section-why .about-item.style-desc .title {
+    min-height: 0;
+    display: block;
+    margin-bottom: 10px;
+  }
+  /* 40px of side padding is a lot of the width once the card is full
+     bleed rather than a quarter of the row. */
+  .section-why .about-item.style-desc {
+    padding: 28px 24px 26px;
+  }
+  .section-why .about-item.style-desc .number-item {
+    margin-bottom: 16px;
+  }
+}
