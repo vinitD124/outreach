@@ -100,6 +100,10 @@ export default function BulkImportPage() {
     return { rows: previewData.length, named, skipped: previewData.length - named, withEmail, overridden };
   }, [previewData]);
 
+  // Every importable row sets its own template, so the batch picker has
+  // nothing left to apply to.
+  const allRowsCarryTemplate = audit.named > 0 && audit.overridden >= audit.named;
+
   const reset = () => { setFile(null); setPreviewData([]); setError(null); };
 
   return (
@@ -186,10 +190,24 @@ export default function BulkImportPage() {
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
-              <Select value={template} onValueChange={setTemplate} disabled={isImporting}>
-                <SelectTrigger className="gap-1.5 text-[13px]">
+              {/* When every row carries its own Template, this picker does
+                  nothing. Leaving it live showed a value that was about to
+                  be ignored, which reads as a bug. */}
+              <Select
+                value={template}
+                onValueChange={setTemplate}
+                disabled={isImporting || allRowsCarryTemplate}
+              >
+                <SelectTrigger
+                  className="gap-1.5 text-[13px]"
+                  title={allRowsCarryTemplate
+                    ? 'Every row in this sheet sets its own template, so there is nothing for this to do'
+                    : 'Applies to rows with no Template column of their own'}
+                >
                   <Layout size={13} className="text-muted-foreground" />
-                  {TEMPLATE_LIST.find((t) => t.id === template)?.label}
+                  {allRowsCarryTemplate
+                    ? 'Set per row'
+                    : TEMPLATE_LIST.find((t) => t.id === template)?.label}
                 </SelectTrigger>
                 <SelectContent>
                   {TEMPLATE_LIST.map((t) => (
@@ -216,8 +234,10 @@ export default function BulkImportPage() {
             <div className="flex items-center gap-2 border-b bg-brand-muted/50 px-5 py-2.5 text-[12px]">
               <Layout size={13} className="shrink-0 text-brand" />
               <span className="nums">
-                <b>{audit.overridden}</b> row{audit.overridden === 1 ? ' has' : 's have'} their own Template column —
-                those win over the picker above.
+                {allRowsCarryTemplate
+                  ? <>Every row sets its own template in the sheet, so the picker is off.</>
+                  : <><b>{audit.overridden}</b> of {audit.named} row{audit.named === 1 ? '' : 's'} set
+                      their own template in the sheet. The rest use the picker.</>}
               </span>
             </div>
           )}

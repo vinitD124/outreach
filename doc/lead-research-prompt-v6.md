@@ -182,11 +182,12 @@ and rehab · Paediatrics · Gynaecology, obstetrics, fertility · Dermatology,
 skin and hair · ENT · Ophthalmology · Orthopaedics and sports injury · Ayurveda
 and panchakarma · Homeopathy · Psychiatry, psychology, counselling · Dietetics
 and nutrition · Cardiology and diabetology · Pathology and diagnostic imaging ·
-**Veterinary clinics** · **Medical and dental aesthetics** · Speech,
-occupational and child therapy
+**Medical and dental aesthetics** · Speech, occupational and child therapy
 
-The last two are new this round. Both are owner-run, both already spend on
-marketing, and neither has been contacted.
+Human healthcare only. No veterinary or pet clinics.
+
+Aesthetics is new this round — owner-run, already spending on marketing, and
+not contacted before.
 
 ---
 
@@ -471,8 +472,8 @@ Append exactly two rows to **Table 1 only**, with placeholder clinic name,
 phone and address, `Doctor Name Verified = no`, Score 0:
 
 ```
-vinitdharaiya124@gmail.com
 accretevinit@gmail.com
+vedix124@gmail.com
 ```
 
 ---

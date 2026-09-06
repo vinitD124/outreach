@@ -38,6 +38,19 @@ import {
   Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+/* Rows addressed to one of our own inboxes are test sends, not prospects.
+   They were skewing everything: every test demo gets opened, so "opened
+   demo" and the visit rate both read higher than reality. Hidden by
+   default, countable, and one click away. */
+const TEST_INBOXES = [
+  'vedix124@gmail.com',
+  'accretevinit@gmail.com',
+  'vinitdharaiya124@gmail.com',
+  'vinit@accreteinfo.com',
+];
+const isTestLead = (lead) =>
+  TEST_INBOXES.includes((lead.email || '').trim().toLowerCase());
+
 /* Pipeline stages, in the order a lead actually moves through them.
    `test` is what decides which chip a row belongs to. */
 const FILTERS = [
@@ -67,8 +80,19 @@ const STAGE_BG = {
   blocked: 'bg-stage-blocked',
 };
 
-export default function LeadTable({ leads }) {
+export default function LeadTable({ leads: allLeads }) {
   const router = useRouter();
+  const [showTests, setShowTests] = useState(false);
+
+  const testCount = useMemo(() => allLeads.filter(isTestLead).length, [allLeads]);
+  /* Everything below this line works off `leads`, so hiding test rows
+     takes them out of the counts, the filters, the pipeline and
+     select-all in one place rather than five. */
+  const leads = useMemo(
+    () => (showTests ? allLeads : allLeads.filter((l) => !isTestLead(l))),
+    [allLeads, showTests]
+  );
+
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [selectedLead, setSelectedLead] = useState(null);
   const [editingLead, setEditingLead] = useState(null);
@@ -411,7 +435,25 @@ export default function LeadTable({ leads }) {
             })}
           </div>
 
-          <div className="relative lg:w-80">
+          <div className="flex items-center gap-3">
+            {testCount > 0 && (
+              <button
+                onClick={() => { setShowTests((v) => !v); setSelectedIds(new Set()); }}
+                title={TEST_INBOXES.join(', ')}
+                className={cn(
+                  'nums shrink-0 rounded-md px-2 py-1 text-[11.5px] font-medium transition-colors',
+                  showTests
+                    ? 'bg-accent text-foreground'
+                    : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                )}
+              >
+                {showTests
+                  ? `Hide ${testCount} test row${testCount === 1 ? '' : 's'}`
+                  : `${testCount} test row${testCount === 1 ? '' : 's'} hidden`}
+              </button>
+            )}
+
+            <div className="relative flex-1 lg:w-80">
             <Search size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="search"
@@ -429,6 +471,7 @@ export default function LeadTable({ leads }) {
                 <X size={13} />
               </button>
             )}
+            </div>
           </div>
         </div>
 
