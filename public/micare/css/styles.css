@@ -15571,188 +15571,252 @@ a.mapboxgl-ctrl-logo {
 
 /* ====================================================================
    DEMO NOTE
-   The card that introduces the person who built the page. Sits bottom
-   right on a desktop and across the bottom on a phone, where the
-   thumb is.
+
+   The card that says who built the page. It sits on a bright blue site,
+   so it goes dark - the same near-black the CTA banner and the doctor
+   panel already use. That way it reads as part of the design rather
+   than as a browser notification that wandered in.
    ==================================================================== */
 .demo-note {
   position: fixed;
   z-index: 99999;
-  right: 20px;
-  bottom: 20px;
-  width: min(370px, calc(100vw - 40px));
+  right: 24px;
+  bottom: 24px;
+  width: min(392px, calc(100vw - 32px));
   pointer-events: none;
 }
+
 .demo-note__card {
   pointer-events: auto;
   position: relative;
-  background: var(--white);
-  border: 1px solid rgba(12, 102, 182, 0.12);
-  border-radius: 18px;
-  padding: 22px 22px 18px;
+  overflow: hidden;
+  border-radius: 20px;
+  padding: 26px 26px 22px;
+  color: var(--white);
+  background-color: #0C171A;
+  background-image:
+    radial-gradient(120% 90% at 0% 0%, rgba(20, 122, 212, 0.38) 0%, rgba(20, 122, 212, 0) 58%),
+    radial-gradient(90% 70% at 100% 100%, rgba(12, 102, 182, 0.22) 0%, rgba(12, 102, 182, 0) 62%),
+    linear-gradient(158deg, #10273A 0%, #0C171A 55%, #0A1D2E 100%);
+  border: 1px solid rgba(255, 255, 255, 0.09);
   box-shadow:
-    0 2px 6px rgba(12, 23, 26, 0.04),
-    0 24px 60px -24px rgba(12, 23, 26, 0.35);
-  /* start state: the transition is added by .is-open */
+    0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
+    0 30px 70px -28px rgba(6, 30, 50, 0.85),
+    0 4px 14px -6px rgba(6, 30, 50, 0.4);
+
   opacity: 0;
-  transform: translateY(18px) scale(0.98);
+  transform: translateY(24px) scale(0.97);
   transition:
-    opacity 0.45s ease,
-    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.5s ease,
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .demo-note.is-open .demo-note__card {
   opacity: 1;
   transform: none;
 }
 
-/* a thin accent edge along the top, so it reads as ours rather than as
-   a browser notification */
-.demo-note__card::before {
+/* a light sweep across the top edge, so the card has a lit side */
+.demo-note__card::after {
   content: "";
   position: absolute;
-  top: 0;
-  left: 22px;
-  right: 22px;
-  height: 2px;
-  border-radius: 0 0 2px 2px;
-  background: linear-gradient(90deg, var(--red) 0%, var(--red-2) 60%, rgba(20, 122, 212, 0) 100%);
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.35) 28%,
+    rgba(255, 255, 255, 0.08) 70%,
+    rgba(255, 255, 255, 0) 100%);
 }
 
 .demo-note__close {
   position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 28px;
-  height: 28px;
+  top: 16px;
+  right: 16px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 50%;
-  background: transparent;
-  color: var(--color-text-2);
-  font-size: 11px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 10px;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }
 .demo-note__close:hover {
-  background: rgba(12, 23, 26, 0.06);
-  color: var(--color-title);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--white);
 }
 
+/* ---- who ---- */
 .demo-note__head {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding-right: 30px;
+  gap: 13px;
+  padding-right: 34px;
 }
+
 .demo-note__avatar {
+  position: relative;
   flex: 0 0 auto;
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
   color: var(--white);
-  background: linear-gradient(135deg, var(--red-2) 0%, var(--red) 100%);
-  box-shadow: 0 6px 16px -6px rgba(12, 102, 182, 0.6);
+  background: linear-gradient(140deg, #2F9BF0 0%, var(--red) 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.14) inset,
+    0 10px 24px -10px rgba(20, 122, 212, 0.9);
 }
+
+/* a live dot, so the eye is drawn to the card as it lands */
+.demo-note__avatar::after {
+  content: "";
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #3BD671;
+  border: 2px solid #0C171A;
+}
+.demo-note.is-open .demo-note__avatar::after {
+  animation: demoNotePulse 2.6s ease-out 0.6s 3;
+}
+@keyframes demoNotePulse {
+  0%   { box-shadow: 0 0 0 0 rgba(59, 214, 113, 0.55); }
+  70%  { box-shadow: 0 0 0 9px rgba(59, 214, 113, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(59, 214, 113, 0); }
+}
+
 .demo-note__head-text {
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
 .demo-note__eyebrow {
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--red);
+  color: #6FB6F2;
 }
 .demo-note__title {
-  font-size: 16px;
-  line-height: 1.3;
-  color: var(--color-title);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  margin-top: 4px;
+}
+.demo-note__role {
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.5);
   margin-top: 3px;
 }
-.demo-note__title b { font-weight: 700; }
 
+/* ---- message ---- */
 .demo-note__body {
-  margin: 14px 0 0;
+  margin: 18px 0 0;
   font-size: 13.5px;
-  line-height: 1.65;
-  color: var(--color-paragraph);
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.74);
+}
+.demo-note__body b {
+  color: var(--white);
+  font-weight: 600;
 }
 
+/* ---- actions ---- */
 .demo-note__actions {
   display: flex;
-  gap: 8px;
-  margin-top: 16px;
+  gap: 9px;
+  margin-top: 20px;
 }
 .demo-note__btn {
-  flex: 1 1 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
-  height: 40px;
-  padding: 0 14px;
-  border-radius: 10px;
-  font-size: 13px;
+  gap: 8px;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  font-size: 13.5px;
   font-weight: 600;
   text-decoration: none;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.18s ease,
+    box-shadow 0.25s ease;
 }
 .demo-note__btn:active { transform: translateY(1px); }
-.demo-note__btn svg { width: 16px; height: 16px; flex-shrink: 0; }
-.demo-note__btn i { font-size: 14px; }
+.demo-note__btn svg { width: 17px; height: 17px; flex-shrink: 0; }
+.demo-note__btn i { font-size: 15px; }
 
 .demo-note__btn--primary {
-  background: var(--red);
-  color: var(--white);
-  border: 1px solid var(--red);
+  flex: 1 1 auto;
+  background: #25D366;
+  color: #06301A;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 12px 26px -14px rgba(37, 211, 102, 0.9);
 }
 .demo-note__btn--primary:hover {
-  background: var(--red-2);
-  border-color: var(--red-2);
-  color: var(--white);
+  background: #2BE674;
+  color: #06301A;
 }
+
 .demo-note__btn--ghost {
   flex: 0 0 auto;
-  background: var(--white);
-  color: var(--color-title);
-  border: 1px solid rgba(12, 23, 26, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.14);
 }
 .demo-note__btn--ghost:hover {
-  border-color: var(--red);
-  color: var(--red);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.26);
+  color: var(--white);
 }
 
+/* ---- expiry ---- */
 .demo-note__foot {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin: 16px 0 0;
-  padding-top: 14px;
-  border-top: 1px solid rgba(12, 23, 26, 0.08);
+  align-items: center;
+  gap: 9px;
+  margin: 18px 0 0;
+  padding: 11px 13px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   font-size: 11.5px;
-  line-height: 1.55;
-  color: var(--color-text-2);
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.55);
 }
 .demo-note__foot i {
-  color: var(--red);
-  font-size: 13px;
-  margin-top: 1px;
+  color: #6FB6F2;
+  font-size: 14px;
   flex-shrink: 0;
 }
-.demo-note__foot b { color: var(--color-title); font-weight: 600; }
+.demo-note__foot b {
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 600;
+}
 
-/* On a phone it spans the width and sits above the thumb, and the
-   secondary action gets equal weight because both are one tap. */
+/* Full width on a phone, sitting where the thumb already is, and both
+   actions given equal weight because both are a single tap. */
 @media (max-width: 575px) {
   .demo-note {
     right: 12px;
@@ -15760,12 +15824,22 @@ a.mapboxgl-ctrl-logo {
     bottom: 12px;
     width: auto;
   }
-  .demo-note__card { padding: 18px 18px 16px; border-radius: 16px; }
-  .demo-note__body { font-size: 13px; }
-  .demo-note__btn--ghost { flex: 1 1 auto; }
+  .demo-note__card {
+    padding: 20px 20px 18px;
+    border-radius: 18px;
+  }
+  .demo-note__avatar { width: 42px; height: 42px; border-radius: 13px; font-size: 14px; }
+  .demo-note__title { font-size: 16px; }
+  .demo-note__body { font-size: 13px; line-height: 1.65; margin-top: 15px; }
+  .demo-note__actions { margin-top: 17px; }
+  .demo-note__btn { flex: 1 1 auto; height: 46px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .demo-note__card { transition: opacity 0.2s ease; transform: none; }
+  .demo-note__card {
+    transition: opacity 0.2s ease;
+    transform: none;
+  }
   .demo-note.is-open .demo-note__card { transform: none; }
+  .demo-note.is-open .demo-note__avatar::after { animation: none; }
 }
