@@ -45,7 +45,7 @@
     <!-- Jquery-ui -->
     <link rel="stylesheet" href="css/jquery-ui.min.css">
     <!-- Theme Style -->
-    <link rel="stylesheet" type="text/css" href="css/styles.css?v=1788715075322" />
+    <link rel="stylesheet" type="text/css" href="css/styles.css?v=1788721308169" />
 
     <!-- Icon -->
     <link rel="stylesheet" type="text/css" href="icons/icomoon/style.css" />
@@ -1617,14 +1617,16 @@
         </div>
         <!-- /.offcanvasMegamenu -->
 
-        <!-- Go-top -->
-        <div class="progress-wrap">
-            <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
-                <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" style="transition: stroke-dashoffset 10ms linear; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 277.672;">
-                </path>
+        <!-- Message the clinic on WhatsApp. Rendered hidden and only
+             revealed by script once a usable mobile number is known, so a
+             clinic with no number on file never gets a dead button. -->
+        <a class="wa-float" id="wa-float" href="#" target="_blank" rel="noopener"
+           aria-label="Message the clinic on WhatsApp" hidden>
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.86 9.86 0 0 0 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm.01 18.15a8.2 8.2 0 0 1-4.2-1.14l-.3-.18-3.12.82.83-3.04-.2-.32a8.17 8.17 0 0 1-1.25-4.38c0-4.54 3.69-8.23 8.23-8.23 2.21 0 4.27.86 5.83 2.42a8.18 8.18 0 0 1 2.41 5.82c0 4.54-3.69 8.23-8.23 8.23Zm4.52-5.76c-.25-.12-1.46-.72-1.69-.81-.22-.08-.38-.12-.55.13-.16.25-.62.78-.77.95-.14.16-.28.18-.53.06-.24-.12-1.04-.38-1.99-1.23-.74-.66-1.24-1.47-1.38-1.72-.14-.24-.02-.38.1-.5.11-.11.25-.29.37-.43.12-.14.17-.24.25-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.35-.76-1.84-.21-.48-.41-.42-.57-.43h-.48c-.17 0-.44.06-.66.31-.23.24-.87.84-.87 2.06s.89 2.39 1.01 2.56c.13.16 1.74 3.29 4.21 4.36.59.25 1.04.4 1.4.52.59.18 1.13.16 1.56.09.48-.07 1.47-.53 1.68-1.11.2-.57.2-1.06.14-1.17-.06-.1-.2-.13-.45-.25Z"/>
             </svg>
-        </div>
-        <!-- /.go-top -->
+            <span class="wa-float__label">Message us</span>
+        </a>
 
     </div>
 
@@ -2020,6 +2022,65 @@
         else if (n > 32) el.classList.add("is-len-l");
         else if (n > 22) el.classList.add("is-len-m");
       });
+
+      /* ------------------------------------------------------------------
+         WhatsApp button.
+
+         Deliberately reads CLINIC.phone raw rather than the resolved
+         `phone` above. That one falls back to our own number so the header
+         and footer always have something to dial - but a WhatsApp button
+         doing the same would send this clinic's patients to us. If the
+         lead has no number, the button simply never appears.
+
+         WhatsApp needs a mobile. Ahmedabad landlines (079 ...) would open
+         a chat that goes nowhere, so only 10-digit numbers starting 6-9
+         qualify.
+         ------------------------------------------------------------------ */
+      (function () {
+        var btn = document.getElementById("wa-float");
+        if (!btn) return;
+
+        var raw = String(CLINIC.phone || "").trim();
+
+        /* A leading zero marks an STD code, so this is a landline - 079 for
+           Ahmedabad. Stripping it leaves ten digits starting 7, which looks
+           exactly like a mobile and would open a chat to a number that has
+           no WhatsApp account. */
+        if (raw.charAt(0) === "0") return;
+
+        var digits = raw.replace(/[^0-9]/g, "");
+        if (digits.length === 12 && digits.indexOf("91") === 0) digits = digits.slice(2);
+        if (!/^[6-9][0-9]{9}$/.test(digits)) return;   // stays hidden
+
+        /* Refuse anything that looks made up. Sixteen numbers in one early
+           research batch ended in runs like 12345 or 67890; putting one of
+           those on a live demo sends a patient to a stranger. Losing a
+           genuine number that happens to end that way is the cheaper
+           mistake. */
+        var tail = digits.slice(-5), run = 1, up = 1, down = 1;
+        for (var i = 1; i < tail.length; i++) {
+          up = (+tail[i] === +tail[i - 1] + 1) ? up + 1 : 1;
+          down = (+tail[i] === +tail[i - 1] - 1) ? down + 1 : 1;
+          run = Math.max(run, up, down);
+        }
+        if (run >= 4) return;
+
+        var msg = "Hello" + (clinicName ? " " + clinicName : "") +
+                  ", I would like to book an appointment.";
+        btn.href = "https://wa.me/91" + digits + "?text=" + encodeURIComponent(msg);
+        btn.hidden = false;
+
+        /* Held back until the hero is behind you - it is an action for
+           someone who has read something, not a greeting. */
+        var hero = document.querySelector(".page-title-home");
+        if (hero && "IntersectionObserver" in window) {
+          new IntersectionObserver(function (e) {
+            btn.classList.toggle("is-on", !e[0].isIntersecting);
+          }, { rootMargin: "-40% 0px 0px 0px", threshold: 0 }).observe(hero);
+        } else {
+          btn.classList.add("is-on");
+        }
+      })();
 
       document.title = clinicName;
     })();

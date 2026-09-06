@@ -15870,3 +15870,113 @@ a.mapboxgl-ctrl-logo {
     margin-bottom: 16px;
   }
 }
+
+/* ====================================================================
+   WHATSAPP BUTTON
+   Replaces the template's scroll-progress ring. That ring was a
+   decoration with a scroll-to-top hidden inside it; this is the action
+   most of these clinics actually take enquiries through.
+
+   The element ships with `hidden` and is only revealed by script once a
+   usable mobile number is known, so a lead with no phone on file shows
+   nothing at all rather than a button that goes nowhere.
+   ==================================================================== */
+.wa-float {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 9990;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  height: 54px;
+  padding: 0 15px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: #ffffff;
+  background: linear-gradient(140deg, #2ED96F 0%, #17B85A 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.18) inset,
+    0 14px 32px -12px rgba(23, 184, 90, 0.75),
+    0 4px 12px rgba(12, 23, 26, 0.14);
+
+  /* held back until the hero has scrolled away */
+  opacity: 0;
+  transform: translateY(16px) scale(0.94);
+  pointer-events: none;
+  transition:
+    opacity 0.45s ease,
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    gap 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s ease;
+}
+.wa-float.is-on {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.wa-float:hover {
+  color: #ffffff;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.24) inset,
+    0 18px 38px -12px rgba(23, 184, 90, 0.85),
+    0 6px 16px rgba(12, 23, 26, 0.18);
+}
+.wa-float:active { transform: translateY(1px); }
+
+.wa-float svg {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+/* The label is collapsed to nothing and opens on hover, so the button
+   sits quietly out of the way until someone reaches for it. */
+.wa-float__label {
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  opacity: 0;
+  transition:
+    max-width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.3s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .wa-float:hover { gap: 9px; }
+  .wa-float:hover .wa-float__label {
+    max-width: 140px;
+    opacity: 1;
+  }
+}
+/* Keyboard users get the same affordance as a mouse hover. */
+.wa-float:focus-visible {
+  gap: 9px;
+  outline: 3px solid rgba(46, 217, 111, 0.45);
+  outline-offset: 3px;
+}
+.wa-float:focus-visible .wa-float__label {
+  max-width: 140px;
+  opacity: 1;
+}
+
+/* On a phone it is icon-only and sits clear of the thumb bar. */
+@media (max-width: 575px) {
+  .wa-float {
+    right: 14px;
+    bottom: 14px;
+    height: 50px;
+    padding: 0 12px;
+  }
+  .wa-float svg { width: 24px; height: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wa-float {
+    transition: opacity 0.2s ease;
+    transform: none;
+  }
+  .wa-float.is-on { transform: none; }
+}
