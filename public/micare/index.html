@@ -45,7 +45,7 @@
     <!-- Jquery-ui -->
     <link rel="stylesheet" href="css/jquery-ui.min.css">
     <!-- Theme Style -->
-    <link rel="stylesheet" type="text/css" href="css/styles.css?v=1788699287336" />
+    <link rel="stylesheet" type="text/css" href="css/styles.css?v=1788712885832" />
 
     <!-- Icon -->
     <link rel="stylesheet" type="text/css" href="icons/icomoon/style.css" />
@@ -2024,6 +2024,119 @@
       document.title = clinicName;
     })();
   </script>
+  <!-- ==================================================================
+       Demo introduction card.
+
+       The prospect opens this page cold, with no idea who sent it. After
+       half a minute of looking - long enough to have formed an opinion,
+       short enough that they are still here - it says who built it and
+       how to reply. Dismissed once, it stays dismissed for the session.
+       =================================================================== -->
+  <aside id="demo-note" class="demo-note" role="dialog" aria-modal="false"
+         aria-labelledby="demo-note-title" hidden>
+    <div class="demo-note__card">
+      <button type="button" class="demo-note__close" aria-label="Close this message">
+        <i class="icon-close" aria-hidden="true"></i>
+      </button>
+
+      <div class="demo-note__head">
+        <span class="demo-note__avatar" aria-hidden="true">VD</span>
+        <span class="demo-note__head-text">
+          <span class="demo-note__eyebrow">About this demo</span>
+          <span class="demo-note__title" id="demo-note-title">
+            Hello, I&rsquo;m <b>Vinit Dharaiya</b>
+          </span>
+        </span>
+      </div>
+
+      <p class="demo-note__body">
+        I built this page for your clinic before asking for anything. Every
+        part of it can change &mdash; the photographs, the colours, the
+        sections, the wording. Tell me what you would want different.
+      </p>
+
+      <div class="demo-note__actions">
+        <a class="demo-note__btn demo-note__btn--primary"
+           href="https://wa.me/916356182998?text=Hi%20Vinit%2C%20I%20saw%20the%20demo%20site%20you%20built."
+           target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.86 9.86 0 0 0 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm.01 18.15a8.2 8.2 0 0 1-4.2-1.14l-.3-.18-3.12.82.83-3.04-.2-.32a8.17 8.17 0 0 1-1.25-4.38c0-4.54 3.69-8.23 8.23-8.23 2.21 0 4.27.86 5.83 2.42a8.18 8.18 0 0 1 2.41 5.82c0 4.54-3.69 8.23-8.23 8.23Zm4.52-5.76c-.25-.12-1.46-.72-1.69-.81-.22-.08-.38-.12-.55.13-.16.25-.62.78-.77.95-.14.16-.28.18-.53.06-.24-.12-1.04-.38-1.99-1.23-.74-.66-1.24-1.47-1.38-1.72-.14-.24-.02-.38.1-.5.11-.11.25-.29.37-.43.12-.14.17-.24.25-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.35-.76-1.84-.21-.48-.41-.42-.57-.43h-.48c-.17 0-.44.06-.66.31-.23.24-.87.84-.87 2.06s.89 2.39 1.01 2.56c.13.16 1.74 3.29 4.21 4.36.59.25 1.04.4 1.4.52.59.18 1.13.16 1.56.09.48-.07 1.47-.53 1.68-1.11.2-.57.2-1.06.14-1.17-.06-.1-.2-.13-.45-.25Z"/>
+          </svg>
+          WhatsApp me
+        </a>
+        <a class="demo-note__btn demo-note__btn--ghost" href="mailto:vinitdharaiya124@gmail.com">
+          <i class="icon-envelope" aria-hidden="true"></i>
+          Email
+        </a>
+      </div>
+
+      <p class="demo-note__foot">
+        <i class="icon-calendar-day" aria-hidden="true"></i>
+        <span><b>This demo stays online for 10 days.</b> Save my number if you
+        would like to talk before it comes down.</span>
+      </p>
+    </div>
+  </aside>
+
+  <script>
+    /* Shows the introduction card once, thirty seconds in. Dismissing it
+       is remembered for the session, so scrolling back to the top does
+       not bring it round again. Under reduced-motion it still appears -
+       it carries information - it just does not slide. */
+    (function () {
+      "use strict";
+      var DELAY = 30000;
+      var KEY = "demo-note-dismissed";
+
+      var el = document.getElementById("demo-note");
+      if (!el) return;
+
+      try {
+        if (sessionStorage.getItem(KEY)) return;
+      } catch (e) { /* private mode: show it, it is only a nicety */ }
+
+      var timer = null;
+
+      function open() {
+        el.hidden = false;
+        /* next frame, so the browser paints the start state before the
+           transition begins */
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { el.classList.add("is-open"); });
+        });
+        document.addEventListener("keydown", onKey);
+      }
+
+      function close() {
+        el.classList.remove("is-open");
+        document.removeEventListener("keydown", onKey);
+        try { sessionStorage.setItem(KEY, "1"); } catch (e) {}
+        window.setTimeout(function () { el.hidden = true; }, 350);
+      }
+
+      function onKey(e) { if (e.key === "Escape") close(); }
+
+      el.querySelector(".demo-note__close").addEventListener("click", close);
+      /* Taking an action is also a dismissal - nobody wants it still
+         sitting there when they come back from WhatsApp. */
+      Array.prototype.forEach.call(el.querySelectorAll(".demo-note__btn"), function (b) {
+        b.addEventListener("click", function () {
+          try { sessionStorage.setItem(KEY, "1"); } catch (e) {}
+        });
+      });
+
+      /* Do not start counting while the tab is in the background - the
+           thirty seconds is meant to be thirty seconds of reading. */
+      function start() { if (!timer) timer = window.setTimeout(open, DELAY); }
+      function stop() { window.clearTimeout(timer); timer = null; }
+
+      document.addEventListener("visibilitychange", function () {
+        if (document.hidden) stop(); else start();
+      });
+      if (!document.hidden) start();
+    })();
+  </script>
+
 </body>
 
 </html>
