@@ -1,58 +1,75 @@
 import Link from 'next/link';
-import { Map, Users, LogOut, Upload, Zap } from 'lucide-react';
+import { LogOut, Zap, ExternalLink } from 'lucide-react';
 import { signOut } from './actions';
+import { SidebarNav } from '@/components/admin/SidebarNav';
+import { Button } from '@/components/ui/button';
+import { TEMPLATE_LIST } from '@/lib/templates';
 
 export default function AdminLayout({ children }) {
   return (
-    <div className="flex h-screen bg-[#f8fafc] font-sans text-slate-900 overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-[280px] bg-white border-r border-slate-200/60 flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-10">
-        <div className="p-8 pb-6">
-          <Link href="/admin" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
-              <Zap size={18} fill="currentColor" />
-            </div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">
-              Outreach<span className="text-blue-600">HQ</span>
-            </h1>
+    <div className="flex h-screen overflow-hidden bg-background text-foreground">
+      <aside className="hidden w-60 shrink-0 flex-col border-r bg-sidebar md:flex">
+        <div className="px-4 py-5">
+          <Link href="/admin" className="group flex items-center gap-2.5">
+            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand text-brand-foreground shadow-sm transition-transform group-hover:scale-105">
+              <Zap size={15} fill="currentColor" />
+            </span>
+            <span className="text-[15px] font-semibold tracking-tight">
+              Outreach<span className="text-brand">HQ</span>
+            </span>
           </Link>
         </div>
-        
-        <div className="px-6 mb-2">
-          <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Navigation</p>
+
+        <div className="px-3">
+          <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/70">
+            Workspace
+          </p>
+          <SidebarNav />
         </div>
 
-        <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto">
-          <Link href="/admin" className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-all font-medium border border-transparent hover:border-slate-100 group">
-            <Users size={18} className="text-slate-400 group-hover:text-blue-600 transition-colors" />
-            <span>My Leads</span>
-          </Link>
-          <Link href="/admin/scraper" className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-all font-medium border border-transparent hover:border-slate-100 group">
-            <Map size={18} className="text-slate-400 group-hover:text-blue-600 transition-colors" />
-            <span>Map Scraper</span>
-          </Link>
-          <Link href="/admin/import" className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-all font-medium border border-transparent hover:border-slate-100 group">
-            <Upload size={18} className="text-slate-400 group-hover:text-blue-600 transition-colors" />
-            <span>Bulk Import</span>
-          </Link>
-        </nav>
+        {/* Templates are a first-class concept now, so they get somewhere to
+            be looked at rather than being buried in a table cell. */}
+        <div className="mt-6 px-3">
+          <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/70">
+            Demo templates
+          </p>
+          <div className="flex flex-col gap-0.5">
+            {TEMPLATE_LIST.map((t) => (
+              <a
+                key={t.id}
+                href={`/admin/preview/${t.id}`}
+                target="_blank"
+                rel="noopener"
+                title={t.blurb}
+                className="group flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent/60 hover:text-foreground"
+              >
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-muted-foreground/40 transition-colors group-hover:bg-brand" />
+                <span className="truncate">{t.label}</span>
+                <ExternalLink
+                  size={12}
+                  className="ml-auto shrink-0 text-muted-foreground/0 transition-colors group-hover:text-muted-foreground"
+                />
+              </a>
+            ))}
+          </div>
+        </div>
 
-        <div className="p-4 border-t border-slate-100/50 m-4">
+        <div className="mt-auto border-t p-3">
           <form action={signOut}>
-            <button type="submit" className="flex items-center gap-3 px-4 py-3 w-full text-slate-500 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all font-medium group border border-transparent hover:border-red-100">
-              <LogOut size={18} className="text-slate-400 group-hover:text-red-500 transition-colors" />
-              <span>Sign Out</span>
-            </button>
+            <Button
+              type="submit"
+              variant="ghost"
+              className="w-full justify-start gap-3 px-3 text-[13px] font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+            >
+              <LogOut size={16} />
+              Sign out
+            </Button>
           </form>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-[#f8fafc] relative">
-        <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-white to-transparent pointer-events-none opacity-50"></div>
-        <div className="relative min-h-full">
-          {children}
-        </div>
+      <main className="app-ground relative flex-1 overflow-y-auto">
+        {children}
       </main>
     </div>
   );

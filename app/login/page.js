@@ -1,6 +1,10 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { Zap } from 'lucide-react';
 import { COOKIE_NAME, TTL_MS, createSession } from '@/lib/auth';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function LoginPage() {
   async function handleLogin(formData) {
@@ -27,31 +31,47 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-gray-100 p-8 space-y-6">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
-          <p className="text-gray-500 mt-2 text-sm">Enter your master password to access the admin dashboard.</p>
+    <div className="app-ground flex min-h-screen flex-col items-center justify-center p-4">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 flex flex-col items-center text-center">
+          <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-brand text-brand-foreground shadow-lg shadow-brand/20">
+            <Zap size={20} fill="currentColor" />
+          </span>
+          <h1 className="text-[19px] font-semibold tracking-tight">
+            Outreach<span className="text-brand">HQ</span>
+          </h1>
+          <p className="mt-1.5 text-[13px] text-muted-foreground">
+            Sign in to manage leads and demos.
+          </p>
         </div>
-        
-        <form action={handleLogin} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Master Password</label>
-            <input 
-              type="password" 
-              name="password"
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-              placeholder="••••••••"
-              required
-            />
-          </div>
-          <button 
-            type="submit"
-            className="w-full bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Access Dashboard
-          </button>
-        </form>
+
+        <div className="rounded-xl border bg-card p-6 shadow-sm">
+          <form action={handleLogin} className="space-y-4">
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="password"
+                className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground"
+              >
+                Master password
+              </Label>
+              <Input
+                id="password"
+                type="password"
+                name="password"
+                placeholder="••••••••"
+                required
+                autoFocus
+                autoComplete="current-password"
+                className="text-[13px]"
+              />
+            </div>
+            <Button type="submit" className="w-full">Sign in</Button>
+          </form>
+        </div>
+
+        <p className="mt-5 text-center text-[11px] text-muted-foreground">
+          Sessions last seven days on this device.
+        </p>
       </div>
     </div>
   );

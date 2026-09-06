@@ -1,20 +1,51 @@
 'use client';
 
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Mail, FileText, CheckCircle2, Clock, MapPin, X, Edit3, Save, Send, ExternalLink, Search, Copy, Eye, AlertTriangle, Layout } from 'lucide-react';
+import {
+  Mail, FileText, CheckCircle2, Clock, MapPin, Edit3, Save, Send, ExternalLink,
+  Search, Copy, Eye, AlertTriangle, Layout, MoreHorizontal, Phone, X, Loader2,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { updateLead, setLeadTemplate, setTemplateForLeads } from './actions';
 import { TEMPLATE_LIST, resolveTemplate } from '@/lib/templates';
+import { cn } from '@/lib/utils';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from '@/components/ui/table';
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  Select, SelectContent, SelectItem, SelectTrigger,
+} from '@/components/ui/select';
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 /* Pipeline stages, in the order a lead actually moves through them.
    `test` is what decides which chip a row belongs to. */
 const FILTERS = [
-  { key: 'all', label: 'All', test: () => true },
-  { key: 'ready', label: 'Ready to pitch', test: (l) => l.email && !l.emailsent },
-  { key: 'sent', label: 'Pitched', test: (l) => l.emailsent },
-  { key: 'visited', label: 'Visited', test: (l) => l.demovisited },
-  { key: 'noemail', label: 'No email', test: (l) => !l.email },
+  { key: 'all', label: 'All', test: () => true, tone: 'new' },
+  { key: 'ready', label: 'Ready to pitch', test: (l) => l.email && !l.emailsent, tone: 'ready' },
+  { key: 'sent', label: 'Pitched', test: (l) => l.emailsent, tone: 'sent' },
+  { key: 'visited', label: 'Visited', test: (l) => l.demovisited, tone: 'visited' },
+  { key: 'noemail', label: 'No email', test: (l) => !l.email, tone: 'blocked' },
 ];
 
 // Dates are formatted deterministically rather than with toLocaleDateString,
@@ -27,6 +58,14 @@ function shortDate(value) {
   if (Number.isNaN(d.getTime())) return null;
   return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}`;
 }
+
+const STAGE_BG = {
+  new: 'bg-stage-new',
+  ready: 'bg-stage-ready',
+  sent: 'bg-stage-sent',
+  visited: 'bg-stage-visited',
+  blocked: 'bg-stage-blocked',
+};
 
 export default function LeadTable({ leads }) {
   const router = useRouter();
@@ -48,12 +87,11 @@ export default function LeadTable({ leads }) {
   // hostname and looks nothing like the rest of the app.
   const [ask, setAsk] = useState(null);
   const [templateBusy, setTemplateBusy] = useState(null);
-  const selectAllRef = useRef(null);
 
   const confirmDialog = (opts) => new Promise((resolve) => setAsk({ ...opts, resolve }));
   const answer = (value) => { if (ask) { ask.resolve(value); setAsk(null); } };
 
-  /* ---- counts for the filter chips and the stat row ---- */
+  /* ---- counts for the filter chips and the pipeline strip ---- */
   const counts = useMemo(() => {
     const c = {};
     FILTERS.forEach((f) => { c[f.key] = leads.filter(f.test).length; });
@@ -88,11 +126,7 @@ export default function LeadTable({ leads }) {
   /* Select-all reflects the sendable rows it actually controls. Comparing it
      against every row is why the box never looked checked. */
   const allSendableSelected = sendable.length > 0 && sendable.every((l) => selectedIds.has(l.id));
-  useEffect(() => {
-    if (selectAllRef.current) {
-      selectAllRef.current.indeterminate = selectedCount > 0 && !allSendableSelected;
-    }
-  }, [selectedCount, allSendableSelected]);
+  const someSelected = selectedCount > 0 && !allSendableSelected;
 
   const toggleSelect = (id) => {
     const next = new Set(selectedIds);
@@ -108,6 +142,17 @@ export default function LeadTable({ leads }) {
   // Changing the view drops the selection, so a bulk send can never reach a
   // row that scrolled out of the filter.
   const changeFilter = (key) => { setFilter(key); setSelectedIds(new Set()); };
+
+  // Escape clears a selection, the way it does in every other table.
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape' && selectedCount > 0 && !selectedLead && !bulkMode && !editingLead && !ask) {
+        setSelectedIds(new Set());
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selectedCount, selectedLead, bulkMode, editingLead, ask]);
 
   /* Changing the template only changes what /{slug} serves from now on.
      The slug is untouched, so a link already in someone's inbox keeps
@@ -319,162 +364,420 @@ export default function LeadTable({ leads }) {
     setAllowResend(false);
   }
 
+  const composerOpen = Boolean(selectedLead || bulkMode);
+  const templateSpread = useMemo(() => {
+    const pool = bulkMode ? selectedLeads : (selectedLead ? [selectedLead] : []);
+    const acc = {};
+    pool.forEach((l) => {
+      const id = resolveTemplate(l.template).id;
+      acc[id] = (acc[id] || 0) + 1;
+    });
+    return Object.entries(acc);
+  }, [bulkMode, selectedLeads, selectedLead]);
+
   return (
-    <div className="w-full relative pb-24 space-y-5">
+    <TooltipProvider delay={200}>
+      <div className="relative w-full space-y-5 pb-28">
 
-      {/* ---------- Stat row ---------- */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <Stat label="Total leads" value={leads.length} icon={<FileText size={15} />} />
-        <Stat label="Ready to pitch" value={counts.ready} icon={<Send size={15} />} tone="blue" />
-        <Stat label="Pitched" value={counts.sent} icon={<Mail size={15} />} />
-        <Stat
-          label="Visited demo"
-          value={counts.visited}
-          hint={visitRate !== null ? `${visitRate}% of pitched` : null}
-          icon={<Eye size={15} />}
-          tone="emerald"
-        />
-      </div>
+        <Pipeline counts={counts} total={leads.length} visitRate={visitRate} />
 
-      {/* ---------- Filters + search ---------- */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          {FILTERS.map((f) => {
-            const active = filter === f.key;
-            return (
+        {/* ---------- Filters + search ---------- */}
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-wrap items-center gap-1 rounded-lg border bg-card p-1 shadow-xs">
+            {FILTERS.map((f) => {
+              const active = filter === f.key;
+              return (
+                <button
+                  key={f.key}
+                  onClick={() => changeFilter(f.key)}
+                  aria-pressed={active}
+                  className={cn(
+                    'flex items-center gap-2 rounded-md px-2.5 py-1.5 text-[12px] font-medium transition-colors',
+                    active
+                      ? 'bg-primary text-primary-foreground shadow-xs'
+                      : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                  )}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={cn('h-1.5 w-1.5 rounded-full', STAGE_BG[f.tone], active && 'ring-2 ring-primary-foreground/30')}
+                  />
+                  {f.label}
+                  <span className={cn('nums text-[11px]', active ? 'text-primary-foreground/60' : 'text-muted-foreground/60')}>
+                    {counts[f.key]}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="relative lg:w-80">
+            <Search size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search clinic, doctor, email, area…"
+              className="h-9 bg-card pl-9 text-[13px]"
+            />
+            {query && (
               <button
-                key={f.key}
-                onClick={() => changeFilter(f.key)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors border ${
-                  active
-                    ? 'bg-slate-900 text-white border-slate-900'
-                    : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:text-slate-900'
-                }`}
+                onClick={() => setQuery('')}
+                aria-label="Clear search"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-sm p-0.5 text-muted-foreground transition-colors hover:text-foreground"
               >
-                {f.label}
-                <span className={`ml-1.5 tabular-nums ${active ? 'text-slate-400' : 'text-slate-400'}`}>
-                  {counts[f.key]}
-                </span>
+                <X size={13} />
               </button>
-            );
-          })}
-        </div>
-
-        <div className="relative lg:w-72">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search clinic, doctor, email, area..."
-            className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-[13px] text-slate-900 placeholder:text-slate-400 outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 transition-all"
-          />
-        </div>
-      </div>
-
-      {/* ---------- Floating bulk bar ---------- */}
-      {selectedCount > 0 && (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 bg-slate-900 border border-slate-700 shadow-xl rounded-lg py-2 px-4 flex items-center gap-4 animate-in slide-in-from-bottom-10 fade-in duration-200">
-          <div className="flex items-center gap-2 text-white">
-            <span className="flex items-center justify-center bg-blue-600 font-bold text-[11px] w-5 h-5 rounded-sm tabular-nums">{selectedCount}</span>
-            <span className="text-sm font-medium">Selected</span>
+            )}
           </div>
-          <div className="h-4 w-px bg-slate-700" />
-          <button onClick={() => setSelectedIds(new Set())} className="text-slate-400 hover:text-white text-xs font-medium transition-colors">Clear</button>
-          <div className="h-4 w-px bg-slate-700" />
-          <div className="flex items-center gap-2">
-            <Layout size={13} className="text-slate-400" />
-            <select
+        </div>
+
+        {/* ---------- Table ---------- */}
+        <div className="overflow-hidden rounded-xl border bg-card shadow-xs">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="w-10 pl-4">
+                    <Checkbox
+                      checked={allSendableSelected}
+                      indeterminate={someSelected}
+                      onCheckedChange={toggleAll}
+                      disabled={sendable.length === 0}
+                      aria-label={sendable.length ? `Select ${sendable.length} pitchable leads` : 'Nothing pitchable in this view'}
+                    />
+                  </TableHead>
+                  <Th>Clinic</Th>
+                  <Th>Contact</Th>
+                  <Th>Demo</Th>
+                  <Th>Stage</Th>
+                  <Th className="pr-4 text-right">Actions</Th>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
+                {visible.length === 0 ? (
+                  <TableRow className="hover:bg-transparent">
+                    <TableCell colSpan={6} className="py-20 text-center">
+                      <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl border bg-muted/50">
+                        <FileText className="text-muted-foreground/60" size={18} />
+                      </div>
+                      {leads.length === 0 ? (
+                        <>
+                          <p className="text-sm font-medium">No leads yet</p>
+                          <p className="mt-1 text-xs text-muted-foreground">Import a list or use the scraper to find targets.</p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-sm font-medium">Nothing matches this view</p>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {query ? <>No result for &ldquo;{query}&rdquo;. </> : null}
+                            <button
+                              onClick={() => { changeFilter('all'); setQuery(''); }}
+                              className="font-medium text-brand underline-offset-2 hover:underline"
+                            >
+                              Reset filters
+                            </button>
+                          </p>
+                        </>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  visible.map((lead) => {
+                    const isChecked = selectedIds.has(lead.id);
+                    const isSent = emailStatus[lead.id] === 'sent' || lead.emailsent;
+                    const failed = emailStatus[lead.id] === 'failed';
+                    const sentOn = shortDate(lead.emailsentat);
+                    const tpl = resolveTemplate(lead.template);
+
+                    return (
+                      <TableRow
+                        key={lead.id}
+                        data-state={isChecked ? 'selected' : undefined}
+                        className={cn('group align-top transition-colors', isChecked && 'bg-brand-muted/60')}
+                      >
+                        <TableCell className="pl-4 pt-4">
+                          <Checkbox
+                            checked={isChecked}
+                            onCheckedChange={() => toggleSelect(lead.id)}
+                            aria-label={`Select ${lead.clinicname}`}
+                          />
+                        </TableCell>
+
+                        <TableCell className="max-w-[300px] py-3">
+                          <div className="text-[13px] font-medium leading-snug">{lead.clinicname}</div>
+                          {lead.doctorname && (
+                            <div className="mt-0.5 text-[11.5px] text-muted-foreground">{lead.doctorname}</div>
+                          )}
+                          <div className="mt-1 flex items-start gap-1 text-[11px] text-muted-foreground/70">
+                            <MapPin size={10} className="mt-[3px] shrink-0" />
+                            <span className="line-clamp-2">{lead.address || 'No address'}</span>
+                          </div>
+                        </TableCell>
+
+                        <TableCell className="py-3">
+                          {lead.email ? (
+                            <Tooltip>
+                              <TooltipTrigger
+                                render={
+                                  <button
+                                    onClick={() => copyEmail(lead.email)}
+                                    className="flex max-w-[210px] items-center gap-1.5 font-mono text-[11.5px] transition-colors hover:text-brand"
+                                  />
+                                }
+                              >
+                                <span className="truncate">{lead.email}</span>
+                                <Copy size={10} className="shrink-0 text-muted-foreground/40" />
+                              </TooltipTrigger>
+                              <TooltipContent>Copy email</TooltipContent>
+                            </Tooltip>
+                          ) : (
+                            <Badge variant="outline" className="border-stage-blocked/30 bg-stage-blocked/10 text-[10px] font-semibold text-stage-blocked">
+                              NO EMAIL
+                            </Badge>
+                          )}
+                          <div className="mt-1 flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
+                            <Phone size={9} className="shrink-0 text-muted-foreground/50" />
+                            {lead.phone || '—'}
+                          </div>
+                        </TableCell>
+
+                        {/* The link and the template that renders it belong
+                            together - one is meaningless without the other. */}
+                        <TableCell className="py-3">
+                          <a
+                            href={`/${lead.slug}`}
+                            target="_blank"
+                            rel="noopener"
+                            className="flex max-w-[170px] items-center gap-1 font-mono text-[11.5px] text-muted-foreground transition-colors hover:text-brand"
+                          >
+                            <span className="truncate">/{lead.slug}</span>
+                            <ExternalLink size={10} className="shrink-0 opacity-50" />
+                          </a>
+
+                          <div className="mt-1.5 flex items-center gap-1">
+                            <Select
+                              value={tpl.id}
+                              onValueChange={(v) => changeTemplate(lead, v)}
+                              disabled={templateBusy === lead.id}
+                            >
+                              <SelectTrigger
+                                size="sm"
+                                className="h-6 w-auto gap-1 border-dashed px-2 text-[11px] font-medium"
+                              >
+                                {templateBusy === lead.id
+                                  ? <Loader2 size={11} className="animate-spin" />
+                                  : <Layout size={11} className="text-muted-foreground" />}
+                                {tpl.label}
+                              </SelectTrigger>
+                              <SelectContent>
+                                {TEMPLATE_LIST.map((t) => (
+                                  <SelectItem key={t.id} value={t.id}>
+                                    <div className="flex flex-col">
+                                      <span className="text-[13px] font-medium">{t.label}</span>
+                                      <span className="text-[11px] text-muted-foreground">{t.blurb}</span>
+                                    </div>
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+
+                            <Tooltip>
+                              <TooltipTrigger
+                                render={
+                                  <a
+                                    href={`/admin/preview/${tpl.id}?clinic=${encodeURIComponent(lead.clinicname || '')}&doctor=${encodeURIComponent(lead.doctorname || '')}`}
+                                    target="_blank"
+                                    rel="noopener"
+                                    className="rounded-md p-1 text-muted-foreground/40 transition-colors hover:bg-accent hover:text-foreground"
+                                  />
+                                }
+                              >
+                                <Eye size={12} />
+                              </TooltipTrigger>
+                              <TooltipContent>Preview this template with their details</TooltipContent>
+                            </Tooltip>
+                          </div>
+                        </TableCell>
+
+                        <TableCell className="py-3">
+                          <StageDot
+                            tone={lead.demovisited ? 'visited' : isSent ? 'sent' : 'new'}
+                            label={lead.demovisited ? 'Visited' : isSent ? 'Pitched' : 'Not sent'}
+                          />
+                          {sentOn && <div className="nums mt-1 text-[10.5px] text-muted-foreground/70">sent {sentOn}</div>}
+                          {failed && <div className="mt-1 text-[10.5px] font-medium text-destructive">send failed</div>}
+                        </TableCell>
+
+                        <TableCell className="py-3 pr-4 text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            <Button
+                              size="sm"
+                              variant={isSent ? 'ghost' : 'outline'}
+                              disabled={isSent}
+                              onClick={() => openComposer(lead)}
+                              className={cn('h-7 gap-1.5 px-2.5 text-[12px]', isSent && 'text-stage-visited disabled:opacity-100')}
+                            >
+                              {isSent ? <><CheckCircle2 size={12} /> Sent</> : <><Send size={12} /> Pitch</>}
+                            </Button>
+
+                            <DropdownMenu>
+                              <DropdownMenuTrigger
+                                render={
+                                  <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground" aria-label="More actions" />
+                                }
+                              >
+                                <MoreHorizontal size={14} />
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-44">
+                                <DropdownMenuItem onClick={() => setEditingLead(lead)}>
+                                  <Edit3 size={13} /> Edit details
+                                </DropdownMenuItem>
+                                {lead.email && (
+                                  <DropdownMenuItem onClick={() => copyEmail(lead.email)}>
+                                    <Copy size={13} /> Copy email
+                                  </DropdownMenuItem>
+                                )}
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  render={<a href={`/${lead.slug}`} target="_blank" rel="noopener" />}
+                                >
+                                  <ExternalLink size={13} /> Open demo
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
+          </div>
+
+          {visible.length > 0 && (
+            <div className="flex items-center justify-between border-t bg-muted/30 px-4 py-2.5 text-[11px] text-muted-foreground">
+              <span className="nums">
+                Showing {visible.length} of {leads.length}
+                {sendable.length > 0 && <> · {sendable.length} pitchable here</>}
+              </span>
+              <span>Newest first</span>
+            </div>
+          )}
+        </div>
+
+        {/* ---------- Floating selection bar ---------- */}
+        {selectedCount > 0 && (
+          <div className="fixed bottom-6 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-xl border border-white/10 bg-primary px-3 py-2 text-primary-foreground shadow-2xl duration-200 animate-in fade-in slide-in-from-bottom-6">
+            <span className="nums flex h-6 min-w-6 items-center justify-center rounded-md bg-brand px-1.5 text-[11px] font-semibold text-brand-foreground">
+              {selectedCount}
+            </span>
+            <span className="text-[13px] font-medium">selected</span>
+
+            <span className="h-4 w-px bg-primary-foreground/20" />
+
+            <Select
               value=""
-              onChange={(e) => { if (e.target.value) bulkChangeTemplate(e.target.value); e.target.value = ''; }}
+              onValueChange={(v) => v && bulkChangeTemplate(v)}
               disabled={templateBusy === 'bulk'}
-              className="bg-slate-800 border border-slate-700 text-white text-xs font-medium rounded-md px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-white/40 disabled:opacity-40 cursor-pointer"
             >
-              <option value="">Set template…</option>
-              {TEMPLATE_LIST.map((t) => (
-                <option key={t.id} value={t.id}>{t.label}</option>
-              ))}
-            </select>
-          </div>
-          <button
-            onClick={openBulkComposer}
-            className="flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-900 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors shadow-sm"
-          >
-            <Send size={14} /> Bulk Pitch
-          </button>
-        </div>
-      )}
+              <SelectTrigger
+                size="sm"
+                className="h-7 w-auto gap-1.5 border-primary-foreground/20 bg-primary-foreground/10 px-2.5 text-[12px] text-primary-foreground hover:bg-primary-foreground/15"
+              >
+                {templateBusy === 'bulk'
+                  ? <Loader2 size={12} className="animate-spin" />
+                  : <Layout size={12} />}
+                Set template
+              </SelectTrigger>
+              <SelectContent>
+                {TEMPLATE_LIST.map((t) => (
+                  <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-      {/* ---------- Confirm dialog ---------- */}
-      {ask && (
-        <div
-          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
-          onClick={() => answer(false)}
-        >
-          <div
-            className="bg-white rounded-xl shadow-2xl w-full max-w-md border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="p-6">
+            <Button size="sm" variant="secondary" onClick={openBulkComposer} className="h-7 gap-1.5 px-3 text-[12px] font-semibold">
+              <Send size={13} /> Pitch selected
+            </Button>
+
+            <button
+              onClick={() => setSelectedIds(new Set())}
+              className="rounded-md p-1 text-primary-foreground/60 transition-colors hover:bg-primary-foreground/10 hover:text-primary-foreground"
+              aria-label="Clear selection"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        )}
+
+        {/* ---------- Confirm ---------- */}
+        <AlertDialog open={Boolean(ask)} onOpenChange={(open) => { if (!open) answer(false); }}>
+          <AlertDialogContent className="max-w-md">
+            <AlertDialogHeader>
               <div className="flex items-start gap-3">
-                <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${ask.tone === 'danger' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'}`}>
-                  <AlertTriangle size={18} />
-                </div>
+                <span className={cn(
+                  'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg',
+                  ask?.tone === 'danger' ? 'bg-destructive/10 text-destructive' : 'bg-stage-blocked/10 text-stage-blocked'
+                )}>
+                  <AlertTriangle size={17} />
+                </span>
                 <div className="min-w-0">
-                  <h3 className="font-semibold text-slate-900 text-[15px] leading-snug">{ask.title}</h3>
-                  <p className="text-[13px] text-slate-500 mt-1.5 leading-relaxed">{ask.body}</p>
+                  <AlertDialogTitle className="text-[15px]">{ask?.title}</AlertDialogTitle>
+                  <AlertDialogDescription className="mt-1.5 text-[13px] leading-relaxed">
+                    {ask?.body}
+                  </AlertDialogDescription>
                 </div>
               </div>
+            </AlertDialogHeader>
 
-              {ask.names?.length > 0 && (
-                <ul className="mt-4 bg-slate-50 border border-slate-100 rounded-lg p-3 max-h-36 overflow-y-auto space-y-1">
-                  {ask.names.slice(0, 8).map((n, i) => (
-                    <li key={i} className="text-[12px] text-slate-700 font-medium truncate">{n || 'Untitled lead'}</li>
-                  ))}
-                  {ask.names.length > 8 && (
-                    <li className="text-[11px] text-slate-400 pt-1">and {ask.names.length - 8} more</li>
-                  )}
-                </ul>
-              )}
-            </div>
+            {ask?.names?.length > 0 && (
+              <ul className="max-h-36 space-y-1 overflow-y-auto rounded-lg border bg-muted/40 p-3">
+                {ask.names.slice(0, 8).map((n, i) => (
+                  <li key={i} className="truncate text-[12px] font-medium">{n || 'Untitled lead'}</li>
+                ))}
+                {ask.names.length > 8 && (
+                  <li className="pt-1 text-[11px] text-muted-foreground">and {ask.names.length - 8} more</li>
+                )}
+              </ul>
+            )}
 
-            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-2">
-              <button
-                onClick={() => answer(false)}
-                className="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:text-slate-900 transition-colors"
-              >
-                {ask.cancelLabel || 'Cancel'}
-              </button>
-              <button
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => answer(false)}>{ask?.cancelLabel || 'Cancel'}</AlertDialogCancel>
+              <AlertDialogAction
                 onClick={() => answer(true)}
-                className={`px-4 py-2 text-sm font-medium text-white rounded-md transition-colors ${ask.tone === 'danger' ? 'bg-red-600 hover:bg-red-700' : 'bg-slate-900 hover:bg-slate-800'}`}
+                className={ask?.tone === 'danger' ? 'bg-destructive text-white hover:bg-destructive/90' : undefined}
               >
-                {ask.confirmLabel || 'Continue'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+                {ask?.confirmLabel || 'Continue'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
-      {/* ---------- Composer ---------- */}
-      {(selectedLead || bulkMode) && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col border border-slate-200">
-            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <h3 className="font-semibold text-sm text-slate-900 flex items-center gap-2">
-                <Mail className="text-slate-400" size={16} />
-                {bulkMode ? `Bulk Pitch (${selectedCount} selected)` : `Pitch ${selectedLead.clinicname}`}
-              </h3>
-              <button onClick={closeComposer} disabled={isSending} className="text-slate-400 hover:text-slate-900 transition-colors disabled:opacity-40"><X size={16} /></button>
-            </div>
+        {/* ---------- Composer ---------- */}
+        <Dialog open={composerOpen} onOpenChange={(open) => { if (!open && !isSending) closeComposer(); }}>
+          <DialogContent className="max-w-2xl gap-0 p-0" showCloseButton={!isSending}>
+            <DialogHeader className="border-b px-6 py-4">
+              <DialogTitle className="flex items-center gap-2 text-[15px]">
+                <Mail size={16} className="text-muted-foreground" />
+                {bulkMode ? `Pitch ${selectedCount} leads` : `Pitch ${selectedLead?.clinicname}`}
+              </DialogTitle>
+              <DialogDescription className="sr-only">Compose the outreach email</DialogDescription>
+            </DialogHeader>
 
             {bulkMode && (() => {
               const willSend = selectedCount - selectedNoEmail - (allowResend ? 0 : selectedPitched);
+              const danger = allowResend && selectedPitched > 0;
               return (
-                <div className={`px-6 py-3 border-b text-[12px] font-medium ${allowResend && selectedPitched > 0 ? 'bg-red-50/70 border-red-100 text-red-800' : 'bg-amber-50/60 border-amber-100 text-amber-800'}`}>
-                  <div>
-                    Sending to <b>{willSend}</b> of {selectedCount} selected — one at a time with a 3 second gap,
-                    about {Math.ceil((willSend * 3) / 60)} min. Keep this tab open until it finishes.
+                <div className={cn(
+                  'border-b px-6 py-3 text-[12px]',
+                  danger ? 'bg-destructive/8 text-destructive' : 'bg-stage-blocked/8 text-stage-blocked'
+                )}>
+                  <div className="font-medium">
+                    Sending to <b className="nums">{willSend}</b> of {selectedCount} selected — one at a time with a
+                    3 second gap, about {Math.ceil((willSend * 3) / 60)} min. Keep this tab open until it finishes.
                   </div>
                   {selectedPitched > 0 && (
                     <div className="mt-1">
@@ -490,326 +793,188 @@ export default function LeadTable({ leads }) {
 
             {/* Which demo each recipient actually lands on. Worth stating
                 before sending, not after. */}
-            {(() => {
-              const pool = bulkMode ? selectedLeads : (selectedLead ? [selectedLead] : []);
-              if (!pool.length) return null;
-              const counts = pool.reduce((acc, l) => {
-                const id = resolveTemplate(l.template).id;
-                acc[id] = (acc[id] || 0) + 1;
-                return acc;
-              }, {});
-              const parts = Object.entries(counts);
-              return (
-                <div className="px-6 py-2.5 border-b border-slate-100 bg-slate-50/70 flex items-center gap-2 text-[12px] text-slate-600">
-                  <Layout size={13} className="text-slate-400 shrink-0" />
-                  <span>
-                    {parts.length === 1
-                      ? <>Everyone gets the <b className="text-slate-900">{resolveTemplate(parts[0][0]).label}</b> demo.</>
-                      : <>Mixed templates: {parts.map(([id, n], i) => (
-                          <span key={id}>{i > 0 ? ', ' : ''}<b className="text-slate-900">{n} {resolveTemplate(id).label}</b></span>
-                        ))}. Set them all from the selection bar if that is not what you want.</>}
-                  </span>
-                </div>
-              );
-            })()}
+            {templateSpread.length > 0 && (
+              <div className="flex items-center gap-2 border-b bg-muted/40 px-6 py-2.5 text-[12px] text-muted-foreground">
+                <Layout size={13} className="shrink-0" />
+                <span>
+                  {templateSpread.length === 1 ? (
+                    <>Everyone gets the <b className="font-semibold text-foreground">{resolveTemplate(templateSpread[0][0]).label}</b> demo.</>
+                  ) : (
+                    <>Mixed templates: {templateSpread.map(([id, n], i) => (
+                      <span key={id}>{i > 0 ? ', ' : ''}<b className="nums font-semibold text-foreground">{n} {resolveTemplate(id).label}</b></span>
+                    ))}. Set them all from the selection bar if that is not what you want.</>
+                  )}
+                </span>
+              </div>
+            )}
 
-            <form onSubmit={handleSendEmail} className="p-6 space-y-5 flex-1 bg-white">
-              <div className="grid gap-5 bg-slate-50 p-5 rounded-lg border border-slate-100">
-                <div>
-                  <label className="block text-[11px] font-medium text-slate-500 mb-1.5 uppercase tracking-widest">Subject Line</label>
-                  <input
-                    type="text"
-                    name="emailSubject"
-                    required
-                    defaultValue="I built this for {{clinicname}}"
-                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md text-slate-900 outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 text-sm transition-all"
-                  />
-                  <p className="text-[10px] text-slate-400 mt-2">Available tags: <code className="bg-slate-200 text-slate-700 px-1 py-0.5 rounded font-mono">{'{{clinicname}}'}</code> <code className="bg-slate-200 text-slate-700 px-1 py-0.5 rounded font-mono">{'{{doctorname}}'}</code> <code className="bg-slate-200 text-slate-700 px-1 py-0.5 rounded font-mono">{'{{area}}'}</code> <code className="bg-slate-200 text-slate-700 px-1 py-0.5 rounded font-mono">{'{{slug}}'}</code></p>
-                </div>
+            <form onSubmit={handleSendEmail} className="space-y-5 px-6 py-5">
+              <div className="space-y-1.5">
+                <Label htmlFor="emailSubject" className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                  Subject line
+                </Label>
+                <Input
+                  id="emailSubject"
+                  name="emailSubject"
+                  required
+                  defaultValue="I built this for {{clinicname}}"
+                  className="text-[13px]"
+                />
+                <p className="flex flex-wrap items-center gap-1 pt-1 text-[10.5px] text-muted-foreground">
+                  Tags:
+                  {['{{clinicname}}', '{{doctorname}}', '{{area}}', '{{slug}}'].map((t) => (
+                    <code key={t} className="rounded bg-muted px-1 py-0.5 font-mono text-[10px] text-foreground">{t}</code>
+                  ))}
+                </p>
               </div>
 
-              <div>
-                <label className="block text-[11px] font-medium text-slate-500 mb-1.5 uppercase tracking-widest">Message Body</label>
-                <textarea
+              <div className="space-y-1.5">
+                <Label htmlFor="emailBody" className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                  Message body
+                </Label>
+                <Textarea
+                  id="emailBody"
                   name="emailBody"
                   required
-                  rows="12"
+                  rows={12}
                   defaultValue={`Hi {{doctorname}},\n\nI came across {{clinicname}} while looking at practices in {{area}} and had an idea for how you could be presented online.\n\nRather than sending you a proposal, I actually built a private website concept specifically for your practice.\n\n[VIEW THE WEBSITE I BUILT →]\n${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/{{slug}}\n\nIt takes about 30 seconds to look through, and it was made specifically for {{clinicname}} — not a generic template.\n\nIf you like the direction, we can talk. If not, no problem at all.\n\nVinit Dharaiya\nIndependent Web Developer\nWhatsApp: +91 6356 182 998`}
-                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md text-slate-800 text-[13px] outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 font-mono resize-none transition-all leading-relaxed"
+                  className="resize-none font-mono text-[12.5px] leading-relaxed"
                 />
               </div>
 
-              <div className="pt-2 flex justify-between items-center gap-2">
-                <span className="text-[11px] text-slate-400 font-medium tabular-nums">
+              <DialogFooter className="items-center gap-2 sm:justify-between">
+                <span className="nums text-[11px] text-muted-foreground">
                   {sentProgress ? `Sending ${sentProgress.done + 1} of ${sentProgress.total} — ${sentProgress.name}` : ''}
                 </span>
                 <div className="flex gap-2">
-                  <button type="button" onClick={closeComposer} disabled={isSending} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-md transition-colors disabled:opacity-40">Cancel</button>
-                  <button type="submit" disabled={isSending} className="px-4 py-2 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-md transition-colors flex items-center gap-2 disabled:opacity-60">
-                    {isSending ? 'Sending...' : <><Send size={14} /> Send Pitch</>}
-                  </button>
+                  <Button type="button" variant="ghost" onClick={closeComposer} disabled={isSending}>Cancel</Button>
+                  <Button type="submit" disabled={isSending} className="gap-2">
+                    {isSending ? <><Loader2 size={14} className="animate-spin" /> Sending…</> : <><Send size={14} /> Send pitch</>}
+                  </Button>
                 </div>
-              </div>
+              </DialogFooter>
             </form>
-          </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* ---------- Edit ---------- */}
+        <Dialog open={Boolean(editingLead)} onOpenChange={(open) => { if (!open) setEditingLead(null); }}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-[15px]">Edit lead</DialogTitle>
+              <DialogDescription className="text-[13px]">
+                Changing the clinic name does not change the demo link — the slug stays as it was sent.
+              </DialogDescription>
+            </DialogHeader>
+
+            <form onSubmit={handleUpdateLead} className="space-y-4">
+              <Field label="Clinic name" name="clinicname" required defaultValue={editingLead?.clinicname} />
+              <Field label="Doctor name" name="doctorname" defaultValue={editingLead?.doctorname} />
+              <Field label="Email address" name="email" type="email" defaultValue={editingLead?.email} mono />
+              <Field label="Phone / WhatsApp" name="phone" defaultValue={editingLead?.phone} mono />
+
+              <DialogFooter>
+                <Button type="button" variant="ghost" onClick={() => setEditingLead(null)}>Cancel</Button>
+                <Button type="submit" disabled={isSaving} className="gap-2">
+                  {isSaving ? <><Loader2 size={14} className="animate-spin" /> Saving…</> : <><Save size={14} /> Save changes</>}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </TooltipProvider>
+  );
+}
+
+/* ---------- presentational pieces ---------- */
+
+/**
+ * The funnel, drawn to scale.
+ *
+ * Four disconnected stat cards make you do the arithmetic yourself. This
+ * is the same numbers as one bar, so the shape of the pipeline - how much
+ * is still untouched, how much has landed - reads at a glance.
+ */
+function Pipeline({ counts, total, visitRate }) {
+  const stages = [
+    { key: 'ready', label: 'Ready to pitch', value: counts.ready, tone: 'ready' },
+    { key: 'sent', label: 'Pitched', value: counts.sent, tone: 'sent' },
+    { key: 'visited', label: 'Opened demo', value: counts.visited, tone: 'visited', hint: visitRate !== null ? `${visitRate}% of pitched` : null },
+    { key: 'noemail', label: 'No email', value: counts.noemail, tone: 'blocked' },
+  ];
+  const safe = Math.max(total, 1);
+
+  return (
+    <div className="rounded-xl border bg-card p-4 shadow-xs sm:p-5">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Pipeline</p>
+          <p className="nums mt-1 text-2xl font-semibold tracking-tight">
+            {total}
+            <span className="ml-1.5 text-[13px] font-normal text-muted-foreground">leads</span>
+          </p>
         </div>
-      )}
-
-      {/* ---------- Table ---------- */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 border-b border-slate-200">
-              <tr>
-                <th className="px-4 py-3 w-10">
-                  <div className="flex items-center justify-center">
-                    <input
-                      ref={selectAllRef}
-                      type="checkbox"
-                      checked={allSendableSelected}
-                      onChange={toggleAll}
-                      disabled={sendable.length === 0}
-                      title={sendable.length ? `Select ${sendable.length} pitchable leads` : 'Nothing pitchable in this view'}
-                      className="w-3.5 h-3.5 rounded-sm border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
-                    />
-                  </div>
-                </th>
-                <Th>Clinic</Th>
-                <Th>Contact</Th>
-                <Th>Demo</Th>
-                <Th>Template</Th>
-                <Th>Status</Th>
-                <Th className="text-right">Actions</Th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {visible.length === 0 ? (
-                <tr>
-                  <td colSpan="7" className="px-6 py-24 text-center text-slate-400 bg-white">
-                    <div className="w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-3 bg-slate-50 border border-slate-100">
-                      <FileText className="text-slate-300" size={20} />
-                    </div>
-                    {leads.length === 0 ? (
-                      <>
-                        <p className="font-medium text-slate-900 text-sm">No leads found</p>
-                        <p className="text-xs mt-1">Import a list or use the scraper to find targets.</p>
-                      </>
-                    ) : (
-                      <>
-                        <p className="font-medium text-slate-900 text-sm">Nothing matches this view</p>
-                        <p className="text-xs mt-1">
-                          {query ? <>No result for &ldquo;{query}&rdquo;. </> : null}
-                          <button onClick={() => { changeFilter('all'); setQuery(''); }} className="text-blue-600 hover:underline font-medium">Reset filters</button>
-                        </p>
-                      </>
-                    )}
-                  </td>
-                </tr>
-              ) : (
-                visible.map((lead) => {
-                  const isChecked = selectedIds.has(lead.id);
-                  const isSent = emailStatus[lead.id] === 'sent' || lead.emailsent;
-                  const failed = emailStatus[lead.id] === 'failed';
-                  const sentOn = shortDate(lead.emailsentat);
-
-                  return (
-                    <tr key={lead.id} className={`transition-colors ${isChecked ? 'bg-blue-50/40' : 'hover:bg-slate-50/60'}`}>
-                      <td className="px-4 py-3 align-top">
-                        <div className="flex items-center justify-center pt-0.5">
-                          <input
-                            type="checkbox"
-                            checked={isChecked}
-                            onChange={() => toggleSelect(lead.id)}
-                            className="w-3.5 h-3.5 rounded-sm border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer"
-                          />
-                        </div>
-                      </td>
-
-                      <td className="px-4 py-3 align-top max-w-[320px]">
-                        <div className="font-medium text-slate-900 text-[13px] leading-snug">{lead.clinicname}</div>
-                        {lead.doctorname && <div className="text-[11px] text-slate-500 mt-0.5">{lead.doctorname}</div>}
-                        <div className="text-[11px] text-slate-400 flex items-start gap-1 mt-1">
-                          <MapPin size={10} className="shrink-0 mt-[3px]" />
-                          <span className="line-clamp-2">{lead.address || 'No address'}</span>
-                        </div>
-                      </td>
-
-                      <td className="px-4 py-3 align-top">
-                        {lead.email ? (
-                          <button
-                            onClick={() => copyEmail(lead.email)}
-                            title="Copy email"
-                            className="group/c flex items-center gap-1.5 text-slate-900 text-[12px] font-mono hover:text-blue-600 transition-colors max-w-[220px]"
-                          >
-                            <span className="truncate">{lead.email}</span>
-                            <Copy size={11} className="shrink-0 text-slate-300 group-hover/c:text-blue-600 transition-colors" />
-                          </button>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold tracking-wide bg-orange-50 text-orange-700 border border-orange-200/60">
-                            NO EMAIL
-                          </span>
-                        )}
-                        <div className="text-[11px] text-slate-500 font-mono mt-1">{lead.phone || '—'}</div>
-                      </td>
-
-                      <td className="px-4 py-3 align-top">
-                        <a href={`/${lead.slug}`} target="_blank" rel="noopener" className="text-slate-500 hover:text-blue-600 hover:underline inline-flex items-center gap-1 text-[12px] font-mono max-w-[180px]">
-                          <span className="truncate">/{lead.slug}</span>
-                          <ExternalLink size={11} className="shrink-0 text-slate-400" />
-                        </a>
-                      </td>
-
-                      <td className="px-4 py-3 align-top">
-                        <div className="flex items-center gap-1.5">
-                          <select
-                            value={resolveTemplate(lead.template).id}
-                            onChange={(e) => changeTemplate(lead, e.target.value)}
-                            disabled={templateBusy === lead.id}
-                            title={resolveTemplate(lead.template).blurb}
-                            className="text-[11px] font-semibold rounded-md border border-slate-200 bg-white px-2 py-1 text-slate-700 hover:border-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-900 disabled:opacity-40 cursor-pointer"
-                          >
-                            {TEMPLATE_LIST.map((t) => (
-                              <option key={t.id} value={t.id}>{t.label}</option>
-                            ))}
-                          </select>
-                          <a
-                            href={`/admin/preview/${resolveTemplate(lead.template).id}?clinic=${encodeURIComponent(lead.clinicname || '')}&doctor=${encodeURIComponent(lead.doctorname || '')}`}
-                            target="_blank"
-                            rel="noopener"
-                            title="Preview this template with this clinic's details, without touching the lead"
-                            className="text-slate-300 hover:text-blue-600 transition-colors shrink-0"
-                          >
-                            <Eye size={13} />
-                          </a>
-                        </div>
-                      </td>
-
-                      <td className="px-4 py-3 align-top">
-                        <div className="flex flex-col items-start gap-1">
-                          {lead.demovisited ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold tracking-wide bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                              <CheckCircle2 size={10} /> VISITED
-                            </span>
-                          ) : isSent ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold tracking-wide bg-blue-50 text-blue-700 border border-blue-200/60">
-                              <Mail size={10} /> PITCHED
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold tracking-wide bg-slate-100 text-slate-500 border border-slate-200">
-                              <Clock size={10} /> NOT SENT
-                            </span>
-                          )}
-                          {sentOn && <span className="text-[10px] text-slate-400 tabular-nums">sent {sentOn}</span>}
-                          {failed && <span className="text-[10px] text-red-500 font-medium">send failed</span>}
-                        </div>
-                      </td>
-
-                      <td className="px-4 py-3 align-top text-right">
-                        <div className="flex justify-end gap-1.5">
-                          <button
-                            onClick={() => setEditingLead(lead)}
-                            className="p-1.5 rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-colors border border-transparent hover:border-slate-200"
-                            title="Edit lead"
-                          >
-                            <Edit3 size={14} />
-                          </button>
-                          <button
-                            onClick={() => openComposer(lead)}
-                            disabled={isSent}
-                            title={isSent ? 'Already pitched' : 'Send pitch'}
-                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
-                              isSent
-                                ? 'bg-slate-50 text-emerald-600 cursor-not-allowed border border-slate-100'
-                                : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-400 hover:text-slate-900 shadow-sm'
-                            }`}
-                          >
-                            {isSent ? <><CheckCircle2 size={12} /> Sent</> : <><Send size={12} /> Pitch</>}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {visible.length > 0 && (
-          <div className="px-4 py-2.5 border-t border-slate-100 bg-slate-50/60 text-[11px] text-slate-500 font-medium flex items-center justify-between">
-            <span className="tabular-nums">
-              Showing {visible.length} of {leads.length}
-              {sendable.length > 0 && <> · {sendable.length} pitchable here</>}
-            </span>
-            <span>Newest first</span>
-          </div>
-        )}
+        <dl className="flex flex-wrap items-center gap-x-6 gap-y-2">
+          {stages.map((s) => (
+            <div key={s.key} className="flex items-center gap-2">
+              <span aria-hidden="true" className={cn('h-2 w-2 rounded-full', STAGE_BG[s.tone])} />
+              <div>
+                <dt className="text-[11px] leading-none text-muted-foreground">{s.label}</dt>
+                <dd className="nums mt-1 flex items-baseline gap-1.5 text-[15px] font-semibold leading-none">
+                  {s.value}
+                  {s.hint && <span className="text-[10.5px] font-normal text-muted-foreground">{s.hint}</span>}
+                </dd>
+              </div>
+            </div>
+          ))}
+        </dl>
       </div>
 
-      {/* ---------- Edit modal ---------- */}
-      {editingLead && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col border border-slate-200">
-            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <h3 className="font-semibold text-sm text-slate-900">Edit Lead</h3>
-              <button onClick={() => setEditingLead(null)} className="text-slate-400 hover:text-slate-900 transition-colors"><X size={16} /></button>
-            </div>
-
-            <form onSubmit={handleUpdateLead} className="p-6 space-y-4">
-              <Field label="Clinic Name" name="clinicname" required defaultValue={editingLead.clinicname} />
-              <Field label="Doctor Name" name="doctorname" defaultValue={editingLead.doctorname} />
-              <Field label="Email Address" name="email" type="email" defaultValue={editingLead.email} />
-              <Field label="Phone / WhatsApp" name="phone" defaultValue={editingLead.phone} mono />
-
-              <div className="pt-2 flex justify-end gap-2">
-                <button type="button" onClick={() => setEditingLead(null)} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-md transition-colors">Cancel</button>
-                <button type="submit" disabled={isSaving} className="px-4 py-2 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-md transition-colors flex items-center gap-2 disabled:opacity-60">
-                  {isSaving ? 'Saving...' : <><Save size={14} /> Save Changes</>}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <div className="mt-4 flex h-1.5 w-full gap-0.5 overflow-hidden rounded-full bg-muted">
+        {stages.map((s) => (
+          <div
+            key={s.key}
+            className={cn('h-full rounded-full transition-all duration-500', STAGE_BG[s.tone])}
+            style={{ width: `${(s.value / safe) * 100}%` }}
+            title={`${s.label}: ${s.value}`}
+          />
+        ))}
+      </div>
     </div>
   );
 }
 
-/* ---------- small presentational helpers ---------- */
-
-function Stat({ label, value, hint, icon, tone }) {
-  const accent = tone === 'emerald' ? 'text-emerald-600' : tone === 'blue' ? 'text-blue-600' : 'text-slate-400';
+function StageDot({ tone, label }) {
   return (
-    <div className="bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm">
-      <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400">
-        <span className={accent}>{icon}</span>{label}
-      </div>
-      <div className="mt-1.5 flex items-baseline gap-2">
-        <span className="text-2xl font-extrabold tracking-tight text-slate-900 tabular-nums">{value}</span>
-        {hint && <span className="text-[11px] font-medium text-slate-400">{hint}</span>}
-      </div>
-    </div>
+    <span className="flex items-center gap-1.5 text-[12px] font-medium">
+      <span aria-hidden="true" className={cn('h-1.5 w-1.5 rounded-full', STAGE_BG[tone])} />
+      {label}
+    </span>
   );
 }
 
 function Th({ children, className = '' }) {
   return (
-    <th className={`px-4 py-3 text-[11px] font-medium text-slate-500 uppercase tracking-widest ${className}`}>
+    <TableHead className={cn('h-9 text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground', className)}>
       {children}
-    </th>
+    </TableHead>
   );
 }
 
 function Field({ label, name, type = 'text', defaultValue, required, mono }) {
   return (
-    <div>
-      <label className="block text-[11px] font-medium text-slate-500 mb-1.5 uppercase tracking-widest">{label}</label>
-      <input
-        type={type}
+    <div className="space-y-1.5">
+      <Label htmlFor={name} className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+        {label}
+      </Label>
+      <Input
+        id={name}
         name={name}
+        type={type}
         required={required}
         defaultValue={defaultValue || ''}
-        className={`w-full px-3 py-2 bg-white border border-slate-200 rounded-md text-sm outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 transition-all text-slate-900 ${mono ? 'font-mono' : ''}`}
+        className={cn('text-[13px]', mono && 'font-mono')}
       />
     </div>
   );

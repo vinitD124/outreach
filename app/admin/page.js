@@ -13,7 +13,7 @@ export default async function AdminDashboard() {
   async function addLead(formData) {
     'use server';
     const slug = formData.get('clinicName').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.random().toString(36).substr(2, 5);
-    
+
     await pool.query(
       `INSERT INTO leads (slug, clinicname, doctorname, phone, whatsapp, email, address, template)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
@@ -31,27 +31,23 @@ export default async function AdminDashboard() {
     revalidatePath('/admin');
   }
 
-  return (
-    <div className="min-h-full bg-slate-50 p-6 sm:p-10 font-sans">
-      <div className="max-w-[1400px] mx-auto space-y-8">
-        
-        <header className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-slate-200/60 pb-6">
-          <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 mb-2">My Leads</h1>
-            <p className="text-slate-500 font-medium">Bulk generate clinic demos, manage leads, and automate your entire pitch sequence.</p>
-          </div>
-          <div className="mt-4 sm:mt-0 flex items-center gap-4">
-             <div className="px-4 py-2 rounded-lg bg-white border border-slate-200 text-slate-600 font-bold text-[11px] uppercase tracking-widest shadow-sm">
-               {leads.length} Active Leads
-             </div>
-             <AddLeadDialog action={addLead} />
-          </div>
-        </header>
+  const ready = leads.filter((l) => l.email && !l.emailsent).length;
 
-        <div className="w-full">
-          <LeadTable leads={leads} />
+  return (
+    <div className="mx-auto max-w-[1400px] px-5 py-6 sm:px-8 sm:py-8">
+      <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-[22px] font-semibold tracking-tight">Leads</h1>
+          <p className="mt-1 text-[13px] text-muted-foreground">
+            {ready > 0
+              ? <>You have <b className="nums font-semibold text-foreground">{ready}</b> {ready === 1 ? 'clinic' : 'clinics'} ready to pitch.</>
+              : <>Nothing waiting to be pitched. Import a list to add more.</>}
+          </p>
         </div>
-      </div>
+        <AddLeadDialog action={addLead} />
+      </header>
+
+      <LeadTable leads={leads} />
     </div>
   );
 }

@@ -2,50 +2,55 @@
 
 import { useState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
-import { MapPin, Search, Plus, X, Loader2 } from 'lucide-react';
+import { MapPin, Search, Plus, Loader2 } from 'lucide-react';
+import { TEMPLATE_LIST, DEFAULT_TEMPLATE } from '@/lib/templates';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import {
+  Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Select, SelectContent, SelectItem, SelectTrigger,
+} from '@/components/ui/select';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm py-2.5 px-4 rounded-md transition-colors disabled:opacity-70 flex justify-center items-center gap-2"
-    >
-      {pending ? <><Loader2 size={16} className="animate-spin" /> Saving...</> : 'Add Target'}
-    </button>
+    <Button type="submit" disabled={pending} className="w-full gap-2">
+      {pending ? <><Loader2 size={15} className="animate-spin" /> Saving…</> : 'Add lead'}
+    </Button>
+  );
+}
+
+function FieldRow({ label, children, hint }) {
+  return (
+    <div className="space-y-1.5">
+      <Label className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+        {label}
+      </Label>
+      {children}
+      {hint && <p className="text-[11px] text-muted-foreground">{hint}</p>}
+    </div>
   );
 }
 
 export default function AddLeadDialog({ action }) {
   const [isOpen, setIsOpen] = useState(false);
-  
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [template, setTemplate] = useState(DEFAULT_TEMPLATE);
   const [formData, setFormData] = useState({
     clinicName: '',
     doctorName: '',
     phone: '',
     whatsapp: '',
     email: '',
-    address: ''
+    address: '',
   });
-
-  // Handle escape key
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') setIsOpen(false);
-    };
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
-    }
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen]);
 
   // Debounced OpenStreetMap search
   useEffect(() => {
@@ -72,13 +77,13 @@ export default function AddLeadDialog({ action }) {
 
   function handleSelectResult(place) {
     const name = place.address?.clinic || place.address?.hospital || place.address?.doctors || place.name || '';
-    
-    setFormData(prev => ({
+
+    setFormData((prev) => ({
       ...prev,
       clinicName: name || prev.clinicName,
-      address: place.display_name
+      address: place.display_name,
     }));
-    
+
     setSearchQuery('');
     setResults([]);
   }
@@ -87,141 +92,125 @@ export default function AddLeadDialog({ action }) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
-  async function handleSubmit(formData) {
-    await action(formData);
+  async function handleSubmit(fd) {
+    await action(fd);
     setIsOpen(false);
+    setTemplate(DEFAULT_TEMPLATE);
     setFormData({
-      clinicName: '',
-      doctorName: '',
-      phone: '',
-      whatsapp: '',
-      email: '',
-      address: ''
+      clinicName: '', doctorName: '', phone: '', whatsapp: '', email: '', address: '',
     });
   }
 
   return (
-    <>
-      <button 
-        onClick={() => setIsOpen(true)}
-        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors shadow-sm"
-      >
-        <Plus size={16} /> New Target
-      </button>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger render={<Button className="gap-2" />}>
+        <Plus size={15} /> New lead
+      </DialogTrigger>
 
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
-          
-          <div className="relative w-full max-w-md bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
-              <div>
-                <h2 className="text-base font-semibold text-slate-900">Add New Target</h2>
-                <p className="text-xs text-slate-500 mt-0.5">Enter details to generate a custom demo</p>
+      <DialogContent className="max-h-[90vh] max-w-md overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-[15px]">Add a lead</DialogTitle>
+          <DialogDescription className="text-[13px]">
+            A demo page is generated the moment this is saved.
+          </DialogDescription>
+        </DialogHeader>
+
+        <form action={handleSubmit} className="space-y-5">
+          {/* Auto-fill from OpenStreetMap */}
+          <div className="relative z-20">
+            <FieldRow label="Auto-fill from map">
+              <div className="relative">
+                <Search size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Search clinics…"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="bg-muted/50 pl-9 text-[13px]"
+                />
+                {isSearching && (
+                  <Loader2 size={13} className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-muted-foreground" />
+                )}
               </div>
-              <button 
-                onClick={() => setIsOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
-              >
-                <X size={18} />
-              </button>
-            </div>
-            
-            <div className="overflow-y-auto p-6 flex-1">
-              <form action={handleSubmit} className="space-y-5">
-                {/* Search Bar */}
-                <div className="relative z-20">
-                  <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-widest mb-1.5">Auto-Fill from Map</label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Search size={14} className="text-slate-400" />
-                    </div>
-                    <input 
-                      type="text" 
-                      placeholder="Search clinics..." 
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none text-sm transition-all text-slate-900 placeholder:text-slate-400"
-                    />
-                  </div>
-                  
-                  {/* Results Dropdown */}
-                  {results.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg border border-slate-200 overflow-hidden z-50 max-h-48 overflow-y-auto">
-                      {results.map((r, i) => (
-                        <div 
-                          key={i}
-                          onClick={() => handleSelectResult(r)}
-                          className="p-2.5 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-0 transition-colors flex gap-2.5 items-start"
-                        >
-                          <div className="text-slate-400 mt-0.5 shrink-0">
-                            <MapPin size={14} />
-                          </div>
-                          <div>
-                            <p className="font-medium text-slate-900 text-xs">{r.name}</p>
-                            <p className="text-slate-500 text-[10px] mt-0.5 leading-snug line-clamp-2">{r.display_name}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+            </FieldRow>
 
-                <hr className="border-slate-100" />
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1.5">Clinic Name</label>
-                    <input type="text" name="clinicName" required value={formData.clinicName} onChange={handleChange}
-                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none text-sm transition-all text-slate-900" 
-                      placeholder="e.g. City Health Clinic" />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1.5">Doctor Name</label>
-                    <input type="text" name="doctorName" value={formData.doctorName} onChange={handleChange}
-                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none text-sm transition-all text-slate-900" 
-                      placeholder="e.g. Dr. Sarah Jones" />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-medium text-slate-700 mb-1.5">Phone</label>
-                      <input type="text" name="phone" value={formData.phone} onChange={handleChange}
-                        className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none text-sm transition-all text-slate-900" 
-                        placeholder="+1 234 567 8900" />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-slate-700 mb-1.5">WhatsApp</label>
-                      <input type="text" name="whatsapp" value={formData.whatsapp} onChange={handleChange}
-                        className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none text-sm transition-all text-slate-900" 
-                        placeholder="12345678900" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1.5">Email</label>
-                    <input type="email" name="email" value={formData.email} onChange={handleChange}
-                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none text-sm transition-all text-slate-900" 
-                      placeholder="doctor@clinic.com" />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1.5">Address</label>
-                    <textarea name="address" rows="2" value={formData.address} onChange={handleChange}
-                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none text-sm transition-all text-slate-900 resize-none" 
-                      placeholder="123 Medical Way, New York"></textarea>
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <SubmitButton />
-                </div>
-              </form>
-            </div>
+            {results.length > 0 && (
+              <div className="absolute inset-x-0 top-full z-50 mt-1 max-h-48 overflow-y-auto rounded-lg border bg-popover shadow-lg">
+                {results.map((r, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => handleSelectResult(r)}
+                    className="flex w-full items-start gap-2.5 border-b p-2.5 text-left transition-colors last:border-0 hover:bg-accent"
+                  >
+                    <MapPin size={13} className="mt-0.5 shrink-0 text-muted-foreground" />
+                    <span className="min-w-0">
+                      <span className="block text-[12px] font-medium">{r.name}</span>
+                      <span className="mt-0.5 line-clamp-2 block text-[10.5px] leading-snug text-muted-foreground">
+                        {r.display_name}
+                      </span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
-      )}
-    </>
+
+          <div className="h-px bg-border" />
+
+          <FieldRow label="Clinic name">
+            <Input name="clinicName" required value={formData.clinicName} onChange={handleChange}
+              placeholder="e.g. Aashu Dental Clinic" className="text-[13px]" />
+          </FieldRow>
+
+          <FieldRow label="Doctor name">
+            <Input name="doctorName" value={formData.doctorName} onChange={handleChange}
+              placeholder="e.g. Dr. K. K. Shah" className="text-[13px]" />
+          </FieldRow>
+
+          <div className="grid grid-cols-2 gap-3">
+            <FieldRow label="Phone">
+              <Input name="phone" value={formData.phone} onChange={handleChange}
+                placeholder="+91 98251 47293" className="font-mono text-[13px]" />
+            </FieldRow>
+            <FieldRow label="WhatsApp">
+              <Input name="whatsapp" value={formData.whatsapp} onChange={handleChange}
+                placeholder="919825147293" className="font-mono text-[13px]" />
+            </FieldRow>
+          </div>
+
+          <FieldRow label="Email">
+            <Input type="email" name="email" value={formData.email} onChange={handleChange}
+              placeholder="reception@clinic.com" className="font-mono text-[13px]" />
+          </FieldRow>
+
+          <FieldRow label="Address">
+            <Textarea name="address" rows={2} value={formData.address} onChange={handleChange}
+              placeholder="Naranpura, Ahmedabad, Gujarat" className="resize-none text-[13px]" />
+          </FieldRow>
+
+          <FieldRow
+            label="Demo template"
+            hint={TEMPLATE_LIST.find((t) => t.id === template)?.blurb}
+          >
+            {/* Base UI Select does not post a form value, so the choice is
+                mirrored into a hidden input the server action can read. */}
+            <input type="hidden" name="template" value={template} />
+            <Select value={template} onValueChange={setTemplate}>
+              <SelectTrigger className="w-full text-[13px]">
+                {TEMPLATE_LIST.find((t) => t.id === template)?.label}
+              </SelectTrigger>
+              <SelectContent>
+                {TEMPLATE_LIST.map((t) => (
+                  <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FieldRow>
+
+          <SubmitButton />
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
