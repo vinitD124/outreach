@@ -4,6 +4,7 @@ import { useState } from 'react';
 import * as XLSX from 'xlsx';
 import { UploadCloud, CheckCircle2, AlertCircle, FileSpreadsheet, Loader2, ArrowRight } from 'lucide-react';
 import { bulkImportLeads } from '../actions';
+import { TEMPLATE_LIST, DEFAULT_TEMPLATE } from '@/lib/templates';
 import { useRouter } from 'next/navigation';
 
 export default function BulkImportPage() {
@@ -13,6 +14,9 @@ export default function BulkImportPage() {
   const [isImporting, setIsImporting] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  // Template for the whole batch. A "Template" column in the sheet
+  // overrides this per row.
+  const [template, setTemplate] = useState(DEFAULT_TEMPLATE);
   const router = useRouter();
 
   const handleFileUpload = (e) => {
@@ -52,7 +56,7 @@ export default function BulkImportPage() {
     try {
       // Ensure data is completely stripped of any XLSX prototype methods before sending to Server Action
       const plainData = JSON.parse(JSON.stringify(previewData));
-      await bulkImportLeads(plainData);
+      await bulkImportLeads(plainData, template);
       setSuccess(true);
       setTimeout(() => {
         router.push('/admin');
@@ -131,8 +135,22 @@ export default function BulkImportPage() {
               </div>
             </div>
             
-            <div className="flex gap-3">
-              <button 
+            <div className="flex items-center gap-3">
+              <label className="flex items-center gap-2">
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-500">Template</span>
+                <select
+                  value={template}
+                  onChange={(e) => setTemplate(e.target.value)}
+                  disabled={isImporting}
+                  title="Applies to every row, unless the sheet has its own Template column"
+                  className="px-3 py-2 text-sm font-medium text-slate-800 bg-white border border-slate-200 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-slate-900 disabled:opacity-60 cursor-pointer"
+                >
+                  {TEMPLATE_LIST.map((t) => (
+                    <option key={t.id} value={t.id}>{t.label}</option>
+                  ))}
+                </select>
+              </label>
+              <button
                 onClick={() => { setFile(null); setPreviewData([]); }}
                 className="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm"
                 disabled={isImporting}

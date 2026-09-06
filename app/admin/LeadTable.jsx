@@ -2,9 +2,10 @@
 
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Mail, FileText, CheckCircle2, Clock, MapPin, X, Edit3, Save, Send, ExternalLink, Search, Copy, Eye, AlertTriangle } from 'lucide-react';
+import { Mail, FileText, CheckCircle2, Clock, MapPin, X, Edit3, Save, Send, ExternalLink, Search, Copy, Eye, AlertTriangle, Layout } from 'lucide-react';
 import { toast } from 'sonner';
-import { updateLead } from './actions';
+import { updateLead, setLeadTemplate, setTemplateForLeads } from './actions';
+import { TEMPLATE_LIST, resolveTemplate } from '@/lib/templates';
 
 /* Pipeline stages, in the order a lead actually moves through them.
    `test` is what decides which chip a row belongs to. */
@@ -46,6 +47,7 @@ export default function LeadTable({ leads }) {
   // In-app replacement for window.confirm, which renders the deployment
   // hostname and looks nothing like the rest of the app.
   const [ask, setAsk] = useState(null);
+  const [templateBusy, setTemplateBusy] = useState(null);
   const selectAllRef = useRef(null);
 
   const confirmDialog = (opts) => new Promise((resolve) => setAsk({ ...opts, resolve }));
@@ -106,6 +108,43 @@ export default function LeadTable({ leads }) {
   // Changing the view drops the selection, so a bulk send can never reach a
   // row that scrolled out of the filter.
   const changeFilter = (key) => { setFilter(key); setSelectedIds(new Set()); };
+
+  /* Changing the template only changes what /{slug} serves from now on.
+     The slug is untouched, so a link already in someone's inbox keeps
+     working - it just renders the other template next time it is opened. */
+  async function changeTemplate(lead, template) {
+    if (resolveTemplate(lead.template).id === template) return;
+    setTemplateBusy(lead.id);
+    try {
+      await setLeadTemplate(lead.id, template);
+      const label = resolveTemplate(template).label;
+      toast.success(`${lead.clinicname} now uses ${label}`, {
+        description: lead.emailsent
+          ? 'Already pitched — the link they have will now open this template.'
+          : undefined,
+      });
+      router.refresh();
+    } catch (err) {
+      toast.error('Could not change the template', { description: err.message });
+    } finally {
+      setTemplateBusy(null);
+    }
+  }
+
+  async function bulkChangeTemplate(template) {
+    const ids = Array.from(selectedIds);
+    if (!ids.length) return;
+    setTemplateBusy('bulk');
+    try {
+      const { updated } = await setTemplateForLeads(ids, template);
+      toast.success(`${updated} lead${updated === 1 ? '' : 's'} set to ${resolveTemplate(template).label}`);
+      router.refresh();
+    } catch (err) {
+      toast.error('Could not change the template', { description: err.message });
+    } finally {
+      setTemplateBusy(null);
+    }
+  }
 
   async function copyEmail(email) {
     try {
@@ -342,6 +381,21 @@ export default function LeadTable({ leads }) {
           </div>
           <div className="h-4 w-px bg-slate-700" />
           <button onClick={() => setSelectedIds(new Set())} className="text-slate-400 hover:text-white text-xs font-medium transition-colors">Clear</button>
+          <div className="h-4 w-px bg-slate-700" />
+          <div className="flex items-center gap-2">
+            <Layout size={13} className="text-slate-400" />
+            <select
+              value=""
+              onChange={(e) => { if (e.target.value) bulkChangeTemplate(e.target.value); e.target.value = ''; }}
+              disabled={templateBusy === 'bulk'}
+              className="bg-slate-800 border border-slate-700 text-white text-xs font-medium rounded-md px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-white/40 disabled:opacity-40 cursor-pointer"
+            >
+              <option value="">Set template…</option>
+              {TEMPLATE_LIST.map((t) => (
+                <option key={t.id} value={t.id}>{t.label}</option>
+              ))}
+            </select>
+          </div>
           <button
             onClick={openBulkComposer}
             className="flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-900 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors shadow-sm"
@@ -434,6 +488,31 @@ export default function LeadTable({ leads }) {
               );
             })()}
 
+            {/* Which demo each recipient actually lands on. Worth stating
+                before sending, not after. */}
+            {(() => {
+              const pool = bulkMode ? selectedLeads : (selectedLead ? [selectedLead] : []);
+              if (!pool.length) return null;
+              const counts = pool.reduce((acc, l) => {
+                const id = resolveTemplate(l.template).id;
+                acc[id] = (acc[id] || 0) + 1;
+                return acc;
+              }, {});
+              const parts = Object.entries(counts);
+              return (
+                <div className="px-6 py-2.5 border-b border-slate-100 bg-slate-50/70 flex items-center gap-2 text-[12px] text-slate-600">
+                  <Layout size={13} className="text-slate-400 shrink-0" />
+                  <span>
+                    {parts.length === 1
+                      ? <>Everyone gets the <b className="text-slate-900">{resolveTemplate(parts[0][0]).label}</b> demo.</>
+                      : <>Mixed templates: {parts.map(([id, n], i) => (
+                          <span key={id}>{i > 0 ? ', ' : ''}<b className="text-slate-900">{n} {resolveTemplate(id).label}</b></span>
+                        ))}. Set them all from the selection bar if that is not what you want.</>}
+                  </span>
+                </div>
+              );
+            })()}
+
             <form onSubmit={handleSendEmail} className="p-6 space-y-5 flex-1 bg-white">
               <div className="grid gap-5 bg-slate-50 p-5 rounded-lg border border-slate-100">
                 <div>
@@ -498,6 +577,7 @@ export default function LeadTable({ leads }) {
                 <Th>Clinic</Th>
                 <Th>Contact</Th>
                 <Th>Demo</Th>
+                <Th>Template</Th>
                 <Th>Status</Th>
                 <Th className="text-right">Actions</Th>
               </tr>
@@ -505,7 +585,7 @@ export default function LeadTable({ leads }) {
             <tbody className="divide-y divide-slate-100">
               {visible.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="px-6 py-24 text-center text-slate-400 bg-white">
+                  <td colSpan="7" className="px-6 py-24 text-center text-slate-400 bg-white">
                     <div className="w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-3 bg-slate-50 border border-slate-100">
                       <FileText className="text-slate-300" size={20} />
                     </div>
@@ -577,6 +657,31 @@ export default function LeadTable({ leads }) {
                           <span className="truncate">/{lead.slug}</span>
                           <ExternalLink size={11} className="shrink-0 text-slate-400" />
                         </a>
+                      </td>
+
+                      <td className="px-4 py-3 align-top">
+                        <div className="flex items-center gap-1.5">
+                          <select
+                            value={resolveTemplate(lead.template).id}
+                            onChange={(e) => changeTemplate(lead, e.target.value)}
+                            disabled={templateBusy === lead.id}
+                            title={resolveTemplate(lead.template).blurb}
+                            className="text-[11px] font-semibold rounded-md border border-slate-200 bg-white px-2 py-1 text-slate-700 hover:border-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-900 disabled:opacity-40 cursor-pointer"
+                          >
+                            {TEMPLATE_LIST.map((t) => (
+                              <option key={t.id} value={t.id}>{t.label}</option>
+                            ))}
+                          </select>
+                          <a
+                            href={`/admin/preview/${resolveTemplate(lead.template).id}?clinic=${encodeURIComponent(lead.clinicname || '')}&doctor=${encodeURIComponent(lead.doctorname || '')}`}
+                            target="_blank"
+                            rel="noopener"
+                            title="Preview this template with this clinic's details, without touching the lead"
+                            className="text-slate-300 hover:text-blue-600 transition-colors shrink-0"
+                          >
+                            <Eye size={13} />
+                          </a>
+                        </div>
                       </td>
 
                       <td className="px-4 py-3 align-top">

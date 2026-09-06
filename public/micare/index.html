@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="ie" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<!--<![endif]-->
+
+<head>
+    <base href="/micare/" />
+    <!-- Basic Page Needs -->
+    <meta charset="utf-8" />
+    <!-- [if IE ]><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/><![endif] -->
+    <title>Your Clinic &mdash; Family Medicine in Ahmedabad</title>
+    <meta name="description" content="A neighbourhood clinic in Ahmedabad. Unhurried consultations, appointments that run on time, and fees explained before anything is done.">
+    <meta name="keywords" content="clinic ahmedabad, family doctor, general physician, health checkup, vaccination, appointment">
+    <meta name="author" content="themesflat.com" />
+
+    <!-- Mobile Specific Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap -->
+    <!-- Fonts first, and in parallel. This used to be an @import buried
+         inside styles.css, which made the browser wait for the stylesheet
+         to parse before it even learned the font existed. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap" />
+
+    <!-- The hero image is a CSS background, so the browser cannot find it
+         until the stylesheet is parsed. Preloading makes it the first
+         thing fetched, which is what LCP measures. Two entries because
+         the layout swaps the image below 768px. -->
+    <link rel="preload" as="image" href="image/header-bg-1.webp" fetchpriority="high" media="(min-width: 768px)" />
+    <link rel="preload" as="image" href="image/img-6.webp" fetchpriority="high" media="(max-width: 767px)" />
+
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+    <!-- Animate -->
+    <link rel="stylesheet" type="text/css" href="css/animate.min.css" />
+    <!-- Magnific-popup -->
+    <link rel="stylesheet" type="text/css" href="css/magnific-popup.min.css" />
+    <!-- Swiper -->
+    <link rel="stylesheet" href="css/swiper-bundle.min.css">
+    <!-- Odometer -->
+    <link rel="stylesheet" href="css/odometer-theme-default.css">
+    <!-- Nice Select -->
+    <!-- Jquery-ui -->
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <!-- Theme Style -->
+    <link rel="stylesheet" type="text/css" href="css/styles.css?v=1788699287336" />
+
+    <!-- Icon -->
+    <link rel="stylesheet" type="text/css" href="icons/icomoon/style.css" />
+
+    <!-- Favicon and Touch Icons  -->
+    <link rel="shortcut icon" href="image/logo-1.webp" />
+    <link rel="apple-touch-icon-precomposed" href="image/logo-1.webp" />
+
+
+</head>
+
+<body class="counter-scroll">
+
+    <span id="top" aria-hidden="true"></span>
+
+    <!-- .preload -->
+    <div id="loading">
+        <div id="loading-center">
+            <div class="loader-container">
+                <div class="wrap-loader">
+                    <div class="loader">
+                    </div>
+                    <div class="icon brand-loader">
+                        <span class="brand__ico" aria-hidden="true"><img src="image/logo-1.webp" alt=""></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.preload -->
+
+    <div class="wrapper">
+        <!-- Top-bar -->
+        <div class="top-bar">
+            <div class="top-bar-inner flex align-items-center justify-content-between mx-30">
+                <div class="tf-tb-left flex align-items-center">
+                    <span class="text-topbar">Have a question? We are here to help.</span>
+                    <div class="top-bar-item phone-topbar">
+                        <i class="icon-phone-volume"></i>
+                        <div class="content">
+                            <span>Call : </span>
+                            <a href="tel:+916356182998" data-c="tel-href tel-text">+91 63561 82998</a>
+                        </div>
+                    </div>
+                    <span class="dot-topbar dot bg-paragraph"></span>
+                    <div class="top-bar-item email-topbar">
+                        <i class="icon-envelope"></i>
+                        <div class="content">
+                            <span>Email : </span>
+                            <a href="mailto:reception@clinic.com" data-c="email-href email-text">reception@clinic.com</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="tf-tb-right flex align-items-center">
+                    <div class="top-bar-item time-topbar">
+                        <i class="icon-clock"></i>
+                        <div class="content">
+                            <span>Working Hours : </span>
+                            <span class="color-title" id="topbar-hours">Mon &ndash; Sat, 8:00 AM &ndash; 7:00 PM</span>
+                        </div>
+                    </div>
+                    <span class="dot-topbar dot bg-paragraph"></span>
+                    <ul class="post-social">
+                        <li><a href="#" class="icon-social" aria-label="Facebook"><i class="icon-facebook" aria-hidden="true"></i></a></li>
+                        <li><a href="#" class="icon-social" aria-label="X"><i class="icon-twitter" aria-hidden="true"></i></a></li>
+                        <li><a href="#" class="icon-social" aria-label="LinkedIn"><i class="icon-linkedin2" aria-hidden="true"></i></a></li>
+                        <li><a href="#" class="icon-social" aria-label="Instagram"><i class="icon-instagram" aria-hidden="true"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div><!-- /.top-bar -->
+
+        <!-- Header -->
+        <header class="header header-sticky" id="header-sticky">
+            <div class="header-content flex justify-content-between align-items-center mx-30">
+                <div class="header-left flex align-items-center">
+                    <div class="logo logo-header">
+                        <a class="brand" href="#top" data-c="brand-label">
+                            <span class="brand__ico" aria-hidden="true"><img src="image/logo-1.webp" alt=""></span>
+                            <span class="brand__txt">
+                                <span class="brand__name">Caremind</span>
+                                <span class="brand__sub" data-c="clinic-name">Meridian Family Clinic</span>
+                            </span>
+                        </a>
+                    </div>
+                    <nav class="main-menu">
+                        <ul class="menu-primary-menu">
+                            <li class="menu-item">
+                                <a href="#about" class="item-link body-2">About</a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="#services" class="item-link body-2">Services</a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="#doctors" class="item-link body-2">Doctors</a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="#reviews" class="item-link body-2">Reviews</a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="#blog" class="item-link body-2">Blog</a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="#footer" class="item-link body-2">Contact</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="header-right">
+                    <div class="nav-icon">
+                        <div class="nav-search nav-item">
+                            <a class="search-btn" href="#canvasSearch" data-bs-toggle="offcanvas">
+                                <i class="icon-magnifying-glass"></i>
+                            </a>
+                        </div>
+                        <div class="mobile-button nav-item d-xl-none">
+                            <a href="#canvasMobile" data-bs-toggle="offcanvas">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="nav-btn">
+                        <a href="#appointment" class="tf-btn style-small">
+                            <span>Make Appointment</span>
+                            <i class="icon-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="nav-megamenu">
+                        <a href="#canvnasMegamenu" data-bs-toggle="offcanvas" class="megamenu-btn">
+                            <i class="icon-megamenu"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <header class="header" id="header">
+            <div class="header-content flex justify-content-between align-items-center mx-30">
+                <div class="header-left flex align-items-center">
+                    <div class="logo logo-header">
+                        <a class="brand" href="#top" data-c="brand-label">
+                            <span class="brand__ico" aria-hidden="true"><img src="image/logo-1.webp" alt=""></span>
+                            <span class="brand__txt">
+                                <span class="brand__name">Caremind</span>
+                                <span class="brand__sub" data-c="clinic-name">Meridian Family Clinic</span>
+                            </span>
+                        </a>
+                    </div>
+                    <nav class="main-menu">
+                        <ul class="menu-primary-menu">
+                            <li class="menu-item">
+                                <a href="#about" class="item-link body-2">About</a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="#services" class="item-link body-2">Services</a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="#doctors" class="item-link body-2">Doctors</a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="#reviews" class="item-link body-2">Reviews</a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="#blog" class="item-link body-2">Blog</a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="#footer" class="item-link body-2">Contact</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="header-right">
+                    <div class="nav-icon">
+                        <div class="nav-search nav-item">
+                            <a class="search-btn" href="#canvasSearch" data-bs-toggle="offcanvas">
+                                <i class="icon-magnifying-glass"></i>
+                            </a>
+                        </div>
+                        <div class="mobile-button nav-item d-xl-none">
+                            <a href="#canvasMobile" data-bs-toggle="offcanvas">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="nav-btn">
+                        <a href="#appointment" class="tf-btn style-small">
+                            <span>Make Appointment</span>
+                            <i class="icon-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="nav-megamenu">
+                        <a href="#canvnasMegamenu" data-bs-toggle="offcanvas" class="megamenu-btn">
+                            <i class="icon-megamenu"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- /.header -->
+
+        <main id="content">
+
+        <div class="page-title-home h-1 mt-30">
+            <div class="swiper sw-page-title-home tf-sw-slideshow slider-effect-fade" data-effect="fade" data-preview="1" data-tablet="1" data-mobile="1" data-auto-play="true" data-centered="false" data-space="0" data-space-mb="0" data-loop="false" data-speed="800">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <div class="page-title-home-inner img-1 mx-30">
+                            <div class="tf-container">
+                                <div class="page-title-content">
+                                    <div class="top-content">
+                                        <div class="image fade-item-1 tf-fade-top">
+                                            <i class="icon-stethoscope hero-mark" aria-hidden="true"></i>
+                                        </div>
+                                        <p class="h3 sub-title fw6 fade-item-1 tf-fade-top">Medical & Health Center</p>
+                                    </div>
+                                    <h1 class="title fade-item-2 tf-fade-top">
+                                        Providing Excellence
+                                        <br><span class="title-accent" id="hero-rotate" data-rotate="in Medical Care|in Everyday Health|in Family Medicine|in Preventive Care">in Medical Care</span>
+                                    </h1>
+                                    <p class="hero-lead fade-item-2 tf-fade-top">
+                                        Compassionate care. Unhurried consultations. A clear plan before you leave.
+                                    </p>
+                                    <div class="list-btn flex align-items-center flex-wrap">
+                                        <div class="fade-item-3 tf-fade-top">
+                                            <a href="#services" class="tf-btn">
+                                                <span>See our services</span>
+                                                <i class="icon-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                        <div class="fade-item-4 tf-fade-top">
+                                            <a href="#doctors" class="tf-btn style-white">
+                                                <span>Meet our Doctors</span>
+                                                <i class="icon-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+
+            <div class="features-list mt-30 mx-30">
+                <div class="swiper tf-swiper sw-features" data-swiper='{
+                    "slidesPerView": 1,
+                    "spaceBetween": 30,
+                    "pagination": { "el": ".sw-pagination-features", "clickable": true },
+                    "breakpoints": {
+                        "575": { "slidesPerView": 2, "slidesPerGroup": 1},
+                        "1150": { "slidesPerView": 3, "slidesPerGroup": 1}
+                        }
+                    }'>
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div class="features-item" data-reveal style="--reveal-delay:0.09s">
+                                <svg class="number-features">
+                                    <defs>
+                                        <linearGradient id="textGradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="rgba(12, 23, 26, 0.05)" />
+                                            <stop offset="100%" stop-color="rgba(12, 23, 26, 0)" />
+                                        </linearGradient>
+                                    </defs>
+
+                                    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="none" stroke="url(#textGradient1)" stroke-width="2">
+                                        01
+                                    </text>
+                                </svg>
+                                <div class="icon">
+                                    <i class="icon-looking"></i>
+                                </div>
+                                <h4 class="title">
+                                    <a href="#services">
+                                        Looking For Medical &amp; Health Care
+                                    </a>
+                                </h4>
+                                <div class="desc">Your health is your greatest asset, and finding care you can trust is where it starts.</div>
+                                <a href="#services" class="tf-btn no-bg">
+                                    <span>Find Medical Services</span>
+                                    <i class="icon-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="features-item" data-reveal style="--reveal-delay:0.18s">
+                                <svg class="number-features">
+                                    <defs>
+                                        <linearGradient id="textGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="rgba(12, 23, 26, 0.05)" />
+                                            <stop offset="100%" stop-color="rgba(12, 23, 26, 0)" />
+                                        </linearGradient>
+                                    </defs>
+
+                                    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="none" stroke="url(#textGradient2)" stroke-width="2">
+                                        02
+                                    </text>
+                                </svg>
+                                <div class="icon">
+                                    <i class="icon-find-professional"></i>
+                                </div>
+                                <h4 class="title">
+                                    <a href="#doctors">
+                                        Find Professional &amp; Quality Doctors
+                                    </a>
+                                </h4>
+                                <div class="desc">A doctor who knows your history is worth more than a specialist who is meeting you for the first time.</div>
+                                <a href="#doctors" class="tf-btn no-bg">
+                                    <span>Find a Doctor</span>
+                                    <i class="icon-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="features-item" data-reveal style="--reveal-delay:0.27s">
+                                <svg class="number-features">
+                                    <defs>
+                                        <linearGradient id="textGradient3" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="rgba(12, 23, 26, 0.05)" />
+                                            <stop offset="100%" stop-color="rgba(12, 23, 26, 0)" />
+                                        </linearGradient>
+                                    </defs>
+
+                                    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="none" stroke="url(#textGradient3)" stroke-width="2">
+                                        03
+                                    </text>
+                                </svg>
+                                <div class="icon">
+                                    <i class="icon-calendar-day"></i>
+                                </div>
+                                <h4 class="title">
+                                    <a href="#appointment">
+                                        Want to Book an Appointment ?
+                                    </a>
+                                </h4>
+                                <div class="desc">Send the clinic a message and reception will confirm a time that suits you, usually the same day.</div>
+                                <a href="#appointment" class="tf-btn no-bg">
+                                    <span>Book a Visit</span>
+                                    <i class="icon-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sw-pagination-features sw-pagination d-xl-none mt-15 justify-content-center"></div>
+                </div>
+            </div>
+
+            <section class="section-about h-1 mt-30 tf-spacing-2 mx-30" id="about">
+                <div class="img-item item-1">
+                    <img src="image/bg-1.webp" data-src="image/bg-1.webp" alt="" class="lazyload">
+                </div>
+                <div class="img-item item-2">
+                    <img src="image/bg-1.webp" data-src="image/bg-1.webp" alt="" class="lazyload">
+                </div>
+                <div class="tf-container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="heading-section mb-70" data-reveal>
+                                <p class="h6 sub-title mb-10 text-anime">
+                                    About the clinic
+                                </p>
+                                <h2 class="title" data-ink="light">
+                                    Care that listens.
+                                    <br>Health that stays.
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <div class="wg-video img-2" data-reveal data-wipe="right">
+                                <a href="https://www.youtube.com/watch?v=XHOmBV4js_E" class="popup-youtube">
+                                    <div class="icon">
+                                        <i class="icon-play icon-color-red"></i>
+                                    </div>
+                                    <div class="wave"></div>
+                                    <div class="wave"></div>
+                                    <div class="wave"></div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="section-content">
+                                <p class="h6 desc mb-50 fw4 lh-32" data-words>
+                                    Everyday medicine for the whole family, from a routine check-up to a condition that needs watching over years. The same doctor each visit, and enough time to ask what you actually came to ask.
+                                </p>
+                                <div class="list-item flex mb-40 flex-wrap">
+                                    <div class="about-item">
+                                        <div class="wow fadeInUp" data-wow-delay=".4s">
+                                            <p class="h6 number-item">1</p>
+                                        </div>
+                                        <div class="wow fadeInUp" data-wow-delay=".4s">
+                                            <h6 class="title lh-30">
+                                                Compassionate
+                                                <br>Healthcare
+                                            </h6>
+                                        </div>
+                                    </div>
+                                    <div class="about-item">
+                                        <div class="wow fadeInUp" data-wow-delay=".5s">
+                                            <p class="h6 number-item">2</p>
+                                        </div>
+                                        <div class="wow fadeInUp" data-wow-delay=".5s">
+                                            <h6 class="title lh-30">
+                                                Advanced Medical
+                                                <br>Technology
+                                            </h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="wow fadeInUp" data-wow-delay=".4s">
+                                    <a href="#about" class="tf-btn">
+                                        <span>More about the clinic</span>
+                                        <i class="icon-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-department h-1 tf-spacing-2 mx-30" id="services">
+                <div class="section-department-inner tf-spacing-2">
+                    <div class="tf-container">
+                        <div class="heading-section mb-70 text-center" data-reveal>
+                            <p class="h6 sub-title mb-10 color-title text-anime">
+                                What we look after
+                            </p>
+                            <h2 class="title text-anime">
+                                Everyday medicine,
+                                <br>done properly.
+                            </h2>
+                        </div>
+                    </div>
+
+                    <div class="list-item-department">
+                        <div class="swiper tf-swiper sw-department sw-grid" data-swiper='{
+                            "slidesPerView": 1,
+                            "spaceBetween": 0,
+                            "observer": true,
+                            "observeParents": true,
+                             "navigation": {
+                                "clickable": true,
+                                "nextEl": ".department-next",
+                                "prevEl": ".department-prev"
+                            },
+                            "pagination": { "el": ".sw-pagination-department", "clickable": true },
+                            "breakpoints": {
+                                "575": { "slidesPerView": 2, "slidesPerGroup": 2, "allowTouchMove": true},
+                                "1150": { 
+                                    "slidesPerView": 4, "slidesPerGroup": 1, "allowTouchMove": false, "spaceBetween": 0}
+                                }
+                            }'>
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                                    <div class="department-item style-1" data-reveal style="--reveal-delay:0.00s">
+                                        <div class="top-item">
+                                            <span class="sub-title text-anime-wave">
+                                                Consultation
+                                            </span>
+                                            <h3 class="title wow fadeInUp">
+                                                <a href="#services">
+                                                    General Consultation
+                                                </a>
+                                            </h3>
+                                        </div>
+                                        <div class="wow fadeInUp">
+                                            <div class="icon ">
+                                                <i class="icon-stethoscope"></i>
+                                            </div>
+                                        </div>
+                                        <div class="bottom-item">
+                                            <div class="desc wow fadeInUp">
+                                                Unhurried visits for everyday illness, aches, and the worries you have been sitting on.
+                                            </div>
+                                            <div class="wow fadeInUp">
+                                                <a href="#" class="tf-btn no-bg">
+                                                    <span class="fw6 lsp-0">Book a visit</span>
+                                                    <i class="icon-arrow-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+                                    <div class="department-item style-1" data-reveal style="--reveal-delay:0.09s">
+                                        <div class="top-item">
+                                            <span class="sub-title wow fadeInUp" data-wow-delay=".2s">
+                                                Prevention
+                                            </span>
+                                            <h3 class="title wow fadeInUp" data-wow-delay=".2s">
+                                                <a href="#services">
+                                                    Vaccinations
+                                                </a>
+                                            </h3>
+                                        </div>
+                                        <div class="wow fadeInUp" data-wow-delay=".2s">
+                                            <div class="icon">
+                                                <i class="icon-special-care"></i>
+                                            </div>
+                                        </div>
+                                        <div class="bottom-item">
+                                            <div class="desc wow fadeInUp" data-wow-delay=".2s">
+                                                Childhood schedules, travel shots and seasonal flu, kept on time with reminders.
+                                            </div>
+                                            <div class="wow fadeInUp" data-wow-delay=".2s">
+                                                <a href="#" class="tf-btn no-bg">
+                                                    <span class="fw6 lsp-0">Book a visit</span>
+                                                    <i class="icon-arrow-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="swiper-slide">
+                                    <div class="department-item style-1" data-reveal style="--reveal-delay:0.18s">
+                                        <div class="top-item">
+                                            <span class="sub-title wow fadeInUp" data-wow-delay=".3s">
+                                                Screening
+                                            </span>
+                                            <h3 class="title wow fadeInUp" data-wow-delay=".3s">
+                                                <a href="#services">
+                                                    Health Checkups
+                                                </a>
+                                            </h3>
+                                        </div>
+                                        <div class="wow fadeInUp" data-wow-delay=".3s">
+                                            <div class="icon">
+                                                <i class="icon-check"></i>
+                                            </div>
+                                        </div>
+                                        <div class="bottom-item">
+                                            <div class="desc wow fadeInUp" data-wow-delay=".3s">
+                                                Annual screenings that catch the small things early, with results explained in person.
+                                            </div>
+                                            <div class="wow fadeInUp" data-wow-delay=".3s">
+                                                <a href="#" class="tf-btn no-bg">
+                                                    <span class="fw6 lsp-0">Book a visit</span>
+                                                    <i class="icon-arrow-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+                                    <div class="department-item style-1" data-reveal style="--reveal-delay:0.27s">
+                                        <div class="top-item">
+                                            <span class="sub-title wow fadeInUp" data-wow-delay=".4s">
+                                                Ongoing care
+                                            </span>
+                                            <h3 class="title wow fadeInUp" data-wow-delay=".4s">
+                                                <a href="#services">
+                                                    Chronic Care
+                                                </a>
+                                            </h3>
+                                        </div>
+                                        <div class="wow fadeInUp" data-wow-delay=".4s">
+                                            <div class="icon">
+                                                <i class="icon-personalized-patient-care"></i>
+                                            </div>
+                                        </div>
+                                        <div class="bottom-item">
+                                            <div class="desc wow fadeInUp" data-wow-delay=".4s">
+                                                Long term support for blood pressure, diabetes and thyroid, on a schedule that suits you.
+                                            </div>
+                                            <div class="wow fadeInUp" data-wow-delay=".4s">
+                                                <a href="#" class="tf-btn no-bg">
+                                                    <span class="fw6 lsp-0">Book a visit</span>
+                                                    <i class="icon-arrow-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+                                    <div class="department-item style-1" data-reveal style="--reveal-delay:0.00s">
+                                        <div class="top-item">
+                                            <span class="sub-title wow fadeInUp" data-wow-delay=".2s">
+                                                Testing
+                                            </span>
+                                            <h3 class="title wow fadeInUp" data-wow-delay=".2s">
+                                                <a href="#services">
+                                                    Lab Guidance
+                                                </a>
+                                            </h3>
+                                        </div>
+                                        <div class="wow fadeInUp" data-wow-delay=".2s">
+                                            <div class="icon">
+                                                <i class="icon-phlebotomy"></i>
+                                            </div>
+                                        </div>
+                                        <div class="bottom-item">
+                                            <div class="desc wow fadeInUp" data-wow-delay=".2s">
+                                                We arrange the tests and read them with you in plain language, most back the same week.
+                                            </div>
+                                            <div class="wow fadeInUp" data-wow-delay=".2s">
+                                                <a href="#" class="tf-btn no-bg">
+                                                    <span class="fw6 lsp-0">Book a visit</span>
+                                                    <i class="icon-arrow-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+                                    <div class="department-item style-1" data-reveal style="--reveal-delay:0.09s">
+                                        <div class="top-item">
+                                            <span class="sub-title wow fadeInUp" data-wow-delay=".3s">
+                                                Aftercare
+                                            </span>
+                                            <h3 class="title wow fadeInUp" data-wow-delay=".3s">
+                                                <a href="#services">
+                                                    Follow-up Visits
+                                                </a>
+                                            </h3>
+                                        </div>
+                                        <div class="wow fadeInUp" data-wow-delay=".3s">
+                                            <div class="icon">
+                                                <i class="icon-calendar-day"></i>
+                                            </div>
+                                        </div>
+                                        <div class="bottom-item">
+                                            <div class="desc wow fadeInUp" data-wow-delay=".3s">
+                                                Short check-ins after treatment, in person or by phone, so nothing gets left half finished.
+                                            </div>
+                                            <div class="wow fadeInUp" data-wow-delay=".3s">
+                                                <a href="#" class="tf-btn no-bg">
+                                                    <span class="fw6 lsp-0">Book a visit</span>
+                                                    <i class="icon-arrow-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide colum-2">
+                                    <div class="box-cta style-1">
+                                        <div class="top-box">
+                                            <div class="sub-title wow fadeInUp" data-wow-delay=".4s">
+                                                Need For Home Care
+                                            </div>
+                                            <div class="title wow fadeInUp" data-wow-delay=".4s">
+                                                Medical Treatments?
+                                            </div>
+                                        </div>
+                                        <div class="desc fw5 wow fadeInUp" data-wow-delay=".4s" data-words>
+                                            We are committed to delivering safe, effective,
+                                            <br> and patient-centered care.
+                                        </div>
+                                        <div class="benefit-list">
+                                            <div class="benefit-items wow fadeInUp" data-reveal style="--reveal-delay:0.18s" data-wow-delay=".4s">
+                                                <i class="icon-check"></i>
+                                                <span>Confirmed the same day</span>
+                                            </div>
+                                            <div class="benefit-items wow fadeInUp" data-reveal style="--reveal-delay:0.27s" data-wow-delay=".4s">
+                                                <i class="icon-check"></i>
+                                                <span>Open six days a week</span>
+                                            </div>
+                                        </div>
+                                        <div class="wow fadeInUp" data-wow-delay=".4s">
+                                            <a href="#appointment" class="tf-btn style-small">
+                                                <span>Make Appointment</span>
+                                                <i class="icon-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sw-pagination-department sw-pagination d-xl-none mt-15 justify-content-center"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-appointmrent h-1 mx-30" id="appointment">
+                <div class="heading-section" data-reveal>
+                    <div class="tf-container tf-spacing-3">
+                        <div class="row rg-30">
+                            <div class="col-xl-6">
+                                <h2 class="title mb-30" data-ink="light">
+                                    Booked in minutes.
+                                    <br>Seen on time.
+                                </h2>
+                                <div class="text" data-words>Call the clinic, send a message on WhatsApp, or use the form below.
+                                    Reception confirms your slot the same day, so you know exactly when
+                                    you are being seen.
+                                </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="list-counter flex justify-content-between">
+                                    <div class="counter-item" data-reveal style="--reveal-delay:0.00s">
+                                        <div class="counter">
+                                            <div class="number-counter flex fs-65 fw7">
+                                                <span class="number odometer color-primary" data-to="6" data-inviewport="yes"> 0 </span>
+                                            </div>
+                                            <p class="title-counter body-2 lh-30">
+                                                Days a week
+                                                <br>open for appointments
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="counter-item" data-reveal style="--reveal-delay:0.09s">
+                                        <div class="counter">
+                                            <div class="number-counter flex fs-65 fw7">
+                                                <span class="number odometer color-primary" data-to="2" data-inviewport="yes"> 0 </span>
+                                            </div>
+                                            <p class="title-counter body-2 lh-30">
+                                                Minutes
+                                                <br>to book, start to finish
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="wg-video style-2">
+                    <a href="https://www.youtube.com/watch?v=XHOmBV4js_E" class="popup-youtube">
+                        <div class="icon">
+                            <i class="icon-play icon-color-red"></i>
+                        </div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                    </a>
+                </div>
+                <form id="contactform" class="form-contact-us" method="post" action="./contact/contact-process.php">
+                    <div class="heading-form text-center mb-30">
+                        <div class="title text-anime">
+                            Make an Appointment
+                        </div>
+                        <div class="desc text-anime">Fill this in and reception will confirm your slot, usually within the hour.</div>
+                    </div>
+
+                    <div class="cols mb-20 g-30 rg-20">
+                        <fieldset class="item">
+                            <i class="icon-user"></i>
+                            <input type="text" name="name" id="name" placeholder="Name" required>
+                        </fieldset>
+
+                        <fieldset class="item">
+                            <i class="icon-envelope"></i>
+                            <input type="email" name="mail" id="mail" placeholder="Email Address" required>
+                        </fieldset>
+
+                        <fieldset class="item">
+                            <i class="icon-phone-volume-2"></i>
+                            <input type="number" name="phone" id="phone" placeholder="Phone no" required>
+                        </fieldset>
+
+                        <fieldset class="item">
+                            <i class="icon-calendar-day"></i>
+                            <input type="text" name="date" id="datepicker" class="date-input" placeholder="Date & Time" required>
+                        </fieldset>
+
+                    </div>
+                    <div class="cols g-30 align-items-start">
+                        <fieldset class="item-textarea">
+                            <i class="icon-envelope-2"></i>
+                            <textarea name="message" id="message" placeholder="Write message..." required></textarea>
+                        </fieldset>
+
+                        <button type="submit" class="tf-btn">
+                            <span>Submit now</span>
+                            <i class="icon-arrow-right"></i>
+                        </button>
+                    </div>
+
+                </form>
+
+            </section>
+
+            <section class="section-team h-1 tf-spacing-2" id="doctors">
+                <div class="tf-container tf-spacing-1">
+                    <div class="heading-section text-center mb-70" data-reveal>
+                        <p class="h6 sub-title mb-10 color-title text-anime">
+                            Your clinic
+                        </p>
+                        <h2 class="title text-anime">
+                            Care that stays consistent.
+                        </h2>
+                    </div>
+
+                    <div class="row rg-70 align-items-stretch">
+                        <div class="col-md-5">
+                            <div class="info-doctor-details" data-reveal data-wipe="down" style="--reveal-delay:.12s">
+                                <a href="#appointment" class="image clinic-portrait">
+                                    <img src="image/img-4.webp" data-src="image/img-4.webp" alt="The doctor at the clinic" class="lazyload">
+                                    <span class="clinic-status" id="clinic-status" hidden>
+                                        <span class="clinic-status__dot" aria-hidden="true"></span>
+                                        <span class="clinic-status__text">&nbsp;</span>
+                                    </span>
+                                </a>
+                                <div class="info-content text-center px-mobile-sm">
+                                    <div class="top-content position-relative">
+                                        <h3 class="name"><a href="#appointment" data-c="doctor">Dr. Rajesh Patel</a></h3>
+                                        <a href="#appointment" class="position">Healthcare Specialist</a>
+                                        <p class="desc" data-words>
+                                            Still the person who reads your file before you sit down, and
+                                            still the one who explains what happens next.
+                                        </p>
+                                    </div>
+                                    <div class="bottom-content position-relative">
+                                        <p class="body-2 fw7">Get in touch</p>
+                                        <ul class="post-social justify-content-center style-bg-white style-radius-50">
+                                            <li><a href="tel:+916356182998" class="icon-social" aria-label="Call the clinic" data-c="tel-href"><i class="icon-phone-volume-2"></i></a></li>
+                                            <li><a href="mailto:reception@clinic.com" class="icon-social" aria-label="Email the clinic" data-c="email-href"><i class="icon-envelope"></i></a></li>
+                                            <li><a href="#appointment" class="icon-social" aria-label="Book an appointment"><i class="icon-calendar-day"></i></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-7">
+                            <div class="details-content doctor-details-content">
+                                <p class="desc mb-30" data-words>
+                                    A neighbourhood practice, run the way one should be. Appointments
+                                    start close to the time they were booked, questions get answered
+                                    properly, and you leave knowing what happens next.
+                                </p>
+                                <p class="desc mb-50" data-words>
+                                    Routine checkup, something new that worries you, or a condition that
+                                    needs watching over years &mdash; you get the same care and the same
+                                    explanation. Fees are discussed before anything is done.
+                                </p>
+
+                                <div class="education-specia" data-reveal data-wipe="down" style="--reveal-delay:.12s">
+                                    <div class="top">
+                                        <div class="image">
+                                            <img src="image/img-education-content.webp" data-src="image/img-education-content.webp" alt="Inside the clinic" class="lazyload">
+                                        </div>
+                                    </div>
+                                    <div class="bottom flex justify-content-between g-30 px-mobile-md">
+                                        <div class="specia-content">
+                                            <div class="title-content fs-30 fw7">
+                                                What we treat
+                                            </div>
+                                            <ul class="specia-list">
+                                                <li class="specia-item"><i class="icon-star"></i>General consultation</li>
+                                                <li class="specia-item"><i class="icon-star"></i>Health checkups</li>
+                                                <li class="specia-item"><i class="icon-star"></i>Vaccinations</li>
+                                                <li class="specia-item"><i class="icon-star"></i>Chronic care</li>
+                                            </ul>
+                                        </div>
+                                        <div class="education-content">
+                                            <div class="title-content fs-30 fw7">
+                                                Clinic hours
+                                            </div>
+                                            <ul class="education-list" id="clinic-hours">
+                                                <li class="education-item"><i class="icon-clock"></i><span class="flex justify-content-between content flex-wrap"><span class="fw6">Mon &ndash; Thu</span> <span>8:00 AM &ndash; 7:00 PM</span></span></li>
+                                                <li class="education-item"><i class="icon-clock"></i><span class="flex justify-content-between content flex-wrap"><span class="fw6">Friday</span> <span>8:00 AM &ndash; 6:00 PM</span></span></li>
+                                                <li class="education-item"><i class="icon-clock"></i><span class="flex justify-content-between content flex-wrap"><span class="fw6">Saturday</span> <span>9:00 AM &ndash; 2:00 PM</span></span></li>
+                                                <li class="education-item"><i class="icon-clock"></i><span class="flex justify-content-between content flex-wrap"><span class="fw6">Sunday</span> <span>Closed</span></span></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-why h-1" id="why">
+                <div class="tf-container">
+                    <div class="row rg-19">
+                        <div class="col-xl-6">
+                            <div class="heading-section style-2 px-mobile-sm tf-animate-1 wow fadeInUp" data-reveal data-wow-delay="0.22s">
+                                <p class="h6 sub-title mb-10">
+                                    Why Choose Us
+                                </p>
+                                <h2 class="title" data-ink>
+                                    Advanced Medical Care
+                                    with a Human Touch
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="about-item style-desc px-mobile-sm tf-animate-1 wow fadeInUp" data-reveal style="--reveal-delay:0.18s" data-wow-delay="0.34s" data-delay=".3s">
+                                <span class="number-item">1</span>
+                                <div class="item-content">
+                                    <h5 class="title"><a href="#">On-Time Appointments</a></h5>
+                                    <div class="desc">A real time slot, not a token number, and a call if we run late.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-md-6">
+                            <div class="about-item style-desc px-mobile-sm tf-animate-1 wow fadeInUp" data-reveal style="--reveal-delay:0.27s" data-wow-delay="0.46s" data-delay=".6s">
+                                <span class="number-item">2</span>
+                                <div class="item-content">
+                                    <h5 class="title"><a href="#">Your Notes, Always To Hand</a></h5>
+                                    <div class="desc">Your history stays on file, so you never start from the beginning.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-md-6">
+                            <div class="about-item style-desc px-mobile-sm tf-animate-4 wow fadeInUp" data-reveal style="--reveal-delay:0.00s" data-wow-delay="0.10s" data-delay=".6s">
+                                <span class="number-item">3</span>
+                                <div class="item-content">
+                                    <h5 class="title"><a href="#">Reports Explained Simply</a></h5>
+                                    <div class="desc">Test results explained properly, so you know what they actually mean.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-md-6">
+                            <div class="about-item style-desc px-mobile-sm tf-animate-4 wow fadeInUp" data-reveal style="--reveal-delay:0.09s" data-wow-delay="0.22s" data-delay=".3s">
+                                <span class="number-item">4</span>
+                                <div class="item-content">
+                                    <h5 class="title"><a href="#">Consultations Without Rush</a></h5>
+                                    <div class="desc">Unhurried consultations, with questions answered in plain language.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="image" data-reveal data-wipe="left" style="--reveal-delay:.12s">
+                                <img src="/img/hc-img.webp" data-src="/img/hc-img.webp" alt="" class="lazyload">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <section class="section-testimonials h-1 tf-spacing-3" id="reviews">
+                <div class="tf-container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="heading-section mb-30 text-center" data-reveal>
+                                <p class="h6 sub-title mb-10 text-anime">
+                                    Our Testimonials
+                                </p>
+                                <h2 class="title text-anime">
+                                    What patients say
+                                    <br>after their visit.
+                                </h2>
+                            </div>
+                            <div class="testimonials-nav flex align-items-center justify-content-center g-20 wow fadeInUp" data-wow-delay="0.22s">
+                                <a class="arrow-btn testimonials-prev" role="button" tabindex="0" aria-label="Previous testimonial">
+                                    <i class="icon-arrow-left"></i>
+                                </a>
+                                <a class="arrow-btn testimonials-next" role="button" tabindex="0" aria-label="Next testimonial">
+                                    <i class="icon-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tf-container">
+                    <div class="row rg-30">
+                        <div class="col-md-4 col-sm-6">
+                            <div class="testimonials-item style-video wow fadeInUp" data-reveal data-wipe="down" style="--reveal-delay:0.18s" data-wow-delay="0.34s">
+                                <div class="image">
+                                    <img src="/img/header-1.webp" data-src="/img/header-1.webp" alt="" class="lazyload">
+                                </div>
+                                <div class="testimonials-content px-mobile-md">
+                                    <a href="https://www.youtube.com/watch?v=XHOmBV4js_E" class="popup-youtube">
+                                        <div class="icon">
+                                            <i class="icon-play color-red"></i>
+                                        </div>
+                                    </a>
+                                    <div class="user-testimonials flex align-items-end">
+                                        <h5 class="name-user"><a href="#">Rakesh Shah,</a></h5>
+                                        <a href="#" class="position">Patient, Paldi</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8 col-sm-6">
+                            <div class="swiper tf-swiper sw-testimonials" data-swiper='{
+                                "slidesPerView": 1,
+                                "spaceBetween": 30,
+                                "autoHeight": false,
+                                "speed" : 800,
+                                "navigation": {
+                                    "clickable": true,
+                                    "nextEl": ".testimonials-next",
+                                    "prevEl": ".testimonials-prev"
+                                },  
+                                "pagination": { "el": ".sw-pagination-testimonials", "clickable": true },
+                                "breakpoints": {
+                                    "992": { "slidesPerView": 2, "slidesPerGroup": 1}
+                                    }
+                                }'>
+                                <div class="swiper-wrapper">
+                                    <div class="swiper-slide">
+                                        <div class="testimonials-item px-mobile-md style-1 wow fadeInUp" data-reveal style="--reveal-delay:0.27s" data-wow-delay="0.46s">
+                                            <div class="rating flex">
+                                                <i class="icon-star"></i>
+                                                <i class="icon-star"></i>
+                                                <i class="icon-star"></i>
+                                                <i class="icon-star"></i>
+                                                <i class="icon-star"></i>
+                                            </div>
+                                            <h4 class="title lh-35">
+                                                <a href="#appointment">“Explained so I understood”</a>
+                                            </h4>
+                                            <p class="h6 desc lh-32">
+                                                “The doctor explained what was wrong and what happens next, in plain
+                                                language. I left knowing exactly what to do.”
+                                            </p>
+                                            <div class="icon">
+                                                <i class="icon-groud-chat"></i>
+                                            </div>
+                                            <div class="user-testimonials flex align-items-end">
+                                                <h5 class="name-user"><a href="#">Priya Mehta,</a></h5>
+                                                <a href="#" class="position">Patient, Navrangpura</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="swiper-slide">
+                                        <div class="testimonials-item px-mobile-md style-1 wow fadeInUp" data-reveal style="--reveal-delay:0.00s" data-wow-delay="0.10s">
+                                            <div class="rating flex">
+                                                <i class="icon-star"></i>
+                                                <i class="icon-star"></i>
+                                                <i class="icon-star"></i>
+                                                <i class="icon-star"></i>
+                                                <i class="icon-star"></i>
+                                            </div>
+                                            <h4 class="title lh-35">
+                                                <a href="#appointment">“Listened, and not rushed”</a>
+                                            </h4>
+                                            <p class="h6 desc lh-32">
+                                                “They listened properly, explained the treatment plan clearly, and never
+                                                once made me feel hurried.”
+                                            </p>
+                                            <div class="icon">
+                                                <i class="icon-groud-chat"></i>
+                                            </div>
+                                            <div class="user-testimonials flex align-items-end">
+                                                <h5 class="name-user"><a href="#">Amit Trivedi,</a></h5>
+                                                <a href="#" class="position">Father of two</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="swiper-slide">
+                                        <div class="testimonials-item px-mobile-md style-1 wow fadeInUp" data-reveal style="--reveal-delay:0.09s" data-wow-delay="0.22s">
+                                            <div class="rating flex">
+                                                <i class="icon-star"></i>
+                                                <i class="icon-star"></i>
+                                                <i class="icon-star"></i>
+                                                <i class="icon-star"></i>
+                                                <i class="icon-star"></i>
+                                            </div>
+                                            <h4 class="title lh-35">
+                                                <a href="#appointment">“They remember my history”</a>
+                                            </h4>
+                                            <p class="h6 desc lh-32">
+                                                “Every visit, the same care. My history is on file, so I never
+                                                have to start from the beginning.”
+                                            </p>
+                                            <div class="icon">
+                                                <i class="icon-groud-chat"></i>
+                                            </div>
+                                            <div class="user-testimonials flex align-items-end">
+                                                <h5 class="name-user"><a href="#">Sunita Patel,</a></h5>
+                                                <a href="#" class="position">Grandmother of three</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="swiper-slide">
+                                        <div class="testimonials-item px-mobile-md style-1 wow fadeInUp" data-reveal style="--reveal-delay:0.18s" data-wow-delay="0.34s">
+                                            <div class="rating flex">
+                                                <i class="icon-star"></i>
+                                                <i class="icon-star"></i>
+                                                <i class="icon-star"></i>
+                                                <i class="icon-star"></i>
+                                                <i class="icon-star"></i>
+                                            </div>
+                                            <h4 class="title lh-35">
+                                                <a href="#appointment">“Appointments run on time”</a>
+                                            </h4>
+                                            <p class="h6 desc lh-32">
+                                                “Appointments actually run to time here. That sounds small until you
+                                                have waited half a morning somewhere else.”
+                                            </p>
+                                            <div class="icon">
+                                                <i class="icon-groud-chat"></i>
+                                            </div>
+                                            <div class="user-testimonials flex align-items-end">
+                                                <h5 class="name-user"><a href="#">Harsh Amin,</a></h5>
+                                                <a href="#" class="position">Retired teacher</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sw-pagination-testimonials sw-pagination d-sm-none mt-15 justify-content-center"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-banner h-1 mx-30">
+                <div class="wg-banner">
+                    <div class="tf-container">
+                        <div class="banner-inner tf-spacing-2">
+                            <div class="banner-content">
+                                <p class="h6 sub-title mb-10 text-anime">
+                                    Make an Appointment
+                                </p>
+                                <h2 class="title mb-30" data-ink>
+                                    Ready when you are.
+                                    <br>Book a visit in two minutes.
+                                </h2>
+                                <div class="benefit-list flex flex-wrap rg-30 g-50 mb-40">
+                                    <div class="benefit-items body-2 wow fadeInUp" data-reveal style="--reveal-delay:0.27s" data-wow-delay=".2s">
+                                        <i class="icon-check"></i>
+                                        <span class="body-2">Confirmed the same day</span>
+                                    </div>
+                                    <div class="benefit-items body-2 wow fadeInUp" data-reveal style="--reveal-delay:0.00s" data-wow-delay=".4s">
+                                        <i class="icon-check"></i>
+                                        <span class="body-2">Open six days a week</span>
+                                    </div>
+                                </div>
+                                <div class="text-anime-wave">
+                                    <a href="#appointment" class="tf-btn">
+                                        <span>Make Appointment</span>
+                                        <i class="icon-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-blog h-1 tf-spacing-2" id="blog">
+                <div class="tf-container">
+                    <div class="heading-section mb-70 text-center" data-reveal>
+                        <p class="h6 sub-title mb-10 text-anime">
+                            From the clinic
+                        </p>
+                        <h2 class="title text-anime">
+                            Answers to the things
+                            <br>patients ask us most.
+                        </h2>
+                    </div>
+                </div>
+                <div class="tf-container">
+                    <div class="row rg-30">
+                        <div class="col-lg-6">
+                            <div class="tf-post-grid style-absolute">
+                                <a href="javascript:void(0)" class="image">
+                                    <img src="/img/bg-img-1.webp" data-src="/img/bg-img-1.webp" alt="">
+                                </a>
+                                <div class="tf-grid-post-content px-mobile-sm wow fadeInUp" data-wow-delay="0.22s">
+                                    <a href="javascript:void(0)" class="title-post">When a fever needs a doctor, and when it does not</a>
+                                    <ul class="post-metas style-2 flex-wrap">
+                                        <li class="metas-item"><a href="#">Everyday care</a></li>
+                                        <li class="metas-item"><a href="#">28 August 2026</a></li>
+                                        <li class="metas-item"><a href="#">4 min read</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="list-post">
+                                <div class="tf-post-list style-small small-2 hover-img" data-reveal data-wipe="right" style="--reveal-delay:0.00s">
+                                    <a href="javascript:void(0)" class="image">
+                                        <img src="/img/cpp-img.webp" data-src="/img/cpp-img.webp" alt="" class="lazyload">
+                                    </a>
+                                    <div class="post-content px-mobile-sm wow fadeInUp" data-wow-delay="0.46s">
+                                        <h5>
+                                            <a href="javascript:void(0)" class="name-post">
+                                                What to bring to your first appointment
+                                            </a>
+                                        </h5>
+                                        <ul class="post-metas style-2">
+                                            <li class="metas-item"><a href="#">14 August 2026</a></li>
+                                            <li class="metas-item"><a href="#">3 min read</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="tf-post-list style-small small-2 hover-img" data-reveal data-wipe="right" style="--reveal-delay:0.09s">
+                                    <a href="javascript:void(0)" class="image">
+                                        <img src="/img/bg-img-3.webp" data-src="/img/bg-img-3.webp" alt="" class="lazyload">
+                                    </a>
+                                    <div class="post-content px-mobile-sm wow fadeInUp" data-wow-delay="0.22s">
+                                        <h5>
+                                            <a href="javascript:void(0)" class="name-post">
+                                                Blood pressure: what the numbers actually mean
+                                            </a>
+                                        </h5>
+                                        <ul class="post-metas style-2">
+                                            <li class="metas-item"><a href="#">31 July 2026</a></li>
+                                            <li class="metas-item"><a href="#">5 min read</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="tf-post-list style-small small-2 hover-img" data-reveal data-wipe="right" style="--reveal-delay:0.18s">
+                                    <a href="javascript:void(0)" class="image">
+                                        <img src="/img/fp-img.webp" data-src="/img/fp-img.webp" alt="" class="lazyload">
+                                    </a>
+                                    <div class="post-content px-mobile-sm wow fadeInUp" data-wow-delay="0.46s">
+                                        <h5>
+                                            <a href="javascript:void(0)" class="name-post">
+                                                Why we ask about medicines you take at home
+                                            </a>
+                                        </h5>
+                                        <ul class="post-metas style-2">
+                                            <li class="metas-item"><a href="#">19 July 2026</a></li>
+                                            <li class="metas-item"><a href="#">3 min read</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        </main>
+
+        <footer class="footer" id="footer">
+            <div class="tf-container">
+                <div class="footer-inner flex justify-content-between">
+                    <div class="footer-left">
+                        <div class="top subscribe-footer">
+                            <h3 class="title-footer">
+                                Newsletter Subscribe
+                            </h3>
+                            <div class="sub-title">
+                                Subscribe our newsletter to get more updates
+                            </div>
+                            <form action="#" class="form-newsletter">
+                                <fieldset class="flex align-items-center g-22">
+                                    <input type="text" placeholder="Email Address" required>
+                                    <button type="submit" class="tf-btn">
+                                        <span>Subscribe Now</span>
+                                        <i class="icon-arrow-right"></i>
+                                    </button>
+                                </fieldset>
+                            </form>
+                        </div>
+                        <div class="middle flex justify-content-between">
+                            <div class="footer-about">
+                                <div class="logo logo-footer">
+                                    <a class="brand brand--light" href="#top" data-c="brand-label">
+                            <span class="brand__ico" aria-hidden="true"><img src="image/logo-1.webp" alt=""></span>
+                            <span class="brand__txt">
+                                <span class="brand__name">Caremind</span>
+                                <span class="brand__sub" data-c="clinic-name">Meridian Family Clinic</span>
+                            </span>
+                        </a>
+                                </div>
+
+                                <div class="desc" data-words>
+                                    A neighbourhood practice offering everyday consultations,
+                                    health checkups and long-term care, six days a week.
+                                </div>
+
+                                <a href="#appointment" class="tf-btn style-small">
+                                    <span>Make Appointment</span>
+                                    <i class="icon-arrow-right"></i>
+                                </a>
+
+                            </div>
+
+                            <div class="footer-content our-community footer-col-block">
+                                <h5 class="title-mobile">
+                                    Community
+                                    <i class="icon-chevron-right"></i>
+                                </h5>
+                                <div class="tf-collapse-content" style="display: unset;">
+                                    <ul>
+                                        <li class="support-item-footer"><a href="#doctors">The doctor</a></li>
+                                        <li class="support-item-footer"><a href="">Patient reviews</a></li>
+                                        <li class="support-item-footer"><a href="#footer">About the clinic</a></li>
+                                        <li class="support-item-footer"><a href="#blog">Blog</a></li>
+                                        <li class="support-item-footer"><a href="#">Contact</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="footer-content our-services footer-col-block">
+                                <h5 class="title-mobile  ">
+                                    Services
+                                    <i class="icon-chevron-right"></i>
+                                </h5>
+                                <div class="tf-collapse-content" style="display: unset;">
+                                    <ul>
+                                        <li class="support-item-footer"><a href="#services">General consultation</a></li>
+                                        <li class="support-item-footer"><a href="index.html">Health checkups</a></li>
+                                        <li class="support-item-footer"><a href="#">Vaccinations</a></li>
+                                        <li class="support-item-footer"><a href="#">Chronic care</a></li>
+                                        <li class="support-item-footer"><a href="#">Follow-up visits</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer-right">
+                        <div class="swiper tf-swiper sw-box-item-footer" data-swiper='{
+                                "slidesPerView": 1,
+                                "spaceBetween": 20,
+                                "direction": "horizontal",
+                                "pagination": { "el": ".sw-pagination-box", "clickable": true },
+                                "breakpoints": {
+                                    "575": { "slidesPerView": 2, "slidesPerGroup": 1, "direction": "horizontal"},
+                                    "991": { "slidesPerView": 3, "slidesPerGroup": 1, "direction": "vertical"}
+                                    }
+                                }'>
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                                    <div class="box-item-footer">
+                                        <div class="top-box">
+                                            <i class="icon-location-dot"></i>
+                                            <h4 class="title-box fw6 lsp-0">
+                                                Our Location
+                                            </h4>
+                                        </div>
+                                        <div class="desc body-2 lh-30" data-c="address">
+                                            Shop 4, Ankur Road, Naranpura, Ahmedabad, Gujarat 380013
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="swiper-slide">
+                                    <div class="box-item-footer support-box-item">
+                                        <div class="top-box">
+                                            <i class="icon-headphones-simple"></i>
+                                            <h4 class="title-box fw6 lsp-0">
+                                                Support
+                                            </h4>
+                                        </div>
+                                        <div class="desc">
+                                            <ul>
+                                                <li class="body-2 lh-35">Email Us : <a href="#" data-c="email-href email-text"> reception@clinic.com</a></li>
+                                                <li class="body-2 lh-35">Phone no : <a href="#" data-c="tel-href tel-text"> +91 63561 82998</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="swiper-slide">
+                                    <div class="box-item-footer clock-box-item">
+                                        <div class="top-box">
+                                            <i class="icon-clock"></i>
+                                            <h4 class="title-box fw6 lsp-0">
+                                                Schedule Hours
+                                            </h4>
+                                        </div>
+                                        <div class="desc flex justify-content-between align-items-center lh-30 flex-wrap rg-10">
+                                            <span class="body-2 lh-30" id="foot-hours-label">Mon &ndash; Thu</span>
+                                            <span class="fw7 body-2 lh-30" id="foot-hours-value">8:00 AM &ndash; 7:00 PM</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sw-pagination-box sw-pagination d-lg-none mt-15 justify-content-center"></div>
+                    </div>
+                </div>
+                <div class="bottom">
+                    <span><a href="#" class="color-white">&copy; Your Clinic</a>, All Rights Reserved</span>
+                    <ul>
+                        <li><a href="#">Privacy policy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">About the clinic</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Mobile-nav-wrap -->
+        <div class="offcanvas offcanvas-start mobile-nav-wrap" id="canvasMobile">
+            <div class="inner-mobile-nav">
+                <div class="top-header-mobi">
+                    <div class="logo-mobile">
+                        <a class="brand" href="#top" data-c="brand-label">
+                            <span class="brand__ico" aria-hidden="true"><img src="image/logo-1.webp" alt=""></span>
+                            <span class="brand__txt">
+                                <span class="brand__name">Caremind</span>
+                                <span class="brand__sub" data-c="clinic-name">Meridian Family Clinic</span>
+                            </span>
+                        </a>
+                    </div>
+                    <button class="mobile-nav-close" data-bs-dismiss="offcanvas" aria-label="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="black" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 122.878 122.88" enable-background="new 0 0 122.878 122.88" xml:space="preserve">
+                            <g>
+                                <path d="M1.426,8.313c-1.901-1.901-1.901-4.984,0-6.886c1.901-1.902,4.984-1.902,6.886,0l53.127,53.127l53.127-53.127 c1.901-1.902,4.984-1.902,6.887,0c1.901,1.901,1.901,4.985,0,6.886L68.324,61.439l53.128,53.128c1.901,1.901,1.901,4.984,0,6.886 c-1.902,1.902-4.985,1.902-6.887,0L61.438,68.326L8.312,121.453c-1.901,1.902-4.984,1.902-6.886,0 c-1.901-1.901-1.901-4.984,0-6.886l53.127-53.128L1.426,8.313L1.426,8.313z">
+                                </path>
+                            </g>
+                        </svg>
+                    </button>
+                </div>
+                <nav class="mobile-main-nav">
+                    <ul id="menu-mobile" class="menu">
+                        <li class="menu-item">
+                            <a href="#about">About</a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#services">Services</a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#doctors">Doctors</a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#reviews">Reviews</a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#blog">Blog</a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#footer">Contact</a>
+                        </li>
+                    </ul>
+                    <div class="contact-mobile">
+                        <h6 class="title-contact-mobile">Contact Info</h6>
+                        <ul class="mb-15">
+                            <li class="content-contact-moblile"><i class="icon-location-dot2"></i> <a href="#" class="caption-1" data-c="address">Shop 4, Ankur Road, Naranpura, Ahmedabad, Gujarat 380013</a>
+                            </li>
+                            <li class="content-contact-moblile">
+                                <i class="icon-envelope"></i><a href="mailto:reception@clinic.com" class="caption-1" data-c="email-href email-text">reception@clinic.com</a>
+                            </li>
+                            <li class="content-contact-moblile">
+                                <i class="icon-phone"></i><a href="tel:+916356182998" class="caption-1" data-c="tel-href tel-text">+91 63561 82998</a>
+                            </li>
+                        </ul>
+
+                        <ul class="post-social style-border">
+                            <li><a href="#" class="icon-social" aria-label="Facebook"><i class="icon-facebook" aria-hidden="true"></i></a></li>
+                            <li><a href="#" class="icon-social" aria-label="X"><i class="icon-twitter" aria-hidden="true"></i></a></li>
+                            <li><a href="#" class="icon-social" aria-label="LinkedIn"><i class="icon-linkedin2" aria-hidden="true"></i></a></li>
+                            <li><a href="#" class="icon-social" aria-label="Instagram"><i class="icon-instagram" aria-hidden="true"></i></a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!-- /.mobile-nav-wrap -->
+
+        <div class="offcanvas offcanvas-top offcanvas-search" id="canvasSearch">
+            <button class="btn-close-popup" data-bs-dismiss="offcanvas" aria-label="Close">
+                <i class="icon-close"></i>
+            </button>
+            <div class="tf-container">
+                <div class="wg-box-search">
+                    <form action="#" class="form-search-siderbar">
+                        <fieldset>
+                            <input type="text" placeholder="Keywords">
+                            <button type="submit" class="tf-btn-search"><i class="icon-magnifying-glass"></i></button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- OffcanvasMegamenu -->
+        <div class="offcanvas offcanvas-end offcanvasMegamenu" id="canvnasMegamenu">
+            <div class="heading flex justify-content-between">
+                <div class="logo-megamenu">
+                    <a class="brand" href="#top" data-c="brand-label">
+                            <span class="brand__ico" aria-hidden="true"><img src="image/logo-1.webp" alt=""></span>
+                            <span class="brand__txt">
+                                <span class="brand__name">Caremind</span>
+                                <span class="brand__sub" data-c="clinic-name">Meridian Family Clinic</span>
+                            </span>
+                        </a>
+                </div>
+                <button class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">
+                </button>
+            </div>
+            <div class="desc" data-words>
+                A neighbourhood practice in Naranpura. Call, message, or book a visit &mdash; we answer through clinic hours.
+            </div>
+
+            <div class="contact-mega-menu meag-menu-item">
+                <ul class="contact-list-mega-menu">
+                    <li>
+                        <p>Address:
+                            <a href="#" target="_blank" data-c="address">
+                                Shop 4, Ankur Road, Naranpura, Ahmedabad, Gujarat 380013
+                            </a>
+                        </p>
+                    </li>
+                    <li>
+                        <p>Email:
+                            <a href="mailto:reception@clinic.com">
+                                reception@clinic.com
+                            </a>
+                        </p>
+                    </li>
+                    <li>
+                        <p> Call: <a href="tel:+916356182998" data-c="tel-href tel-text">
+                                +91 63561 82998</a>
+                        </p>
+                    </li>
+                </ul>
+            </div>
+
+                <div class="megamenu-hours">
+                    <h5 class="title-content">
+                        Clinic hours
+                    </h5>
+                    <ul class="megamenu-hours__list" id="mega-hours"></ul>
+                    <a href="#appointment" class="tf-btn w-100 mt-20" data-bs-dismiss="offcanvas">
+                        <span>Book a visit</span>
+                        <i class="icon-arrow-right"></i>
+                    </a>
+                </div>
+
+            <div class="megamenu-recent">
+                <h5 class="title-content">
+                    Recent News
+                </h5>
+                <div class="tf-post-list style-small hover-img">
+                    <a href="javascript:void(0)" class="image">
+                        <img src="/img/gc-img.webp" data-src="/img/gc-img.webp" alt="" class="lazyload">
+                    </a>
+                    <div class="post-content">
+                        <div class="post-date caption-1">
+                            14 August 2026
+                        </div>
+                        <a href="javascript:void(0)" class="name-post fw7 lh-24">
+                            What to bring to your first
+                            appointment
+                        </a>
+                    </div>
+                </div>
+                <div class="tf-post-list style-small hover-img">
+                    <a href="javascript:void(0)" class="image">
+                        <img src="/img/vc-img.webp" data-src="/img/vc-img.webp" alt="" class="lazyload">
+                    </a>
+                    <div class="post-content">
+                        <div class="post-date caption-1">
+                            31 July 2026
+                        </div>
+                        <a href="javascript:void(0)" class="name-post fw7 lh-24">
+                            Blood pressure: what the
+                            numbers actually mean
+                        </a>
+                    </div>
+                </div>
+                <div class="tf-post-list style-small hover-img">
+                    <a href="javascript:void(0)" class="image">
+                        <img src="/img/hc-img.webp" data-src="/img/hc-img.webp" alt="" class="lazyload">
+                    </a>
+                    <div class="post-content">
+                        <div class="post-date caption-1">
+                            19 July 2026
+                        </div>
+                        <a href="javascript:void(0)" class="name-post fw7 lh-24">
+                            Why we ask about medicines
+                            you take at home
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <!-- /.offcanvasMegamenu -->
+
+        <!-- Go-top -->
+        <div class="progress-wrap">
+            <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+                <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" style="transition: stroke-dashoffset 10ms linear; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 277.672;">
+                </path>
+            </svg>
+        </div>
+        <!-- /.go-top -->
+
+    </div>
+
+    <!-- Javascript -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/lazysize.min.js"></script>
+    <script src="js/jquery-validate.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/magnific-popup.min.js"></script>
+    <script src="js/gsap.min.js"></script>
+    <script src="js/gsap-animation.js"></script>
+    <script src="js/ScrollTrigger.min.js"></script>
+    <script src="js/Splitetext.js"></script>
+    <script src="js/wow.min.js"></script>
+    <script src="js/swiper-bundle.min.js"></script>
+    <script src="js/carousel.js"></script>
+    <script src="js/odometer.min.js"></script>
+    <script src="js/ScrollSmooth.js"></script>
+
+    <script type="text/javascript" src="js/main.js"></script>
+    <!-- /Javascript -->
+
+
+
+  <script>
+    /* Opening hours in one place. The list under "Clinic hours" and the live
+       badge on the portrait are both rendered from this, so they can never
+       disagree. Times are 24h; null means closed. */
+    (function () {
+      "use strict";
+      var HOURS = {
+        mon: ["08:00", "19:00"], tue: ["08:00", "19:00"], wed: ["08:00", "19:00"],
+        thu: ["08:00", "19:00"], fri: ["08:00", "18:00"], sat: ["09:00", "14:00"],
+        sun: null
+      };
+      var DAYS = [
+        { key: "sun", label: "Sunday" }, { key: "mon", label: "Monday" },
+        { key: "tue", label: "Tuesday" }, { key: "wed", label: "Wednesday" },
+        { key: "thu", label: "Thursday" }, { key: "fri", label: "Friday" },
+        { key: "sat", label: "Saturday" }
+      ];
+      function mins(t) { var p = t.split(":"); return +p[0] * 60 + +p[1]; }
+      function pretty(t) {
+        var m = mins(t), h = Math.floor(m / 60), mm = m % 60;
+        var ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12;
+        return h + ":" + (mm < 10 ? "0" + mm : mm) + " " + ap;
+      }
+
+      /* group consecutive days that share the same hours, so the list reads
+         "Mon - Thu" rather than four identical rows */
+      function rows() {
+        var order = [1, 2, 3, 4, 5, 6, 0], out = [], run = null;
+        order.forEach(function (i) {
+          var d = DAYS[i], r = HOURS[d.key];
+          var key = r ? r.join("-") : "closed";
+          if (run && run.key === key) { run.end = d.label; return; }
+          if (run) out.push(run);
+          run = { key: key, start: d.label, end: d.label, range: r };
+        });
+        if (run) out.push(run);
+        return out;
+      }
+
+      var list = document.getElementById("clinic-hours");
+      if (list) {
+        list.innerHTML = rows().map(function (g) {
+          var label = g.start === g.end ? g.start : g.start.slice(0, 3) + " &ndash; " + g.end.slice(0, 3);
+          var value = g.range ? pretty(g.range[0]) + " &ndash; " + pretty(g.range[1]) : "Closed";
+          return '<li class="education-item"><i class="icon-clock"></i>' +
+            '<span class="flex justify-content-between content flex-wrap">' +
+            '<span class="fw6">' + label + '</span> <span>' + value + '</span></span></li>';
+        }).join("");
+      }
+
+      /* the footer row and the top contact bar read from the same object,
+         so the three places hours appear can never disagree */
+      var groups = rows();
+      var first = groups[0];
+      var fl = document.getElementById("foot-hours-label");
+      var fv = document.getElementById("foot-hours-value");
+      if (fl && fv && first) {
+        fl.innerHTML = first.start === first.end
+          ? first.start
+          : first.start.slice(0, 3) + " &ndash; " + first.end.slice(0, 3);
+        fv.innerHTML = first.range
+          ? pretty(first.range[0]) + " &ndash; " + pretty(first.range[1])
+          : "Closed";
+      }
+      var tb = document.getElementById("topbar-hours");
+      if (tb) {
+        var openDays = groups.filter(function (g) { return g.range; });
+        if (openDays.length) {
+          var lastOpen = openDays[openDays.length - 1];
+          tb.innerHTML = openDays[0].start.slice(0, 3) + " &ndash; " + lastOpen.end.slice(0, 3) +
+            ", " + pretty(first.range[0]) + " &ndash; " + pretty(first.range[1]);
+        }
+      }
+
+      /* the megamenu panel lists the same hours */
+      var mega = document.getElementById("mega-hours");
+      if (mega) {
+        var todayLabel = DAYS[new Date().getDay()].label;
+        mega.innerHTML = groups.map(function (g) {
+          var label = g.start === g.end ? g.start : g.start.slice(0, 3) + " &ndash; " + g.end.slice(0, 3);
+          var value = g.range ? pretty(g.range[0]) + " &ndash; " + pretty(g.range[1]) : "Closed";
+          /* a grouped row covers a span of days, so check the whole span */
+          var span = [], seen = false;
+          for (var q = 0; q < DAYS.length; q++) {
+            if (DAYS[q].label === g.start) seen = true;
+            if (seen) span.push(DAYS[q].label);
+            if (DAYS[q].label === g.end) break;
+          }
+          var isToday = span.indexOf(todayLabel) > -1 ||
+                        g.start === todayLabel || g.end === todayLabel;
+          return "<li" + (isToday ? " class=\"is-today\"" : "") + "><span>" + label +
+                 (isToday ? " <em>today</em>" : "") + "</span><span>" + value + "</span></li>";
+        }).join("");
+      }
+
+      var badge = document.getElementById("clinic-status");
+      if (!badge) return;
+      var dot = badge.querySelector(".clinic-status__dot");
+      var text = badge.querySelector(".clinic-status__text");
+
+      function refresh() {
+        var now = new Date(), m = now.getHours() * 60 + now.getMinutes();
+        var today = HOURS[DAYS[now.getDay()].key];
+        badge.hidden = false;
+        if (today && m >= mins(today[0]) && m < mins(today[1])) {
+          badge.classList.add("is-open");
+          text.textContent = "Open now, until " + pretty(today[1]);
+          return;
+        }
+        badge.classList.remove("is-open");
+        if (today && m < mins(today[0])) { text.textContent = "Opens today at " + pretty(today[0]); return; }
+        for (var step = 1; step <= 7; step++) {
+          var next = DAYS[(now.getDay() + step) % 7], r = HOURS[next.key];
+          if (r) {
+            text.textContent = "Opens " + (step === 1 ? "tomorrow" : next.label) + " at " + pretty(r[0]);
+            return;
+          }
+        }
+        text.textContent = "Call for opening hours";
+      }
+      refresh();
+      var timer = setInterval(refresh, 60000);
+      window.addEventListener("pagehide", function () { clearInterval(timer); });
+    })();
+  </script>
+
+  <script>
+    /* Blur reveal. Any element with data-reveal sharpens into place as it
+       enters the viewport and resets once it clears, so it replays on the
+       way back up. */
+    (function () {
+      "use strict";
+      var items = document.querySelectorAll("[data-reveal]");
+      if (!items.length) return;
+      if (!("IntersectionObserver" in window) ||
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        items.forEach(function (el) { el.classList.add("is-in"); });
+        return;
+      }
+      /* Direction-aware, and it replays. Scrolling down, things rise from
+         below; scrolling back up, they settle down from above - so a second
+         pass reads as deliberate rather than a repeat. The margins are
+         asymmetric on purpose: an element has to clear the viewport before
+         it resets, which stops flicker at the boundary. */
+      var lastY = window.pageYOffset || 0, dir = 1;
+      window.addEventListener("scroll", function () {
+        var y = window.pageYOffset || 0;
+        if (y !== lastY) { dir = y > lastY ? 1 : -1; lastY = y; }
+      }, { passive: true });
+
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.style.setProperty("--from", (dir > 0 ? 26 : -26) + "px");
+            e.target.classList.add("is-in");
+          } else {
+            e.target.classList.remove("is-in");
+          }
+        });
+      }, { rootMargin: "-4% 0px -12% 0px", threshold: 0 });
+      items.forEach(function (el) { io.observe(el); });
+    })();
+  </script>
+
+  <script>
+    /* Word reveal. Splits [data-words] into per-word masks so each word rises
+       out of its own overflow-hidden box. Skips anything containing markup so
+       a stray <br> or link is never destroyed. */
+    (function () {
+      "use strict";
+      var els = document.querySelectorAll("[data-words]");
+      if (!els.length) return;
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      Array.prototype.forEach.call(els, function (el) {
+        if (el.children.length) return;
+        var words = el.textContent.trim().split(/\s+/);
+        if (words.length > 90) return;
+        var html = "";
+        for (var i = 0; i < words.length; i++) {
+          html += '<span class="wr"><span class="wr__i" style="--d:' +
+                  (i * 0.026).toFixed(3) + 's">' + words[i] + '</span></span> ';
+        }
+        el.innerHTML = html;
+      });
+
+      if (reduce || !("IntersectionObserver" in window)) {
+        Array.prototype.forEach.call(els, function (el) { el.classList.add("is-in"); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) e.target.classList.add("is-in");
+          else e.target.classList.remove("is-in");
+        });
+      }, { rootMargin: "-4% 0px -12% 0px", threshold: 0 });
+      Array.prototype.forEach.call(els, function (el) { io.observe(el); });
+    })();
+  </script>
+
+  <script>
+    /* Ink reveal. Splits [data-ink] into per-word spans, preserving any <br>,
+       and hands the trigger to an observer so it replays like the others. */
+    (function () {
+      "use strict";
+      var els = document.querySelectorAll("[data-ink]");
+      if (!els.length) return;
+
+      Array.prototype.forEach.call(els, function (el) {
+        var raw = el.innerHTML.replace(/<br\s*\/?>/gi, " |BR| ");
+        var parts = raw.replace(/<[^>]+>/g, "").trim().split(/\s+/);
+        var out = "", n = 0;
+        for (var i = 0; i < parts.length; i++) {
+          if (parts[i] === "|BR|") { out += "<br>"; continue; }
+          out += '<span class="ink-w"><i style="--d:' + n + '">' + parts[i] + "</i></span> ";
+          n++;
+        }
+        el.innerHTML = out;
+      });
+
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+          !("IntersectionObserver" in window)) {
+        Array.prototype.forEach.call(els, function (el) { el.classList.add("is-in"); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) e.target.classList.add("is-in");
+          else e.target.classList.remove("is-in");
+        });
+      }, { rootMargin: "-4% 0px -14% 0px", threshold: 0 });
+      Array.prototype.forEach.call(els, function (el) { io.observe(el); });
+    })();
+  </script>
+
+  <script>
+    /* Rotating hero line. Cycles the accent phrase every few seconds: the
+       current one blurs upward out, the next arrives from below and sharpens.
+       Pauses while the tab is hidden so it is not animating into an empty
+       room, and holds still entirely under reduced-motion. */
+    (function () {
+      "use strict";
+      var el = document.getElementById("hero-rotate");
+      if (!el) return;
+      var list = (el.getAttribute("data-rotate") || "").split("|")
+        .map(function (t) { return t.trim(); })
+        .filter(Boolean);
+      if (list.length < 2) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      /* Reserve the width of the longest phrase so the line does not jump
+         as the text changes length. */
+      var probe = document.createElement("span");
+      probe.style.cssText = "position:absolute;visibility:hidden;white-space:nowrap;";
+      probe.className = el.className;
+      el.parentNode.appendChild(probe);
+      var widest = 0;
+      list.forEach(function (t) {
+        probe.textContent = t;
+        widest = Math.max(widest, probe.offsetWidth);
+      });
+      probe.parentNode.removeChild(probe);
+      if (widest) el.style.minWidth = widest + "px";
+
+      var i = 0, timer = null;
+      function step() {
+        el.classList.add("is-out");
+        setTimeout(function () {
+          i = (i + 1) % list.length;
+          el.textContent = list[i];
+          el.classList.remove("is-out");
+          el.classList.add("is-next");
+          /* next frame, so the browser paints the start state first */
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () { el.classList.remove("is-next"); });
+          });
+        }, 430);
+      }
+      function start() { if (!timer) timer = setInterval(step, 3200); }
+      function stop() { clearInterval(timer); timer = null; }
+      document.addEventListener("visibilitychange", function () {
+        document.hidden ? stop() : start();
+      });
+      start();
+    })();
+  </script>
+
+  <script>
+    /* ------------------------------------------------------------------
+       CLINIC - the one place a lead's details enter this page.
+
+       The portal rewrites this whole object before serving. Everything
+       below reads from it and nothing else, so there is exactly one
+       thing to change per clinic. A blank field falls back to our own
+       contact details rather than rendering an empty link.
+       ------------------------------------------------------------------ */
+    const CLINIC = {
+      name: "Meridian Family Clinic",
+      doctor: "Dr. Rajesh Patel",
+      phone: "",
+      email: "",
+      address: ""
+    };
+
+    (function () {
+      "use strict";
+
+      /* Last resort, so a lead with no phone or email on file still gets
+         a page whose buttons do something. These route back to us. */
+      var FALLBACK = {
+        phone: "+91 63561 82998",
+        email: "vinitdharaiya124@gmail.com",
+        address: "Ahmedabad, Gujarat"
+      };
+
+      /* Preview aid: ?clinic=...&doctor=... tries a name without editing
+         the file. Irrelevant once the portal serves this, because CLINIC
+         above is already rewritten by then. */
+      try {
+        var q = new URLSearchParams(location.search);
+        if (q.get("clinic")) CLINIC.name = q.get("clinic");
+        if (q.get("doctor")) CLINIC.doctor = q.get("doctor");
+      } catch (e) { /* no URLSearchParams, nothing to preview */ }
+
+      var clean = function (v) { return String(v === null || v === undefined ? "" : v).trim(); };
+      var pick = function (v, fb) { return clean(v) || fb; };
+
+      var clinicName = clean(CLINIC.name);
+      var doctor = clean(CLINIC.doctor);
+      var phone = pick(CLINIC.phone, FALLBACK.phone);
+      var email = pick(CLINIC.email, FALLBACK.email);
+      var address = pick(CLINIC.address, FALLBACK.address);
+
+      /* A tel: link needs the country code to survive. Keep a leading
+         plus if there is one, drop every other non-digit. */
+      var telHref = "tel:" + (phone.charAt(0) === "+" ? "+" : "") + phone.replace(/[^0-9]/g, "");
+
+      var bind = {
+        "clinic-name": clinicName,
+        "doctor": doctor,
+        "tel-text": phone,
+        "email-text": email,
+        "address": address
+      };
+
+      Array.prototype.forEach.call(document.querySelectorAll("[data-c]"), function (el) {
+        el.dataset.c.split(/[ ]+/).forEach(function (key) {
+          if (key === "tel-href") el.setAttribute("href", telHref);
+          else if (key === "email-href") el.setAttribute("href", "mailto:" + email);
+          else if (bind[key] !== undefined) el.textContent = bind[key];
+        });
+      });
+
+      /* No doctor on file: hide the line rather than print "Dr." alone. */
+      if (!doctor) {
+        var dn = document.querySelector('[data-c="doctor"]');
+        var head = dn && dn.closest ? dn.closest("h3") : null;
+        if (head) head.hidden = true;
+      }
+
+      /* Clinic names in this pipeline reach 60 characters and this line
+         is small type. Step the size down instead of letting it be cut
+         off - a truncated clinic name looks like a broken page. */
+      Array.prototype.forEach.call(document.querySelectorAll(".brand__sub"), function (el) {
+        var n = el.textContent.trim().length;
+        el.classList.remove("is-len-m", "is-len-l", "is-len-x");
+        if (n > 42) el.classList.add("is-len-x");
+        else if (n > 32) el.classList.add("is-len-l");
+        else if (n > 22) el.classList.add("is-len-m");
+      });
+
+      document.title = clinicName;
+    })();
+  </script>
+</body>
+
+</html>

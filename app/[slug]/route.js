@@ -1,9 +1,25 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 import pool from '@/lib/db';
+import { resolveTemplate } from '@/lib/templates';
+import { renderClassic } from '@/lib/render/classic';
+import { renderMicare } from '@/lib/render/micare';
+import { loadTemplateHtml } from '@/lib/render/load';
 
 export const dynamic = 'force-dynamic';
+
+const RENDERERS = {
+  classic: renderClassic,
+  micare: renderMicare,
+};
+
+const SECURITY_HEADERS = {
+  'Content-Type': 'text/html; charset=utf-8',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'SAMEORIGIN',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Cross-Origin-Opener-Policy': 'same-origin',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+};
 
 export async function GET(request, { params }) {
   const { slug } = await params;
@@ -20,71 +36,15 @@ export async function GET(request, { params }) {
       pool.query('UPDATE leads SET "demovisited" = true WHERE id = $1', [lead.id]).catch(console.error);
     }
 
-    // Read index.html
-    const templatePath = path.join(process.cwd(), 'index.html');
-    let html = fs.readFileSync(templatePath, 'utf-8');
+    // A row written before the template column existed has no value at
+    // all; resolveTemplate turns anything unrecognised into the classic
+    // template, which is what keeps every already-sent link working.
+    const template = resolveTemplate(lead.template);
+    const render = RENDERERS[template.id] || renderClassic;
 
-    // Make sure relative assets load from root
-    if (!html.includes('<base href="/"/>')) {
-      html = html.replace('<head>', '<head>\n  <base href="/" />');
-    }
+    const html = render(loadTemplateHtml(template.id), lead);
 
-    // Replace hardcoded doctor name
-    const doctorName = lead.doctorname || "Dr. Rajesh Kumar";
-    html = html.replace(/Dr\. Elena Marsh/g, doctorName);
-    html = html.replace(/Dr\. Eleanor Marsh/g, doctorName);
-    // Be careful with Dr. Marsh, replace it with just the last name or full name
-    const lastName = doctorName.split(' ').pop();
-    html = html.replace(/Dr\. Marsh/g, `Dr. ${lastName}`);
-
-    // Setup fallback data for missing fields
-    const defaultPhone = "+91 6356 182 998";
-    const phoneToUse = lead.phone || defaultPhone;
-    const whatsappToUse = lead.whatsapp || lead.phone || defaultPhone;
-    const addressToUse = lead.address || "SG Highway, Ahmedabad, Gujarat";
-
-    // Generate the clinic object to inject
-    const clinicObj = {
-      name: lead.clinicname,
-      suffix: "",
-      tagline: `A modern clinic caring for you.`,
-      phone: phoneToUse,
-      phoneRaw: phoneToUse.replace(/\D/g, ''),
-      whatsapp: whatsappToUse.replace(/\D/g, ''),
-      email: lead.email,
-      address: addressToUse,
-      // pop() gave "Gujarat" for every lead. The locality sits just before
-      // "Ahmedabad" in the address.
-      area: (() => {
-        const p = addressToUse.split(',').map(s => s.trim()).filter(Boolean);
-        const i = p.findIndex(s => /ahmedabad/i.test(s));
-        return (i > 0 ? p[i - 1] : p[0]) || 'Ahmedabad';
-      })(),
-      hours: {
-        mon: ["08:00", "19:00"],
-        tue: ["08:00", "19:00"],
-        wed: ["08:00", "19:00"],
-        thu: ["08:00", "19:00"],
-        fri: ["08:00", "18:00"],
-        sat: ["09:00", "14:00"],
-        sun: null
-      }
-    };
-
-    // Replace the CLINIC object in the template
-    const clinicRegex = /const CLINIC = {[\s\S]*?};/m;
-    html = html.replace(clinicRegex, `const CLINIC = ${JSON.stringify(clinicObj, null, 2)};`);
-
-    return new NextResponse(html, {
-      headers: {
-        'Content-Type': 'text/html; charset=utf-8',
-        'X-Content-Type-Options': 'nosniff',
-        'X-Frame-Options': 'SAMEORIGIN',
-        'Referrer-Policy': 'strict-origin-when-cross-origin',
-        'Cross-Origin-Opener-Policy': 'same-origin',
-        'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
-      },
-    });
+    return new NextResponse(html, { headers: SECURITY_HEADERS });
   } catch (error) {
     console.error('Error serving template:', error);
     return new NextResponse('Internal Server Error', { status: 500 });

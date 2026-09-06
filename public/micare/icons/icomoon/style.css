@@ -1,0 +1,378 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('fonts/icomoon.eot?7645ay');
+  src:  url('fonts/icomoon.eot?7645ay#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?7645ay') format('truetype'),
+    url('fonts/icomoon.woff?7645ay') format('woff'),
+    url('fonts/icomoon.svg?7645ay#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-map-pin:before {
+  content: "\e96c";
+}
+.icon-eye-hide-line:before {
+  content: "\e96e";
+}
+.icon-lock:before {
+  content: "\e96d";
+}
+.icon-globe:before {
+  content: "\e96b";
+}
+.icon-file-word:before {
+  content: "\e966";
+}
+.icon-file-pdf:before {
+  content: "\e967";
+}
+.icon-trash:before {
+  content: "\e963";
+}
+.icon-right-left:before {
+  content: "\e95e";
+}
+.icon-heart:before {
+  content: "\e95f";
+}
+.icon-eye:before {
+  content: "\e960";
+}
+.icon-cart-plus:before {
+  content: "\e961";
+}
+.icon-envelope-3:before {
+  content: "\e95b";
+}
+.icon-twitter:before {
+  content: "\e970";
+}
+.icon-linkedin2:before {
+  content: "\e971";
+}
+.icon-instagram:before {
+  content: "\e972";
+}
+.icon-facebook:before {
+  content: "\e973";
+}
+.icon-education:before {
+  content: "\e95a";
+}
+.icon-affordable:before {
+  content: "\e953";
+}
+.icon-safety:before {
+  content: "\e954";
+}
+.icon-personalized-patient-care:before {
+  content: "\e955";
+}
+.icon-under-eye:before {
+  content: "\e949";
+}
+.icon-orthokeratology:before {
+  content: "\e94a";
+}
+.icon-LASIK:before {
+  content: "\e94b";
+}
+.icon-blepharoplasty:before {
+  content: "\e94c";
+}
+.icon-pediatric-physical:before {
+  content: "\e941";
+}
+.icon-pediatric-check:before {
+  content: "\e942";
+}
+.icon-nutrition-dietary:before {
+  content: "\e943";
+}
+.icon-inpatient-care:before {
+  content: "\e944";
+}
+.icon-address:before {
+  content: "\e968";
+}
+.icon-working-hours:before {
+  content: "\e969";
+}
+.icon-contacts:before {
+  content: "\e96a";
+}
+.icon-special-care:before {
+  content: "\e93f";
+}
+.icon-primary-care:before {
+  content: "\e940";
+}
+.icon-drag-control:before {
+  content: "\e93d";
+}
+.icon-specialized:before {
+  content: "\e957";
+}
+.icon-patient-centered:before {
+  content: "\e958";
+}
+.icon-emergency1:before {
+  content: "\e959";
+}
+.icon-phone-2:before {
+  content: "\e93e";
+}
+.icon-schedule-hours:before {
+  content: "\e934";
+}
+.icon-our-location:before {
+  content: "\e935";
+}
+.icon-surgery-care:before {
+  content: "\e964";
+}
+.icon-dental-care-services:before {
+  content: "\e965";
+}
+.icon-vision-correction:before {
+  content: "\e945";
+}
+.icon-cutting-edge:before {
+  content: "\e946";
+}
+.icon-compassionate-healthcare:before {
+  content: "\e947";
+}
+.icon-advanced-medical-technology:before {
+  content: "\e948";
+}
+.icon-teeth-whitening:before {
+  content: "\e937";
+}
+.icon-root-canal:before {
+  content: "\e938";
+}
+.icon-periodontal-care:before {
+  content: "\e939";
+}
+.icon-dental-lmplants:before {
+  content: "\e93a";
+}
+.icon-dental-crowns:before {
+  content: "\e93b";
+}
+.icon-years-of-ex:before {
+  content: "\e930";
+}
+.icon-happy-patients:before {
+  content: "\e931";
+}
+.icon-experienced-doctors:before {
+  content: "\e932";
+}
+.icon-emergency-ambulance:before {
+  content: "\e933";
+}
+.icon-physical-rehabilitation:before {
+  content: "\e92d";
+}
+.icon-ambulance-services:before {
+  content: "\e92e";
+}
+.icon-advance:before {
+  content: "\e92f";
+}
+.icon-mental-health:before {
+  content: "\e929";
+}
+.icon-maternity:before {
+  content: "\e92a";
+}
+.icon-emergency:before {
+  content: "\e92b";
+}
+.icon-diagnostic:before {
+  content: "\e92c";
+}
+.icon-location-dot2:before {
+  content: "\e956";
+}
+.icon-suitcase:before {
+  content: "\e926";
+}
+.icon-rocket-launch:before {
+  content: "\e927";
+}
+.icon-atom-simple:before {
+  content: "\e928";
+}
+.icon-list:before {
+  content: "\e95c";
+}
+.icon-grid:before {
+  content: "\e95d";
+}
+.icon-tooth:before {
+  content: "\e93c";
+}
+.icon-phone-volume-2:before {
+  content: "\e90d";
+}
+.icon-vision-therapy:before {
+  content: "\e94d";
+}
+.icon-sports-vision:before {
+  content: "\e94e";
+}
+.icon-low-vision:before {
+  content: "\e94f";
+}
+.icon-laser-vision:before {
+  content: "\e950";
+}
+.icon-laser-and-surgery:before {
+  content: "\e951";
+}
+.icon-comprehensive:before {
+  content: "\e952";
+}
+.icon-dental-care:before {
+  content: "\e924";
+}
+.icon-angle-down:before {
+  content: "\e923";
+}
+.icon-sidebar:before {
+  content: "\e96f";
+}
+.icon-star2:before {
+  content: "\e962";
+}
+.icon-phlebotomy:before {
+  content: "\e925";
+}
+.icon-send:before {
+  content: "\e922";
+}
+.icon-schedule:before {
+  content: "\e936";
+}
+.icon-close:before {
+  content: "\e987";
+}
+.icon-arrow-left:before {
+  content: "\e900";
+}
+.icon-arrow-right:before {
+  content: "\e901";
+}
+.icon-calendar-day:before {
+  content: "\e902";
+}
+.icon-check:before {
+  content: "\e903";
+}
+.icon-chevron-left:before {
+  content: "\e904";
+}
+.icon-chevron-right:before {
+  content: "\e905";
+}
+.icon-clock:before {
+  content: "\e906";
+}
+.icon-comments:before {
+  content: "\e907";
+}
+.icon-envelope:before {
+  content: "\e908";
+}
+.icon-envelope-2:before {
+  content: "\e909";
+}
+.icon-find-professional:before {
+  content: "\e90a";
+}
+.icon-groud-chat:before {
+  content: "\e90b";
+}
+.icon-headphones-simple:before {
+  content: "\e90c";
+}
+.icon-location-dot:before {
+  content: "\e90e";
+}
+.icon-looking:before {
+  content: "\e90f";
+}
+.icon-magnifying-glass:before {
+  content: "\e910";
+}
+.icon-medicine-care:before {
+  content: "\e911";
+}
+.icon-megamenu:before {
+  content: "\e912";
+}
+.icon-need-emergency:before {
+  content: "\e913";
+}
+.icon-neurology:before {
+  content: "\e914";
+}
+.icon-ophthalmology:before {
+  content: "\e915";
+}
+.icon-phone:before {
+  content: "\e916";
+}
+.icon-phone-volume:before {
+  content: "\e917";
+}
+.icon-plastic-surgery:before {
+  content: "\e918";
+}
+.icon-play:before {
+  content: "\e919";
+}
+.icon-star:before {
+  content: "\e91a";
+}
+.icon-stethoscope:before {
+  content: "\e91b";
+}
+.icon-tag:before {
+  content: "\e91c";
+}
+.icon-user:before {
+  content: "\e91d";
+}
+.icon-user-doctor:before {
+  content: "\e91e";
+}
+.icon-envelope-open:before {
+  content: "\e91f";
+}
+.icon-angles-left:before {
+  content: "\e920";
+}
+.icon-angles-right:before {
+  content: "\e921";
+}
