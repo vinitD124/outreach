@@ -74,7 +74,9 @@
       --r-card: 24px;
       --r-media: 22px;
       --r-input: 12px;
-      --maxw: 1280px;
+      /* 15% wider than the 1280px it was: the page had a lot of empty
+         margin either side on a large screen */
+      --maxw: 1472px;
       --pad: clamp(20px, 5vw, 60px);
       --img-filter: saturate(.8) contrast(1.04);
       --ease: cubic-bezier(.16, 1, .3, 1);
@@ -569,7 +571,23 @@
       -webkit-backdrop-filter: none;
       border-bottom: 1px solid transparent;
       box-shadow: 0 0 0 0 rgba(13, 32, 49, 0);
-      transition: background-color .45s var(--ease), backdrop-filter .45s var(--ease), box-shadow .45s var(--ease), border-color .45s var(--ease);
+      transition: background-color .45s var(--ease), backdrop-filter .45s var(--ease), box-shadow .45s var(--ease), border-color .45s var(--ease), transform .42s var(--ease);
+    }
+
+    /* the header steps out of the way on the way down the page and
+       comes back the moment you head up, so it is never sitting over
+       what you are reading but is always one flick away */
+    .nav.is-hidden {
+      transform: translateY(-105%);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      /* a header that jumps in and out with no transition is worse than
+         one that simply stays put */
+      .nav.is-hidden {
+        transform: none;
+      }
     }
 
     .nav.is-stuck {
@@ -1982,6 +2000,13 @@
        full-bleed photograph, so it needs less air between them than two
        blocks of text would. Overrides the global section rhythm here
        only, rather than changing it for every section on the page. */
+    /* Trimmed from the global section rhythm here only. The grid's
+       bottom padding above it is the sticky photograph's runway and has
+       to stay, so this is the part that can give. */
+    #services {
+      padding-bottom: clamp(60px, 10vw, 130px);
+    }
+
     .doorway {
       padding-block: clamp(12px, 3vw, 32px);
       /* Shared by the quote and the strip below it so their left edges
@@ -1999,9 +2024,6 @@
        empty.
        ============================================================== */
     .door__facts {
-      position: absolute;
-      inset: auto 0 0 0;
-      z-index: 4;
       list-style: none;
       margin: 0;
       padding: 0;
@@ -2077,6 +2099,18 @@
       .door__fact-v {
         font-size: 13.5px;
       }
+
+      /* The viewport is narrower than 36ch here, so the cap does
+         nothing but risk an awkward break. */
+      .door__quote {
+        max-width: none;
+      }
+
+      /* Three lines of quote plus two rows of strip needs the frame a
+         little taller than 400px at its shortest. */
+      .door {
+        height: clamp(500px, 74vh, 720px);
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -2110,18 +2144,24 @@
       background: linear-gradient(to top, rgba(5, 12, 20, .94) 0%, rgba(5, 12, 20, .72) 38%, rgba(5, 12, 20, .42) 70%, rgba(5, 12, 20, .3) 100%);
     }
 
-    .door__copy {
+    /* Both the quote and the strip live in here, in flow, anchored to
+       the bottom of the frame. The strip takes what it needs and the
+       quote sits above it - no clearance to calculate. */
+    .door__base {
       position: absolute;
-      inset: 0;
+      inset: auto 0 0 0;
+      z-index: 4;
+      display: grid;
+    }
+
+    .door__copy {
       /* Centred, the quote sat straight over the consulting room doorway
          in the middle of the photograph - the doctor and patient, which
-         is the whole reason to use this picture. Moved to the bottom
-         left, where the floor is empty and the veil is darkest, and
-         aligned to the same edge as the strip underneath. */
-      padding: clamp(28px, 5vw, 64px) var(--door-pad);
-      padding-bottom: clamp(112px, 13vw, 154px);
+         is the whole reason to use this picture. Bottom left instead,
+         where the floor is empty and the veil is darkest, aligned to the
+         same edge as the strip underneath. */
+      padding: 0 var(--door-pad) clamp(24px, 3.4vw, 40px);
       display: grid;
-      align-content: end;
       gap: 16px;
       justify-items: start;
       text-align: left;
@@ -2282,6 +2322,32 @@
       background: var(--line)
     }
 
+    /* The terminus. The rail used to stop in mid-air below the last
+       station, which read as the line running out rather than the
+       journey finishing. Appears when the last step does. */
+    .steps__list::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 4px;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      opacity: 0;
+      transform: scale(.4);
+      transition: opacity .6s var(--ease), transform .6s var(--ease), border-color .6s var(--ease);
+    }
+    .steps__list.is-complete::after {
+      opacity: 1;
+      transform: none;
+      border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+    }
+    .steps__list.is-complete::after {
+      box-shadow: inset 0 0 0 2.5px var(--bg), inset 0 0 0 5px color-mix(in srgb, var(--accent) 70%, transparent);
+    }
+
     .steps__fill {
       position: absolute;
       left: 5px;
@@ -2434,17 +2500,6 @@
         border: 1.5px solid var(--accent);
         animation: ping 2.6s cubic-bezier(0, 0, .2, 1) infinite
       }
-
-      .step.is-active .step__meta {
-        animation: fadeUp .6s var(--ease) both
-      }
-    }
-
-    .step__meta {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: .22em;
-      text-transform: uppercase
     }
 
     .step h3 {
@@ -2568,146 +2623,240 @@
    ===================================================================== */
     .about {
       display: grid;
-      grid-template-columns: .82fr 1.18fr;
-      gap: clamp(28px, 6vw, 88px);
-      align-items: center
+      grid-template-columns: .96fr 1.04fr;
+      gap: clamp(28px, 4.6vw, 72px);
+      /* both columns run to the same height so the card can take up the
+         slack under the photo */
+      align-items: stretch
     }
 
     .about__media {
-      position: relative;
+      margin: 0;
+      display: grid;
+      /* photo at its own height, card takes the remainder */
+      grid-template-rows: auto 1fr;
+      gap: clamp(14px, 1.5vw, 22px);
     }
 
-    .about__media .arch {
-      aspect-ratio: 1;
-      border-radius: 36px 36px 120px 36px;
+    .about__body {
+      align-self: center;
     }
 
     .about__body p+p {
       margin-top: 20px
     }
 
-    /* the portrait: cropped to favour her, not the wall behind her, with the same light frame as the rest of the site */
+    /* the portrait: the arch device, at the photograph's own 3:2 so
+       nothing of the consulting room is cropped away */
     .about__portrait {
-      position: relative;
-      z-index: 1;
-      border: 4px solid #ffffff;
-      box-shadow: 0 12px 28px -10px rgba(12, 35, 60, 0.12), 0 2px 8px rgba(12, 35, 60, 0.04);
+      display: block;
+      aspect-ratio: 3 / 2;
+      box-shadow: var(--shadow-md);
     }
 
-    .about__portrait img {
-      object-position: center 82%
+    /* the card: the arch radius mirrored, so the big corner sits bottom
+       left under the photo's top right and the pair reads as one shape */
+    .about__card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(22px, 2.5vw, 32px);
+      padding: clamp(26px, 3vw, 38px) clamp(24px, 2.6vw, 34px);
+      border-radius: 36px 36px 120px 36px;
+      background: linear-gradient(158deg, var(--brand) 0%, var(--brand-deep) 78%);
+      /* a lit top edge and a hairline, so the card has a real edge
+         rather than being a flat fill of colour */
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1),
+        inset 0 0 0 1px rgba(255, 255, 255, .06),
+        var(--shadow-md);
     }
 
-    /* the seal: the same rotating stamp from the hero, echoed here */
-    .about__seal {
-      position: absolute;
-      z-index: 2;
-      left: clamp(-16px, -1.6vw, -8px);
-      bottom: clamp(-16px, -1.6vw, -8px);
-      width: 104px;
-      height: 104px;
-      border-radius: 50%;
+    .about__card-id {
+      display: grid;
+      gap: 3px;
+    }
+
+    .about__card-name {
+      margin: 0;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      font-weight: 680;
+      font-size: clamp(20px, 1.7vw, 25px);
+      letter-spacing: -.022em;
+      color: #ffffff;
+    }
+
+    .about__card-role {
+      margin: 0;
+      font-size: clamp(12.5px, 1vw, 14px);
+      color: rgba(255, 255, 255, .62);
+    }
+
+    /* the three ways to reach the clinic, each carrying its real value.
+       Booking is not one of them: that is the page's primary button and
+       it does not need a fourth copy here. */
+    .about__reach {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    /* one hairline between rows, none above the first or below the last */
+    .about__reach li+li {
+      border-top: 1px solid rgba(255, 255, 255, .1);
+    }
+
+    .about__reach-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      /* the negative inline margin lets the hover wash run to the card's
+         padding edge while the text stays on the card's own left margin */
+      margin-inline: calc(clamp(10px, 1vw, 14px) * -1);
+      padding: 13px clamp(10px, 1vw, 14px);
+      border-radius: 14px;
+      text-decoration: none;
+      transition: background-color .3s var(--ease);
+    }
+
+    .about__reach-row:hover,
+    .about__reach-row:focus-visible {
+      background: rgba(255, 255, 255, .06);
+    }
+
+    .about__reach-ico {
+      flex: none;
       display: grid;
       place-items: center;
-      background: linear-gradient(155deg, color-mix(in srgb, var(--surface) 97%, transparent) 0%, color-mix(in srgb, var(--surface) 74%, transparent) 100%);
-      border: 1px solid color-mix(in srgb, var(--surface) 35%, var(--line));
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .55), inset 0 0 0 1px rgba(255, 255, 255, .1), var(--shadow-lg)
+      width: 40px;
+      height: 40px;
+      border-radius: 13px;
+      font-size: 19px;
+      /* the icons read against a solid tile rather than a translucent
+         one, which is what makes them look crisp instead of washed */
+      background: rgba(255, 255, 255, .1);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12);
+      color: #8ed0ff;
+      transition: background-color .3s var(--ease), color .3s var(--ease);
     }
 
-    @media (prefers-color-scheme: dark) {
-      .about__seal {
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), inset 0 0 0 1px rgba(255, 255, 255, .06), var(--shadow-lg)
-      }
+    /* Phosphor's duotone glyphs draw the body on ::before at opacity .2
+       and the outline on ::after. At 40px on a dark tile that reads as a
+       thin wireframe with a ghost behind it. Lifting the body gives the
+       icon real weight without loading a second icon font. */
+    .about__reach-ico i::before {
+      opacity: .45;
     }
 
-    @media (prefers-reduced-transparency: reduce) {
-      .about__seal {
-        background: var(--surface);
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none
-      }
+    .about__reach-row:hover .about__reach-ico,
+    .about__reach-row:focus-visible .about__reach-ico {
+      background: var(--accent-bright);
+      color: #ffffff;
     }
 
-    .about__seal svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      fill: var(--accent)
-    }
-
-    .about__seal__core {
-      position: relative;
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      overflow: hidden;
-      background: linear-gradient(155deg, color-mix(in srgb, var(--accent-wash) 100%, transparent), color-mix(in srgb, var(--accent) 16%, var(--accent-wash)));
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6);
+    .about__reach-txt {
       display: grid;
-      place-items: center
+      gap: 2px;
+      min-width: 0;
     }
 
-    .about__seal__core i {
-      font-size: 20px;
-      color: var(--accent)
+    .about__reach-txt small {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .5);
+    }
+
+    .about__reach-txt b {
+      font-size: 14.5px;
+      font-weight: 600;
+      letter-spacing: -.008em;
+      color: #ffffff;
+      /* email addresses run long and the card will not grow for them */
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* the arrow is the affordance, so it only needs to be there when the
+       row is being reached for */
+    .about__reach-go {
+      flex: none;
+      margin-left: auto;
+      font-size: 15px;
+      color: rgba(255, 255, 255, .55);
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: opacity .3s var(--ease), transform .3s var(--ease);
+    }
+
+    .about__reach-go::before {
+      opacity: 0;
+    }
+
+    .about__reach-row:hover .about__reach-go,
+    .about__reach-row:focus-visible .about__reach-go {
+      opacity: 1;
+      transform: none;
     }
 
     @media (prefers-reduced-motion: no-preference) {
-      .about__seal svg {
-        animation: sealSpin 22s linear infinite
+
+      /* the card arrives just after the photo, so the column reads top
+         to bottom rather than both halves landing at once */
+      .about__card {
+        transform: translateY(16px);
+        opacity: 0;
+        transition: transform .9s var(--ease) .12s, opacity .7s var(--ease) .12s;
       }
+
+      .about__media.is-in .about__card {
+        transform: none;
+        opacity: 1;
+      }
+
+      /* then the contents fill it in, one after the next. The surface
+         landing first and the contents following is what makes it read
+         as a card being filled rather than a block fading up. */
+      .about__card-name,
+      .about__card-role,
+      .about__reach li {
+        transform: translateY(10px);
+        opacity: 0;
+        transition: transform .7s var(--ease) calc(.34s + var(--i, 0) * .07s),
+          opacity .5s var(--ease) calc(.34s + var(--i, 0) * .07s);
+      }
+
+      .about__media.is-in .about__card-name,
+      .about__media.is-in .about__card-role,
+      .about__media.is-in .about__reach li {
+        transform: none;
+        opacity: 1;
+      }
+    }
+
+    /* the seal: the same rotating stamp from the hero, echoed here */
+
+    @media (prefers-color-scheme: dark) {
+    }
+
+    @media (prefers-reduced-transparency: reduce) {
+    }
+
+
+
+
+    @media (prefers-reduced-motion: no-preference) {
     }
 
     @media (max-width:900px) {
-      .about__seal {
-        width: 76px;
-        height: 76px
-      }
 
-      .about__seal__core {
-        width: 32px;
-        height: 32px
-      }
 
-      .about__seal__core i {
-        font-size: 15px
-      }
     }
 
     /* the years, set as a mark rather than a card, up in the quiet space above her shoulder */
-    .about__stamp {
-      position: absolute;
-      z-index: 2;
-      right: clamp(-28px, -2.2vw, -12px);
-      top: clamp(6px, 1.2vw, 14px);
-      display: flex;
-      align-items: baseline;
-      gap: 9px;
-      padding: 12px 18px;
-      border-radius: 999px;
-      background: color-mix(in srgb, var(--surface) 84%, transparent);
-      border: 1px solid var(--line);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      box-shadow: var(--shadow-md)
-    }
 
-    .about__stamp b {
-      font-family: "Plus Jakarta Sans", sans-serif;
-      font-size: 26px;
-      letter-spacing: -0.04em;
-      line-height: 1;
-      color: var(--accent)
-    }
 
-    .about__stamp span {
-      font-size: 12.5px;
-      font-weight: 600;
-      color: var(--ink-soft)
-    }
 
     /* the story inks in as you read down it */
     .about__body .ink-a {
@@ -2744,31 +2893,10 @@
     }
 
     @media (max-width:900px) {
-      .about__stamp {
-        right: 14px;
-        top: auto;
-        bottom: 14px
-      }
     }
 
-    .sig {
-      margin-top: 34px;
-      padding-top: 26px;
-      border-top: 1px solid var(--line);
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      flex-wrap: wrap
-    }
 
-    .sig b {
-      font-size: 16.5px
-    }
 
-    .sig span {
-      font-size: 14.5px;
-      color: var(--ink-soft)
-    }
 
     @media (max-width:900px) {
       .about {
@@ -2776,8 +2904,9 @@
         gap: 44px
       }
 
-      .about__media .arch {
-        aspect-ratio: 1.08
+      /* stacked, the card has no slack to take, so it sizes to content */
+      .about__media {
+        grid-template-rows: auto auto;
       }
     }
 
@@ -3147,55 +3276,67 @@
     }
 
     .quote {
+      position: relative;
+      overflow: hidden;
       margin: 0;
       border: 1px solid var(--line);
       background: var(--surface);
       border-radius: var(--r-card);
-      padding: 32px 30px;
+      padding: 30px 30px 26px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      transition: box-shadow .5s ease, transform .5s var(--ease)
-    }
-
-    .quote:nth-child(2) {
-      margin-top: 34px
-    }
-
-    .quote:nth-child(3) {
-      margin-top: 14px
-    }
-
-    .quote:hover {
-      box-shadow: var(--shadow-md)
-    }
-
-    /* the one featured card: a rich, glowing clinical blue */
-    .quote--featured {
-      background: linear-gradient(145deg, #0f528e 0%, #0a3862 100%);
-      border: 1px solid color-mix(in srgb, #4aa6f0 22%, transparent);
-      color: #ffffff;
+      gap: 16px;
+      /* a lit top edge, so the card has a real edge and not just an
+         outline drawn around a fill */
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .72), var(--shadow-sm);
+      transition: box-shadow .5s ease, transform .5s var(--ease), border-color .5s var(--ease)
     }
 
     @media (prefers-color-scheme: dark) {
-      .quote--featured {
-        background: linear-gradient(145deg, #134572 0%, #0b2844 100%);
-        border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+      .quote {
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), var(--shadow-sm);
       }
     }
 
-    .quote--featured .stars {
-      color: #8ed0ff;
+    /* the opening quote mark: it marks a quotation, which is the one job
+       a decorative glyph on a testimonial is allowed to have. Sits
+       behind the text at low contrast. */
+    .quote::after {
+      content: "\201C";
+      position: absolute;
+      top: 2px;
+      right: 24px;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      font-weight: 700;
+      font-size: 96px;
+      line-height: 1;
+      color: color-mix(in srgb, var(--accent) 11%, transparent);
+      pointer-events: none;
     }
 
-    .quote--featured small {
-      color: rgba(255, 255, 255, .72);
+    /* the zigzag has to repeat every three cards, because the track is
+       three cards duplicated and the marquee wraps at -50%: card N and
+       card N+3 must sit at the same height or the row jumps as the loop
+       comes round */
+    .quote:nth-child(3n+2) {
+      margin-top: 30px
     }
 
-    .quote i.mark {
-      font-size: 28px;
-      color: var(--accent);
-      line-height: 1
+    .quote:nth-child(3n+3) {
+      margin-top: 13px
+    }
+
+    .quote:hover {
+      border-color: color-mix(in srgb, var(--accent) 32%, var(--line));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .72), var(--shadow-md)
+    }
+
+    /* every third card carries a wash of the accent instead of the flat
+       surface, so a row of six is not six identical rectangles. Light,
+       not inverted: a dark card in a moving row reads as a gap. */
+    .quote--tinted {
+      background: linear-gradient(158deg, var(--accent-wash) 0%, var(--surface) 62%);
+      border-color: color-mix(in srgb, var(--accent) 18%, var(--line));
     }
 
     .quote p {
@@ -3209,16 +3350,22 @@
       display: flex;
       align-items: center;
       gap: 13px;
-      padding-top: 6px
+      /* one rule, separating who said it from what they said */
+      padding-top: 20px;
+      border-top: 1px solid color-mix(in srgb, var(--line) 74%, transparent)
     }
 
     .avatar {
-      width: 44px;
-      height: 44px;
+      width: 46px;
+      height: 46px;
       border-radius: 50%;
       object-fit: cover;
       filter: var(--img-filter);
-      flex: 0 0 auto
+      flex: 0 0 auto;
+      /* a hairline ring in the accent, set off the card by the card's
+         own colour so it reads as a mount rather than a border */
+      box-shadow: 0 0 0 2px var(--surface),
+        0 0 0 3px color-mix(in srgb, var(--accent) 26%, transparent)
     }
 
     .quote b {
@@ -3254,8 +3401,10 @@
         scroll-snap-align: start
       }
 
-      .quote:nth-child(2),
-      .quote:nth-child(3) {
+      /* one card at a time on a phone, so there is nothing to zigzag
+         against */
+      .quote:nth-child(3n+2),
+      .quote:nth-child(3n+3) {
         margin-top: 0
       }
     }
@@ -4788,7 +4937,6 @@
     @media (prefers-reduced-motion: no-preference) {
       @supports (animation-timeline: view()) {
 
-        .about__media .arch img,
         .cta__media img {
           animation: settle linear both;
           animation-timeline: view();
@@ -4802,6 +4950,27 @@
 
           to {
             transform: scale(1)
+          }
+        }
+
+        /* The about photo does more than settle: it pans slowly inside
+           its frame across the whole time the section is on screen, so
+           the picture is never quite the same twice on the way past.
+           The frame itself does not move, which is what keeps this from
+           reading as the layout drifting. */
+        .about__media .about__portrait img {
+          animation: aboutPan linear both;
+          animation-timeline: view();
+          animation-range: entry 0% exit 100%;
+        }
+
+        @keyframes aboutPan {
+          from {
+            transform: scale(1.14) translateY(-2.2%)
+          }
+
+          to {
+            transform: scale(1.14) translateY(2.2%)
           }
         }
       }
@@ -4916,11 +5085,23 @@
         0 14px 30px -12px rgba(12, 102, 182, .85),
         inset 0 1px 0 rgba(255, 255, 255, .24);
     }
-    /* These sit on a dark panel, where a blue-tinted shadow reads as
-       grime rather than lift. */
-    .btn--onDark:not(.btn--ghost) {
+    /* These sit on a dark panel. The variant sets its ink to #0d1f2e,
+       which needs a light fill behind it - on the accent gradient that
+       is 2.87:1 and fails AA.
+
+       The :not() chain is here to match the gradient rule's specificity.
+       Without it that rule (three classes) beat this one (two), so the
+       button kept the gradient and rendered navy text on blue. The
+       :hover pair is needed for the same reason. */
+    .btn--onDark:not(.btn--ghost):not(.btn--onDarkGhost) {
       background-image: none;
       box-shadow: var(--shadow-sm);
+    }
+
+    .btn--onDark:not(.btn--ghost):not(.btn--onDarkGhost):hover {
+      background-image: none;
+      /* a blue-tinted shadow reads as grime on a dark panel, not lift */
+      box-shadow: 0 12px 26px -12px rgba(0, 0, 0, .5);
     }
 
     /* ==============================================================
@@ -5238,9 +5419,12 @@
         <img src="/img/bg-img-1.webp" width="1900" height="1100" alt="A quiet corner of the Rowan Grove waiting room"
           loading="lazy" />
         <span class="door__veil" aria-hidden="true"></span>
-        <div class="door__copy">
-          <p class="door__quote split" data-split>Good medicine starts with somebody who has the time to listen.</p>
-        </div>
+        <!-- Quote and strip share one bottom-anchored column so they sit
+             in flow and can never overlap, whatever the strip's height. -->
+        <div class="door__base">
+          <div class="door__copy">
+            <p class="door__quote split" data-split>Good medicine starts with somebody who has the time to listen.</p>
+          </div>
 
         <!-- Flush inside the frame, on the veil. Every value reads from
              the lead's own record. Each row wrapped identically, so the
@@ -5265,6 +5449,7 @@
             </a>
           </li>
         </ul>
+        </div>
       </div>
 
   </section>
@@ -5283,20 +5468,17 @@
           <span class="steps__nib" aria-hidden="true"></span>
           <article class="step">
             <span class="step__dot" aria-hidden="true"></span>
-            <p class="step__meta ink ink--label">Book</p>
-            <h3 class="ink ink--head">Pick a time that suits you.</h3>
+              <h3 class="ink ink--head">Pick a time that suits you.</h3>
             <p class="ink ink--body">Call us or message on WhatsApp to book your slot. We will confirm your appointment and let you know what to bring.</p>
           </article>
           <article class="step">
             <span class="step__dot" aria-hidden="true"></span>
-            <p class="step__meta ink ink--label">Visit</p>
-            <h3 class="ink ink--head">Arrive, sit down, be seen.</h3>
-            <p class="ink ink--body">Appointments run to schedule. You get enough time with the doctor to explain your concern properly — and ask the follow-up question.</p>
+              <h3 class="ink ink--head">Arrive, sit down, be seen.</h3>
+            <p class="ink ink--body">Appointments run to schedule. You get enough time with the doctor to explain your concern properly, and to ask the follow-up question.</p>
           </article>
           <article class="step">
             <span class="step__dot" aria-hidden="true"></span>
-            <p class="step__meta ink ink--label">Follow up</p>
-            <h3 class="ink ink--head">Leave knowing the plan.</h3>
+              <h3 class="ink ink--head">Leave knowing the plan.</h3>
             <p class="ink ink--body">Prescriptions, referrals, and next steps are explained clearly before you leave. No confusion, no loose ends.</p>
           </article>
         </div>
@@ -5306,33 +5488,65 @@
     <!-- ============================ ABOUT ============================ -->
     <section class="section wrap" id="about" style="padding-top:clamp(52px,7vw,100px)">
       <div class="about">
-        <div class="about__media reveal">
-          <!-- Swap for a real portrait of the clinic's doctor. Portrait crop, approx 950x1150. -->
-          <figure class="arch about__portrait" style="margin:0">
-            <img src="img/bg-img-2.webp" width="950" height="1150" alt="Portrait of Dr. Elena Marsh" loading="lazy" />
-          </figure>
-          <p class="about__stamp"><b>18</b><span>years on Wilder Avenue</span></p>
-          <div class="about__seal" aria-hidden="true">
-            <svg viewBox="0 0 108 108">
-              <defs>
-                <path id="aboutSealPath" d="M 54,54 m -40,0 a 40,40 0 1,1 80,0 a 40,40 0 1,1 -80,0" />
-              </defs>
-              <text font-size="7.4" letter-spacing="2.4">
-                <textPath href="#aboutSealPath" startOffset="0%">ROWAN GROVE FAMILY CLINIC &#8226; SINCE 2007 &#8226;
-                </textPath>
-              </text>
-            </svg>
-            <span class="about__seal__core"><i class="ph-duotone ph-hand-heart"></i></span>
-          </div>
-        </div>
+        <figure class="about__media reveal">
+          <span class="arch about__portrait">
+            <img src="img/bg-img-2.webp" width="1536" height="1024"
+              alt="A doctor at the desk in a consulting room" loading="lazy" />
+          </span>
+
+          <!-- the card takes whatever height the text column has spare,
+               so the two sides finish level. The doctor's name lives
+               here now instead of in the right column's signature. -->
+          <figcaption class="about__card">
+            <div class="about__card-id">
+              <p class="about__card-name" style="--i:0">Dr. Elena Marsh</p>
+              <p class="about__card-role" style="--i:1">Healthcare Specialist</p>
+            </div>
+
+            <ul class="about__reach">
+              <li style="--i:2">
+                <a class="about__reach-row" data-c="tel-href" href="tel:+14156620148">
+                  <span class="about__reach-ico" aria-hidden="true">
+                    <i class="ph-duotone ph-phone-call"></i>
+                  </span>
+                  <span class="about__reach-txt">
+                    <small>Call the clinic</small>
+                    <b data-c="tel-text">+1 415 662 0148</b>
+                  </span>
+                  <i class="ph-duotone ph-arrow-up-right about__reach-go" aria-hidden="true"></i>
+                </a>
+              </li>
+              <li style="--i:3">
+                <a class="about__reach-row" id="about-wa" href="#contact" target="_blank" rel="noopener">
+                  <span class="about__reach-ico" aria-hidden="true">
+                    <i class="ph-duotone ph-whatsapp-logo"></i>
+                  </span>
+                  <span class="about__reach-txt">
+                    <small>WhatsApp</small>
+                    <b>Message the clinic</b>
+                  </span>
+                  <i class="ph-duotone ph-arrow-up-right about__reach-go" aria-hidden="true"></i>
+                </a>
+              </li>
+              <li style="--i:4">
+                <a class="about__reach-row" data-c="email-href" href="mailto:reception@rowangroveclinic.com">
+                  <span class="about__reach-ico" aria-hidden="true">
+                    <i class="ph-duotone ph-envelope-simple"></i>
+                  </span>
+                  <span class="about__reach-txt">
+                    <small>Email</small>
+                    <b data-c="email-text">reception@rowangroveclinic.com</b>
+                  </span>
+                  <i class="ph-duotone ph-arrow-up-right about__reach-go" aria-hidden="true"></i>
+                </a>
+              </li>
+            </ul>
+          </figcaption>
+        </figure>
         <div class="about__body">
           <h2 class="h-sec split" data-split>A clinic built around you.</h2>
           <p class="lede ink-a" style="margin-top:26px">We opened with one simple belief: patients deserve a doctor who has the time to listen, the experience to diagnose well, and the honesty to explain everything clearly. That has not changed.</p>
-          <p class="lede ink-a" style="--i:1">Dr. Elena Marsh brings years of dedicated practice to every consultation. Whether it is a routine checkup, a new concern, or a long-term condition, you see the same doctor each visit and leave with a clear plan — always.</p>
-          <div class="sig reveal" style="--i:2">
-            <i class="ph-duotone ph-hand-heart" style="font-size:28px; color:var(--accent)" aria-hidden="true"></i>
-            <span><b>Dr. Elena Marsh</b><br /><span>Healthcare Specialist</span></span>
-          </div>
+          <p class="lede ink-a" style="--i:1">Dr. Elena Marsh brings years of dedicated practice to every consultation. Whether it is a routine checkup, a new concern, or a long-term condition, you see the same doctor each visit and leave with a clear plan, always.</p>
         </div>
       </div>
     </section>
@@ -5384,13 +5598,13 @@
       </div>
       <div class="quotes">
         <div class="quotes__track">
-          <figure class="quote quote--featured" style="margin:0">
+          <figure class="quote quote--tinted" style="margin:0">
             <p class="stars" role="img" aria-label="Rated 5 out of 5"><i class="ph-duotone ph-star"
                 aria-hidden="true"></i><i class="ph-duotone ph-star" aria-hidden="true"></i><i
                 class="ph-duotone ph-star" aria-hidden="true"></i><i class="ph-duotone ph-star"
                 aria-hidden="true"></i><i class="ph-duotone ph-star" aria-hidden="true"></i></p>
             <blockquote style="margin:0">
-              <p>The doctor actually listened — properly. She explained my diagnosis clearly and I left the clinic knowing exactly what to do next. First time I felt that at any clinic.</p>
+              <p>The doctor actually listened, properly. She explained my diagnosis clearly and I left the clinic knowing exactly what to do next. First time I felt that at any clinic.</p>
             </blockquote>
             <footer>
               <img class="avatar"
@@ -5429,7 +5643,7 @@
               <span><b>Sunita Patel</b><small>Patient since 2018</small></span>
             </footer>
           </figure>
-          <figure class="quote quote--featured" aria-hidden="true" style="margin:0">
+          <figure class="quote quote--tinted" aria-hidden="true" style="margin:0">
             <p class="stars" role="img" aria-label="Rated 5 out of 5"><i class="ph-duotone ph-star"
                 aria-hidden="true"></i><i class="ph-duotone ph-star" aria-hidden="true"></i><i
                 class="ph-duotone ph-star" aria-hidden="true"></i><i class="ph-duotone ph-star"
@@ -5919,6 +6133,36 @@
           { rootMargin: "-8px 0px 0px 0px", threshold: 0 }).observe(sentinel);
       }
 
+      /* ---- the header retreats going down, returns going up ----
+         Lenis drives the page with window.scrollTo, so ordinary scroll
+         events still fire and there is no need to hook into it. Held
+         during anchor jumps: those scroll down, and letting the header
+         leave mid-jump would strand the -80px landing offset as a band
+         of empty space above the section. */
+      let navHold = false;
+      if (nav) {
+        const FLOOR = 200;   // above this the header always shows - the hero reads better whole
+        const DELTA = 6;     // a trackpad settling is not a change of direction
+        let lastY = Math.max(0, window.scrollY), queued = false;
+
+        function navOnScroll() {
+          queued = false;
+          const y = Math.max(0, window.scrollY);
+          // menu open: the burger lives in the header, so it stays
+          if (navHold || document.body.style.overflow === "hidden") { lastY = y; return; }
+          if (y <= FLOOR) nav.classList.remove("is-hidden");
+          else if (y > lastY + DELTA) nav.classList.add("is-hidden");
+          else if (y < lastY - DELTA) nav.classList.remove("is-hidden");
+          lastY = y;
+        }
+
+        window.addEventListener("scroll", () => {
+          if (queued) return;
+          queued = true;
+          requestAnimationFrame(navOnScroll);
+        }, { passive: true });
+      }
+
       /* ---- mobile menu ---- */
       const menu = $("#menu"), burger = $("#burger"), closeBtn = $("#close");
       function setMenu(open) {
@@ -5945,10 +6189,12 @@
          wrapper, so position:sticky, IntersectionObserver, the reveal
          observers and native anchor focus all keep working untouched.
       
-         lerp 0.085 is slightly heavier than the 0.1 default: a longer
-         glide, which suits a page that is read rather than clicked
-         through. Lenis disables itself under prefers-reduced-motion,
-         so no guard is needed here.
+         lerp is the share of the remaining distance covered each frame,
+         so a lower number means a longer glide and more lag between the
+         wheel and the page. 0.085 was below Lenis's own 0.1 default,
+         which read as heavy. 0.13 keeps the smoothing while letting the
+         page keep up with the hand. Lenis disables itself under
+         prefers-reduced-motion, so no guard is needed here.
       
          Its own `anchors` option is left off - this page already has a
          handler below, and enabling both scrolls twice per click. */
@@ -5970,10 +6216,16 @@
       })();
       
       const lenis = window.Lenis
-        ? new window.Lenis({ autoRaf: true, lerp: 0.085 })
+        ? new window.Lenis({ autoRaf: true, lerp: 0.13 })
         : null;
       
+      let navHoldTimer = 0;
       function smoothScrollTo(target, duration = 800) {
+        // an anchor jump scrolls down, which would otherwise read as
+        // "going down" and pull the header away mid-flight
+        navHold = true;
+        window.clearTimeout(navHoldTimer);
+        navHoldTimer = window.setTimeout(() => { navHold = false; }, duration + 120);
         if (lenis) {
           // -80 matches the offset the hand-rolled version used, so
           // anchors land in exactly the same place as before.
@@ -6123,6 +6375,11 @@
       const waBtn = $("#wa");
       const waLink = (body) =>
         "https://wa.me/" + CLINIC.whatsapp + "?text=" + encodeURIComponent(body);
+      // the about card's WhatsApp button, same link, its own message
+      const aboutWa = $("#about-wa");
+      if (aboutWa) {
+        aboutWa.href = waLink("Hello " + CLINIC.name + " " + CLINIC.suffix + ", I have a question about seeing the doctor.");
+      }
       if (waBtn) {
         waBtn.href = waLink("Hello " + CLINIC.name + " " + CLINIC.suffix + ", I would like to book an appointment.");
         const heroEl = $("#hero");
@@ -6269,6 +6526,9 @@
             item.classList.toggle("is-on", i === active);
             item.classList.toggle("is-done", i < active);
           });
+          /* Draws the terminus once the last station is reached, so the
+             rail finishes rather than trailing off below the last step. */
+          stackEl.classList.toggle("is-complete", active >= stackCards.length - 1);
         };
         const so = new IntersectionObserver((entries) => {
           entries.forEach((entry) => {
@@ -6464,7 +6724,7 @@
       
       <div class="demo-popup__content">
         <p class="demo-popup__text">
-          I built this demo specifically for your clinic. It is fully customizable—we can swap images, adjust colors, and tailor the layout exactly to your needs.
+          I built this demo specifically for your clinic. It is fully customisable: we can swap images, adjust colors, and tailor the layout exactly to your needs.
         </p>
         
         <hr class="demo-popup__divider" />
