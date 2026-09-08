@@ -1691,9 +1691,10 @@
       padding: clamp(32px, 4.4vw, 58px) 0;
       font-family: inherit;
       color: inherit;
-      grid-template-columns: 1fr auto;
-      align-items: baseline;
-      column-gap: 20px;
+      /* icon | name | state dot */
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      column-gap: clamp(14px, 1.6vw, 22px);
     }
 
     .svc__name {
@@ -1726,7 +1727,8 @@
     }
 
     .svc__desc {
-      grid-column: 1 / -1;
+      /* starts at the name, not the icon, so the two line up */
+      grid-column: 2 / -1;
       max-width: 52ch;
       font-size: 16px;
       line-height: 1.65;
@@ -1771,14 +1773,69 @@
       border-radius: 120px 36px 36px 36px;
       background: var(--brand-soft);
       border: 3.5px solid #ffffff;
-      box-shadow: 0 4px 16px -4px rgba(12, 35, 60, 0.06);
+      box-shadow:
+        0 2px 6px -2px rgba(12, 67, 119, .10),
+        0 34px 60px -30px rgba(12, 67, 119, .40);
+    }
+
+    /* ==============================================================
+       SERVICE ICONS
+       Each row gets its own glyph, muted while idle and filled with the
+       accent when it is the row on screen, so the icon carries the
+       selected state alongside the name instead of leaving the small
+       dot to do it alone.
+       ============================================================== */
+    .svc__ico {
+      width: clamp(40px, 4vw, 54px);
+      height: clamp(40px, 4vw, 54px);
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink-faint);
+      font-size: clamp(19px, 2vw, 25px);
+      align-self: center;
+      transition:
+        color .5s var(--ease),
+        border-color .5s var(--ease),
+        background-color .5s var(--ease),
+        box-shadow .5s var(--ease);
+    }
+    .svc__row.is-on .svc__ico {
+      color: var(--accent);
+      border-color: color-mix(in srgb, var(--accent) 26%, transparent);
+      background: var(--accent-wash);
+      box-shadow: 0 8px 20px -12px color-mix(in srgb, var(--accent) 70%, transparent);
+    }
+
+    /* A soft scrim behind the badge. The photograph is swapped per clinic,
+       so the pill cannot rely on whatever happens to sit behind it being
+       dark enough to read against. */
+    .svc__media::before {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 38%;
+      z-index: 2;
+      pointer-events: none;
+      background: linear-gradient(to top,
+        rgba(8, 22, 38, .34) 0%,
+        rgba(8, 22, 38, .16) 45%,
+        rgba(8, 22, 38, 0) 100%);
+    }
+
+    .svc__badge.is-swapping {
+      opacity: 0;
+      transform: translateY(10px) scale(.96);
     }
 
     .svc__badge {
       position: absolute;
-      bottom: 18px;
-      left: 18px;
-      z-index: 3;
+      bottom: 20px;
+      left: 20px;
+      z-index: 4;
       display: inline-flex;
       align-items: center;
       gap: 11px;
@@ -1790,6 +1847,7 @@
       -webkit-backdrop-filter: blur(20px);
       box-shadow: 0 8px 24px -4px rgba(12, 35, 60, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9);
       pointer-events: none;
+      transition: opacity .34s ease, transform .5s cubic-bezier(.16, 1.16, .3, 1);
     }
 
     .svc__badge-icon {
@@ -1824,24 +1882,57 @@
     }
 
     .svc__fig {
+      /* set per figure by the script, from the position of its row */
+      --oy: 50%;
       position: absolute;
       inset: 0;
       margin: 0;
-      opacity: 0;
-      transform: scale(1.07);
-      transition: opacity .8s var(--ease), transform 1.4s var(--ease)
+      /* Opacity stays at 1 and the clip does the work. A fully clipped
+         element paints nothing, so the five behind cost nothing and
+         there is no double animation to keep in sync. */
+      clip-path: circle(0% at -4% var(--oy));
+      transform: scale(1.06);
+      transition:
+        clip-path 1.5s cubic-bezier(.22, 1, .28, 1),
+        transform 1.9s cubic-bezier(.16, 1.16, .3, 1),
+        filter .85s ease-out;
     }
 
     .svc__fig.is-on {
-      opacity: 1;
+      /* 150% clears the far corner from any origin on the left edge */
+      clip-path: circle(150% at -4% var(--oy));
       transform: none
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .svc__fig {
+        filter: blur(9px) saturate(.7);
+      }
+      .svc__fig.is-on {
+        filter: blur(0) saturate(1);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .svc__fig.is-on {
+        opacity: 1
+      }
     }
 
     .svc__fig img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      filter: var(--img-filter)
+      filter: var(--img-filter);
+      /* just over 100%, so the drift never exposes an edge */
+      transform-origin: 52% 48%;
+    }
+    .svc__fig.is-on img {
+      animation: svcDrift 18s ease-in-out infinite alternate;
+    }
+    @keyframes svcDrift {
+      from { transform: scale(1.005) translate3d(0, 0, 0); }
+      to   { transform: scale(1.055) translate3d(-1.2%, -1%, 0); }
     }
 
     .svc__media::after {
@@ -1854,8 +1945,15 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
+      .svc__fig.is-on img {
+        animation: none
+      }
+
       .svc__fig {
-        transition: none
+        clip-path: none;
+        opacity: 0;
+        filter: none;
+        transition: opacity .2s ease
       }
     }
 
@@ -1880,9 +1978,110 @@
     /* =====================================================================
    THE DOORWAY. Signature scroll moment: the arch opens as you arrive.
    ===================================================================== */
+    /* The section above ends on a hairline and this begins with a
+       full-bleed photograph, so it needs less air between them than two
+       blocks of text would. Overrides the global section rhythm here
+       only, rather than changing it for every section on the page. */
     .doorway {
       padding-block: clamp(12px, 3vw, 32px);
     }
+
+    /* ==============================================================
+       THE STRIP
+
+       One row, flush to the bottom of the frame, sitting on the veil
+       that is already darkening the photograph there. Hairlines between
+       the three rather than three separate surfaces: nothing floats,
+       nothing casts a shadow, and there is no box height to leave
+       empty.
+       ============================================================== */
+    .door__facts {
+      position: absolute;
+      inset: auto 0 0 0;
+      z-index: 4;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      border-top: 1px solid rgba(255, 255, 255, .16);
+      /* a touch more darkness under the text than the veil alone gives */
+      background: linear-gradient(to top, rgba(4, 10, 17, .52), rgba(4, 10, 17, .12));
+      backdrop-filter: blur(3px) saturate(1.1);
+      -webkit-backdrop-filter: blur(3px) saturate(1.1);
+    }
+
+    .door__fact + .door__fact {
+      border-left: 1px solid rgba(255, 255, 255, .16);
+    }
+
+    /* One rule for all three, applied to the wrapper rather than to
+       whatever children happen to be there. */
+    .door__fact-in {
+      display: grid;
+      gap: 5px;
+      padding: clamp(15px, 1.9vw, 24px) clamp(16px, 2.1vw, 30px);
+      text-decoration: none;
+      color: inherit;
+      transition: background-color .3s ease;
+    }
+
+    .door__fact-k {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: rgba(226, 236, 245, .62);
+    }
+
+    .door__fact-v {
+      font-family: "Plus Jakarta Sans", sans-serif;
+      font-size: clamp(14px, 1.25vw, 17px);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      line-height: 1.25;
+      color: #ffffff;
+      /* opening strings and addresses vary a lot per clinic */
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      a.door__fact-in:hover {
+        background: rgba(255, 255, 255, .07);
+      }
+    }
+
+    a.door__fact-in:focus-visible {
+      outline: 2px solid #ffffff;
+      outline-offset: -3px;
+    }
+
+    /* Three columns cannot hold an address on a phone. Two rows of one,
+       and the labels shrink to keep the strip off the quote. */
+    @media (max-width: 700px) {
+      .door__facts {
+        grid-template-columns: 1fr 1fr;
+      }
+      .door__fact:first-child {
+        grid-column: 1 / -1;
+        border-bottom: 1px solid rgba(255, 255, 255, .16);
+      }
+      .door__fact:nth-child(2) {
+        border-left: 0;
+      }
+      .door__fact-v {
+        font-size: 13.5px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .door__fact-in {
+        transition: none;
+      }
+    }
+
 
     .door {
       position: relative;
@@ -1901,6 +2100,7 @@
       filter: var(--img-filter);
     }
 
+
     .door__veil {
       position: absolute;
       inset: 0;
@@ -1909,12 +2109,22 @@
 
     .door__copy {
       position: absolute;
-      inset: auto 0 0 0;
+      /* Was pinned to the bottom. The cards live there now, so the
+         quote sits in the body of the frame with room left below it. */
+      inset: 0;
       padding: clamp(28px, 5vw, 64px);
+      padding-bottom: clamp(96px, 12vw, 138px);
       display: grid;
+      align-content: center;
       gap: 16px;
       justify-items: center;
       text-align: center;
+    }
+
+    .door__quote {
+      /* 62 characters, so a little over half that lands it in two lines
+         rather than three. */
+      max-width: 33ch;
     }
 
     .door__quote {
@@ -1925,13 +2135,6 @@
       letter-spacing: -0.04em;
       line-height: 1.14;
       max-width: 18ch;
-    }
-
-    .door__by {
-      font-size: 13.5px;
-      font-weight: 600;
-      letter-spacing: .06em;
-      color: #b9c8d6;
     }
 
     @media (prefers-reduced-motion: no-preference) {
@@ -2038,17 +2241,6 @@
       }
 
       /* the credit waits for the sentence to finish before it signs off */
-      .door__by {
-        opacity: 0;
-        transform: translateY(12px);
-        transition: opacity .9s var(--ease), transform .9s var(--ease);
-        transition-delay: 1.25s;
-      }
-
-      .door__quote.is-in+.door__by {
-        opacity: 1;
-        transform: none;
-      }
     }
 
     /* =====================================================================
@@ -4687,6 +4879,114 @@
         transform: translateY(0)
       }
     }
+
+    /* ==============================================================
+       PRIMARY BUTTON: gradient and a tinted lift, to match micare.
+
+       Only colour and shadow change here. No transform, on purpose:
+       .magnetic writes an inline transform so the button pulls toward
+       the cursor, and a CSS transform would be ignored on those and
+       applied on the rest, making the two behave differently.
+
+       Everything the button already does is left intact - the ::before
+       glow that tracks the cursor through --bx, the ::after shine
+       sweep, the icon nudge, and the :active press.
+       ============================================================== */
+    :root {
+      --accent-grad: linear-gradient(135deg, #1E7FD6 0%, #0C66B6 52%, #094F8F 100%);
+      --accent-grad-hover: linear-gradient(135deg, #2A8DE4 0%, #1170C4 52%, #0B5CA3 100%);
+    }
+
+    /* the solid-fill buttons only. Ghost variants stay transparent. */
+    .btn:not(.btn--ghost):not(.btn--onDarkGhost) {
+      background-image: var(--accent-grad);
+      box-shadow:
+        0 10px 26px -12px rgba(12, 102, 182, .75),
+        inset 0 1px 0 rgba(255, 255, 255, .18);
+    }
+    .btn:not(.btn--ghost):not(.btn--onDarkGhost):hover {
+      background-image: var(--accent-grad-hover);
+      box-shadow:
+        0 14px 30px -12px rgba(12, 102, 182, .85),
+        inset 0 1px 0 rgba(255, 255, 255, .24);
+    }
+    /* These sit on a dark panel, where a blue-tinted shadow reads as
+       grime rather than lift. */
+    .btn--onDark:not(.btn--ghost) {
+      background-image: none;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ==============================================================
+       BRAND LOGO MARK
+       The artwork fills about 66% of its square canvas and sits a
+       little low in it, so it is scaled up inside its box and nudged.
+       Without that a 34px slot renders a 22px mark that looks
+       undersized next to the wordmark.
+       ============================================================== */
+    .brand__logo {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 auto;
+      object-fit: contain;
+      transform: scale(1.5) translateY(-1.7%);
+    }
+    @media (max-width: 640px) {
+      .brand__logo { width: 30px; height: 30px; }
+    }
+
+    /* ==============================================================
+       PRELOAD SCREEN
+       A dot orbiting the mark, same device micare uses. Sits above
+       everything and fades out once the window has loaded.
+       ============================================================== */
+    #preload {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      display: grid;
+      place-items: center;
+      background: var(--bg);
+      transition: opacity .5s ease, visibility .5s ease;
+      /* Failsafe. If the load event never fires or the script errors,
+         this hides the screen anyway rather than trapping the page. */
+      animation: preloadFailsafe 0s linear 6s forwards;
+    }
+    #preload.is-done {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    @keyframes preloadFailsafe {
+      to { opacity: 0; visibility: hidden; pointer-events: none; }
+    }
+
+    .preload__ring {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      animation: preloadSpin 1s linear infinite;
+      box-shadow: 0 2px 0 var(--accent);
+    }
+    .preload__ring img {
+      width: 46px;
+      height: 46px;
+      object-fit: contain;
+      transform: scale(1.5) translateY(-1.7%);
+      /* the ring spins, the mark must not */
+      animation: preloadSpin 1s linear infinite reverse;
+    }
+    @keyframes preloadSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .preload__ring,
+      .preload__ring img { animation: none; }
+      #preload { transition: none; }
+    }
   </style>
 </head>
 
@@ -4706,11 +5006,23 @@
      open badge and the footer automatically.
      ===================================================================== -->
 
+  <!-- Load screen. A demo link is usually opened on a phone on mobile
+       data, and the hero image is heavy; this covers the half second
+       where the page would otherwise show unstyled text. It removes
+       itself on window load, and a CSS failsafe hides it after six
+       seconds regardless, so a JS error can never trap the page. -->
+  <div id="preload" aria-hidden="true">
+    <div class="preload__ring">
+      <img src="/img/logo-mark.webp" width="1254" height="1254" alt="" />
+    </div>
+  </div>
+
   <span id="top-sentinel" aria-hidden="true"></span>
 
   <header class="nav" id="nav">
     <div class="wrap nav__in">
       <a class="brand" href="#top-sentinel" aria-label="Rowan Grove Family Clinic, back to top">
+        <img class="brand__logo" src="/img/logo-mark.webp" width="1254" height="1254" alt="" />
         <span class="brand__mark" data-c="name">Rowan Grove</span>
         <span class="brand__sub" data-c="suffix">Family Clinic</span>
       </a>
@@ -4856,32 +5168,32 @@
       <div class="svc" id="svc">
         <ul class="svc__list">
           <li class="svc__row is-on"><button class="svc__btn" type="button" data-svc="0">
-              <span class="svc__name">General Consultation</span><span class="svc__mark" aria-hidden="true"></span>
+              <span class="svc__ico" aria-hidden="true"><i class="ph-duotone ph-stethoscope"></i></span><span class="svc__name">General Consultation</span><span class="svc__mark" aria-hidden="true"></span>
               <span class="svc__desc"><span>Unhurried visits for everyday illness, aches, and the worries you have been
                   sitting on.</span></span>
             </button></li>
           <li class="svc__row"><button class="svc__btn" type="button" data-svc="1">
-              <span class="svc__name">Vaccinations</span><span class="svc__mark" aria-hidden="true"></span>
+              <span class="svc__ico" aria-hidden="true"><i class="ph-duotone ph-syringe"></i></span><span class="svc__name">Vaccinations</span><span class="svc__mark" aria-hidden="true"></span>
               <span class="svc__desc"><span>Childhood schedules, travel shots and seasonal flu, kept on time with
                   reminders.</span></span>
             </button></li>
           <li class="svc__row"><button class="svc__btn" type="button" data-svc="2">
-              <span class="svc__name">Health Checkups</span><span class="svc__mark" aria-hidden="true"></span>
+              <span class="svc__ico" aria-hidden="true"><i class="ph-duotone ph-clipboard-text"></i></span><span class="svc__name">Health Checkups</span><span class="svc__mark" aria-hidden="true"></span>
               <span class="svc__desc"><span>Annual screenings that catch the small things early, with results explained
                   in person.</span></span>
             </button></li>
           <li class="svc__row"><button class="svc__btn" type="button" data-svc="3">
-              <span class="svc__name">Chronic Care</span><span class="svc__mark" aria-hidden="true"></span>
+              <span class="svc__ico" aria-hidden="true"><i class="ph-duotone ph-heartbeat"></i></span><span class="svc__name">Chronic Care</span><span class="svc__mark" aria-hidden="true"></span>
               <span class="svc__desc"><span>Long term support for blood pressure, diabetes and thyroid, reviewed on a
                   schedule that suits you.</span></span>
             </button></li>
           <li class="svc__row"><button class="svc__btn" type="button" data-svc="4">
-              <span class="svc__name">Lab Guidance</span><span class="svc__mark" aria-hidden="true"></span>
+              <span class="svc__ico" aria-hidden="true"><i class="ph-duotone ph-test-tube"></i></span><span class="svc__name">Lab Guidance</span><span class="svc__mark" aria-hidden="true"></span>
               <span class="svc__desc"><span>We arrange the tests and read them with you in plain language, most of them
                   back the same week.</span></span>
             </button></li>
           <li class="svc__row"><button class="svc__btn" type="button" data-svc="5">
-              <span class="svc__name">Follow-up Visits</span><span class="svc__mark" aria-hidden="true"></span>
+              <span class="svc__ico" aria-hidden="true"><i class="ph-duotone ph-calendar-check"></i></span><span class="svc__name">Follow-up Visits</span><span class="svc__mark" aria-hidden="true"></span>
               <span class="svc__desc"><span>Short check-ins after treatment, in person or by phone, so nothing gets left
                   half finished.</span></span>
             </button></li>
@@ -4889,24 +5201,24 @@
 
         <!-- Swap these six for the clinic's own photography. Portrait crops. -->
         <div class="svc__media">
-          <figure class="svc__fig is-on"><img src="img/gc-img.webp" width="760" height="890"
+          <figure class="svc__fig is-on" data-badge="Consulting Room" data-badge-sub="Unhurried, direct care" data-badge-icon="ph-stethoscope"><img src="img/gc-img.webp" width="760" height="890"
               alt="A consultation in progress" loading="lazy" /></figure>
-          <figure class="svc__fig"><img src="img/vc-img.webp" width="760" height="890"
+          <figure class="svc__fig" data-badge="Treatment Desk" data-badge-sub="On schedule, with reminders" data-badge-icon="ph-syringe"><img src="img/vc-img.webp" width="760" height="890"
               alt="A patient at the treatment desk" loading="lazy" /></figure>
-          <figure class="svc__fig"><img src="img/hc-img.webp" width="760" height="890" alt="The doctor reviewing notes"
+          <figure class="svc__fig" data-badge="Results Review" data-badge-sub="Explained in person" data-badge-icon="ph-clipboard-text"><img src="img/hc-img.webp" width="760" height="890" alt="The doctor reviewing notes"
               loading="lazy" /></figure>
-          <figure class="svc__fig"><img src="img/cpp-img.webp" width="760" height="890" alt="A long term care review"
+          <figure class="svc__fig" data-badge="Long-term Review" data-badge-sub="Seen on a set schedule" data-badge-icon="ph-heartbeat"><img src="img/cpp-img.webp" width="760" height="890" alt="A long term care review"
               loading="lazy" /></figure>
-          <figure class="svc__fig"><img src="img/lg-img.webp" width="760" height="890" alt="The clinic waiting room"
+          <figure class="svc__fig" data-badge="Sample Collection" data-badge-sub="Most results back same week" data-badge-icon="ph-test-tube"><img src="img/lg-img.webp" width="760" height="890" alt="The clinic waiting room"
               loading="lazy" /></figure>
-          <figure class="svc__fig"><img src="img/fp-img.webp" width="760" height="890" alt="A quiet corner for follow-up
+          <figure class="svc__fig" data-badge="Follow-up Corner" data-badge-sub="In person or by phone" data-badge-icon="ph-calendar-check"><img src="img/fp-img.webp" width="760" height="890" alt="A quiet corner for follow-up
               visits" loading="lazy" /></figure>
 
           <div class="svc__badge">
-            <div class="svc__badge-icon"><i class="ph-duotone ph-stethoscope" aria-hidden="true"></i></div>
+            <div class="svc__badge-icon"><i class="ph-duotone ph-stethoscope" id="svcBadgeIcon" aria-hidden="true"></i></div>
             <div class="svc__badge-text">
-              <b>Consulting Room Suite</b>
-              <span>Unhurried, direct care</span>
+              <b id="svcBadgeTitle">Consulting Room</b>
+              <span id="svcBadgeSub">Unhurried, direct care</span>
             </div>
           </div>
         </div>
@@ -4922,10 +5234,34 @@
         <span class="door__veil" aria-hidden="true"></span>
         <div class="door__copy">
           <p class="door__quote split" data-split>Good medicine starts with somebody who has the time to listen.</p>
-          <p class="door__by">Dr. Elena Marsh, Healthcare Specialist</p>
         </div>
+
+        <!-- Flush inside the frame, on the veil. Every value reads from
+             the lead's own record. Each row wrapped identically, so the
+             three stay in step. -->
+        <ul class="door__facts">
+          <li class="door__fact">
+            <span class="door__fact-in">
+              <span class="door__fact-k">Right now</span>
+              <b class="door__fact-v" data-status-mirror>Call for opening hours</b>
+            </span>
+          </li>
+          <li class="door__fact">
+            <a class="door__fact-in" data-c="dir-href" href="#" target="_blank" rel="noopener">
+              <span class="door__fact-k">Where to find us</span>
+              <b class="door__fact-v" data-c="area">Wilder Avenue, Northbrook</b>
+            </a>
+          </li>
+          <li class="door__fact">
+            <a class="door__fact-in" data-c="tel-href" href="tel:">
+              <span class="door__fact-k">Speak to reception</span>
+              <b class="door__fact-v" data-c="tel-text">+91 6356 182 998</b>
+            </a>
+          </li>
+        </ul>
       </div>
-    </section>
+
+  </section>
 
     <!-- ===================== HOW A VISIT WORKS ======================= -->
     <section class="section wrap" id="visit">
@@ -5558,7 +5894,14 @@
         }
         text.textContent = "Call for opening hours";
       }
-      function mirrorStatus() { const a = $('#status-text'), b = $('#cta-status'); if (a && b) b.textContent = a.textContent; }
+      /* refreshStatus works the string out once; this copies it wherever
+         it is wanted. Attribute rather than a list of ids, because this
+         is the third place it has been needed. */
+      function mirrorStatus() {
+        const src = $('#status-text');
+        if (!src) return;
+        $$('#cta-status, [data-status-mirror]').forEach((el) => { el.textContent = src.textContent; });
+      }
       refreshStatus(); mirrorStatus();
       const statusTimer = window.setInterval(() => { refreshStatus(); mirrorStatus(); }, 60000);
       window.addEventListener("pagehide", () => window.clearInterval(statusTimer));
@@ -5603,6 +5946,23 @@
       
          Its own `anchors` option is left off - this page already has a
          handler below, and enabling both scrolls twice per click. */
+      /* ---- clear the load screen ----------------------------------------
+         On window load, so it covers the hero image arriving rather than
+         just the HTML parse. requestAnimationFrame first, so the browser
+         has painted a frame before the fade begins and the transition is
+         not skipped. The CSS failsafe covers the case where load never
+         fires at all. */
+      (function () {
+        var pre = document.getElementById("preload");
+        if (!pre) return;
+        var clear = function () {
+          requestAnimationFrame(function () { pre.classList.add("is-done"); });
+          window.setTimeout(function () { pre.remove(); }, 700);
+        };
+        if (document.readyState === "complete") clear();
+        else window.addEventListener("load", clear, { once: true });
+      })();
+      
       const lenis = window.Lenis
         ? new window.Lenis({ autoRaf: true, lerp: 0.085 })
         : null;
@@ -5777,13 +6137,55 @@
         const figs = $$(".svc__fig", svc);
         let shown = 0;
         let isUserHovering = false;
+
+        /* The badge captions whichever photo is on screen. It fades out,
+           swaps, and fades back, because the image behind it crossfades
+           too and a hard text snap reads as a glitch against that. */
+        /* Where on the panel's left edge this photograph should open
+           from: level with the middle of its own row. Measured at the
+           moment of the switch rather than up front, because the rows
+           change height as descriptions open and close.
+
+           One layout read per switch, not per frame, so it is cheap.
+           Clamped because a row can sit well outside the panel once the
+           list is taller than the sticky image. */
+        const media = $(".svc__media", svc);
+        const setOrigin = (row, fig) => {
+          if (!media || !row || !fig) return;
+          const m = media.getBoundingClientRect();
+          if (!m.height) return;
+          const r = row.getBoundingClientRect();
+          const pct = ((r.top + r.height / 2) - m.top) / m.height * 100;
+          fig.style.setProperty("--oy", Math.max(-15, Math.min(115, pct)).toFixed(1) + "%");
+        };
+
+        const badge = $(".svc__badge", svc);
+        const bTitle = $("#svcBadgeTitle", svc);
+        const bSub = $("#svcBadgeSub", svc);
+        const bIcon = $("#svcBadgeIcon", svc);
+        const setBadge = (fig) => {
+          if (!fig || !badge || !bTitle) return;
+          const title = fig.getAttribute("data-badge");
+          if (!title) return;
+          badge.classList.add("is-swapping");
+          window.setTimeout(() => {
+            bTitle.textContent = title;
+            if (bSub) bSub.textContent = fig.getAttribute("data-badge-sub") || "";
+            if (bIcon) bIcon.className = "ph-duotone " + (fig.getAttribute("data-badge-icon") || "ph-stethoscope");
+            badge.classList.remove("is-swapping");
+          }, 460);
+        };
+
         let hoverTimeout;
 
         const show = (i) => {
           if (i === shown || i < 0 || i >= rows.length) return;
           shown = i;
+          lastSwitch = performance.now();
+          setOrigin(rows[i], figs[i]);
           rows.forEach((r, n) => r.classList.toggle("is-on", n === i));
           figs.forEach((f, n) => f.classList.toggle("is-on", n === i));
+          setBadge(figs[i]);
         };
 
         rows.forEach((row, i) => {
@@ -5802,8 +6204,14 @@
 
         /* Robust, buttery-smooth scroll tracking without layout loops */
         let ticking = false;
+        /* Long enough for a reveal to finish before scrolling is allowed
+           to start another. Hover is not gated by this. */
+        const DWELL = 900;
+        let lastSwitch = 0;
+
         const updateOnScroll = () => {
           if (isUserHovering) return;
+          if (performance.now() - lastSwitch < DWELL) return;
           const rect = svc.getBoundingClientRect();
           if (rect.top > window.innerHeight || rect.bottom < 0) return;
 
