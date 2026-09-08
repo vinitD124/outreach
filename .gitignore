@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# lead research: real clinics' names, phone numbers and email addresses.
+# Nothing in the app reads from here, and anything pushed stays in git
+# history even after the files are deleted. Keep a backup off-repo.
+/doc/
+
+# stale duplicate of public/micare, which is the copy the renderer reads
+/micare/
+
+# leftover from the About image swap
+/public/img/bg-img-2-old.webp
