@@ -1984,6 +1984,9 @@
        only, rather than changing it for every section on the page. */
     .doorway {
       padding-block: clamp(12px, 3vw, 32px);
+      /* Shared by the quote and the strip below it so their left edges
+         line up exactly rather than nearly. */
+      --door-pad: clamp(20px, 2.6vw, 40px);
     }
 
     /* ==============================================================
@@ -2020,7 +2023,7 @@
     .door__fact-in {
       display: grid;
       gap: 5px;
-      padding: clamp(15px, 1.9vw, 24px) clamp(16px, 2.1vw, 30px);
+      padding: clamp(15px, 1.9vw, 24px) var(--door-pad);
       text-decoration: none;
       color: inherit;
       transition: background-color .3s ease;
@@ -2109,22 +2112,25 @@
 
     .door__copy {
       position: absolute;
-      /* Was pinned to the bottom. The cards live there now, so the
-         quote sits in the body of the frame with room left below it. */
       inset: 0;
-      padding: clamp(28px, 5vw, 64px);
-      padding-bottom: clamp(96px, 12vw, 138px);
+      /* Centred, the quote sat straight over the consulting room doorway
+         in the middle of the photograph - the doctor and patient, which
+         is the whole reason to use this picture. Moved to the bottom
+         left, where the floor is empty and the veil is darkest, and
+         aligned to the same edge as the strip underneath. */
+      padding: clamp(28px, 5vw, 64px) var(--door-pad);
+      padding-bottom: clamp(112px, 13vw, 154px);
       display: grid;
-      align-content: center;
+      align-content: end;
       gap: 16px;
-      justify-items: center;
-      text-align: center;
+      justify-items: start;
+      text-align: left;
     }
 
     .door__quote {
-      /* 62 characters, so a little over half that lands it in two lines
-         rather than three. */
-      max-width: 33ch;
+      /* Two lines. Left-aligned it can run a little wider than it could
+         centred without tipping into three. */
+      max-width: 36ch;
     }
 
     .door__quote {
