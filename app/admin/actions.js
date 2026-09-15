@@ -35,6 +35,32 @@ export async function setTemplateForLeads(leadIds, template) {
   return { updated: result.rowCount };
 }
 
+/**
+ * Record that a WhatsApp message was opened for this lead.
+ *
+ * WhatsApp is handed off to the phone, so there is no delivery receipt to
+ * wait for - the honest thing this records is "I opened the chat for them",
+ * which is what stops the same clinic being messaged twice.
+ *
+ * Written defensively: if the columns have not been added yet the action
+ * returns instead of throwing, so the button still opens WhatsApp and the
+ * table keeps working.
+ */
+export async function markWhatsappSent(leadId) {
+  try {
+    await pool.query(
+      'UPDATE leads SET whatsappsent = true, whatsappsentat = NOW() WHERE id = $1',
+      [leadId]
+    );
+  } catch (err) {
+    // 42703 is "column does not exist"
+    if (err && err.code === '42703') return { ok: false, reason: 'columns-missing' };
+    throw err;
+  }
+  revalidatePath('/admin');
+  return { ok: true };
+}
+
 export async function updateLead(leadId, data) {
   await pool.query(
     `UPDATE leads 

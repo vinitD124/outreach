@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation';
 import {
   Mail, FileText, CheckCircle2, Clock, MapPin, Edit3, Save, Send, ExternalLink,
   Search, Copy, Eye, AlertTriangle, Layout, MoreHorizontal, Phone, X, Loader2,
+  MessageCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { updateLead, setLeadTemplate, setTemplateForLeads } from './actions';
+import { updateLead, setLeadTemplate, setTemplateForLeads, markWhatsappSent } from './actions';
 import { TEMPLATE_LIST, resolveTemplate } from '@/lib/templates';
 import { cn } from '@/lib/utils';
 
@@ -50,6 +51,55 @@ const TEST_INBOXES = [
 ];
 const isTestLead = (lead) =>
   TEST_INBOXES.includes((lead.email || '').trim().toLowerCase());
+
+/* ---------------------------------------------------------------------------
+   WhatsApp follow-up
+   ---------------------------------------------------------------------------
+   WhatsApp only reaches mobiles. Ahmedabad's STD code is 79, so a landline
+   like 079 2745 0287 arrives as +917927450287 and sails through a "starts
+   with 6-9" test. Only 792... is that landline shape - 799x is a genuine
+   mobile range, so the check has to be that specific or real leads get
+   dropped. Anything else returns null and the row shows no button rather
+   than one that opens an empty chat. */
+export function waNumber(raw) {
+  if (!raw) return null;
+  let n = String(raw).replace(/\D/g, '');
+  if (n.startsWith('0')) n = n.replace(/^0+/, '');
+  if (n.length === 12 && n.startsWith('91')) n = n.slice(2);
+  if (n.length !== 10) return null;
+  if (!/^[6-9]/.test(n)) return null;
+  if (/^(792|2\d)/.test(n)) return null;   // Ahmedabad / nearby landline
+  return '91' + n;
+}
+
+/* The locality, taken the same way the email route takes it: the segment
+   before the city, because pop() gives "Gujarat" for every lead. */
+function areaOf(address) {
+  const parts = String(address || '').split(',').map((s) => s.trim()).filter(Boolean);
+  const i = parts.findIndex((p) => /ahmedabad|gandhinagar/i.test(p));
+  return (i > 0 ? parts[i - 1] : parts[0]) || 'your area';
+}
+
+export const WA_TEMPLATE =
+  `Hello, this is Vinit Dharaiya.
+
+I had emailed you a sample website I made for {{clinicname}}. Sharing the link here again:
+{{link}}
+
+If you are up for a quick chat about it, just let me know. If not, no problem at all.`;
+
+/* No doctor name in the greeting on purpose: a clinic's WhatsApp is usually
+   answered by reception, and greeting the wrong person reads worse than
+   greeting nobody. {{doctorname}} is still available for anyone who wants it. */
+export function fillWaTemplate(text, lead, baseUrl) {
+  const bare = String(lead.doctorname || '').replace(/^\s*(dr\.?|doctor)\s+/i, '').trim();
+  return String(text || '')
+    .replace(/{{clinicname}}/gi, lead.clinicname || 'your clinic')
+    .replace(/{{doctorname}}/gi, bare ? `Dr. ${bare}` : 'there')
+    .replace(/{{area}}/gi, areaOf(lead.address))
+    .replace(/{{link}}/gi, `${baseUrl}/${lead.slug}`)
+    .replace(/{{slug}}/gi, lead.slug || '');
+}
 
 /* Pipeline stages, in the order a lead actually moves through them.
    `test` is what decides which chip a row belongs to. */
@@ -111,6 +161,13 @@ export default function LeadTable({ leads: allLeads }) {
   // hostname and looks nothing like the rest of the app.
   const [ask, setAsk] = useState(null);
   const [templateBusy, setTemplateBusy] = useState(null);
+
+  // WhatsApp follow-up: which lead's message is open, and what it says.
+  const [waLead, setWaLead] = useState(null);
+  const [waText, setWaText] = useState('');
+  // Local echo so the button flips to "Sent" straight away, before the
+  // server round-trip lands.
+  const [waSent, setWaSent] = useState({});
 
   const confirmDialog = (opts) => new Promise((resolve) => setAsk({ ...opts, resolve }));
   const answer = (value) => { if (ask) { ask.resolve(value); setAsk(null); } };
@@ -221,6 +278,44 @@ export default function LeadTable({ leads: allLeads }) {
       toast.success(`Copied ${email}`);
     } catch {
       toast.error('Could not copy to clipboard');
+    }
+  }
+
+  /* ---- WhatsApp follow-up ---- */
+
+  const APP_URL = process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+  const waWasSent = (l) => Boolean(l.whatsappsent) || waSent[l.id];
+
+  function openWhatsapp(lead) {
+    setWaLead(lead);
+    setWaText(fillWaTemplate(WA_TEMPLATE, lead, APP_URL));
+  }
+
+  /* Opens the chat with the message already typed. The send itself happens
+     on the phone, so the most this can honestly record is that the chat was
+     opened - which is enough to stop a second message going out. */
+  async function sendWhatsapp() {
+    const lead = waLead;
+    if (!lead) return;
+    const num = waNumber(lead.phone);
+    if (!num) { toast.error('No WhatsApp-capable mobile on this lead'); return; }
+
+    window.open(`https://wa.me/${num}?text=${encodeURIComponent(waText)}`, '_blank', 'noopener');
+    setWaSent((prev) => ({ ...prev, [lead.id]: true }));
+    setWaLead(null);
+
+    try {
+      const res = await markWhatsappSent(lead.id);
+      if (res && res.ok === false && res.reason === 'columns-missing') {
+        toast.warning('WhatsApp opened, but it was not recorded: the whatsappsent column is missing.', { duration: 9000 });
+        return;
+      }
+      toast.success(`WhatsApp opened for ${lead.clinicname}`);
+      router.refresh();
+    } catch {
+      // The chat is already open; failing to record it must not look like
+      // the message failed.
+      toast.warning('WhatsApp opened, but marking it as sent failed.');
     }
   }
 
@@ -548,14 +643,23 @@ export default function LeadTable({ leads: allLeads }) {
                           />
                         </TableCell>
 
-                        <TableCell className="max-w-[300px] py-3">
-                          <div className="text-[13px] font-medium leading-snug">{lead.clinicname}</div>
-                          {lead.doctorname && (
-                            <div className="mt-0.5 text-[11.5px] text-muted-foreground">{lead.doctorname}</div>
-                          )}
-                          <div className="mt-1 flex items-start gap-1 text-[11px] text-muted-foreground/70">
-                            <MapPin size={10} className="mt-[3px] shrink-0" />
-                            <span className="line-clamp-2">{lead.address || 'No address'}</span>
+                        {/* max-width on a <td> is advisory: table layout sizes
+                            to content, so a long clinic name pushed the cell
+                            wide and ran under the contact column. The width
+                            has to live on a block inside the cell, and the
+                            name has to be allowed to wrap. */}
+                        <TableCell className="py-3">
+                          <div className="w-[260px] max-w-full xl:w-[300px]">
+                            <div className="line-clamp-2 break-words text-[13px] font-medium leading-snug">
+                              {lead.clinicname}
+                            </div>
+                            {lead.doctorname && (
+                              <div className="mt-0.5 truncate text-[11.5px] text-muted-foreground">{lead.doctorname}</div>
+                            )}
+                            <div className="mt-1 flex items-start gap-1 text-[11px] text-muted-foreground/70">
+                              <MapPin size={10} className="mt-[3px] shrink-0" />
+                              <span className="line-clamp-2 break-words">{lead.address || 'No address'}</span>
+                            </div>
                           </div>
                         </TableCell>
 
@@ -664,6 +768,34 @@ export default function LeadTable({ leads: allLeads }) {
                             >
                               {isSent ? <><CheckCircle2 size={12} /> Sent</> : <><Send size={12} /> Pitch</>}
                             </Button>
+
+                            {/* Only shown when there is a mobile to reach.
+                                A button that opens an empty chat is worse
+                                than no button. */}
+                            {waNumber(lead.phone) && (
+                              <Tooltip>
+                                <TooltipTrigger
+                                  render={
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      disabled={waWasSent(lead)}
+                                      onClick={() => openWhatsapp(lead)}
+                                      aria-label={waWasSent(lead) ? 'WhatsApp already sent' : `WhatsApp ${lead.clinicname}`}
+                                      className={cn(
+                                        'h-7 w-7 text-stage-visited',
+                                        waWasSent(lead) && 'opacity-45 disabled:opacity-45'
+                                      )}
+                                    />
+                                  }
+                                >
+                                  <MessageCircle size={14} />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  {waWasSent(lead) ? 'WhatsApp already sent' : 'Send WhatsApp follow-up'}
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
 
                             <DropdownMenu>
                               <DropdownMenuTrigger
@@ -897,6 +1029,58 @@ export default function LeadTable({ leads: allLeads }) {
                 </div>
               </DialogFooter>
             </form>
+          </DialogContent>
+        </Dialog>
+
+        {/* ---------- WhatsApp follow-up ---------- */}
+        <Dialog open={Boolean(waLead)} onOpenChange={(open) => { if (!open) setWaLead(null); }}>
+          <DialogContent className="max-w-lg gap-0 p-0">
+            <DialogHeader className="border-b px-6 py-4">
+              <DialogTitle className="flex items-center gap-2 text-[15px]">
+                <MessageCircle size={15} className="text-stage-visited" />
+                WhatsApp follow-up
+              </DialogTitle>
+              <DialogDescription className="text-[12.5px]">
+                {waLead?.clinicname}
+                {waNumber(waLead?.phone) && (
+                  <span className="nums"> · +{waNumber(waLead?.phone)}</span>
+                )}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 px-6 py-5">
+              <div className="space-y-1.5">
+                <Label htmlFor="waText" className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                  Message
+                </Label>
+                <Textarea
+                  id="waText"
+                  rows={9}
+                  value={waText}
+                  onChange={(e) => setWaText(e.target.value)}
+                  className="resize-none text-[12.5px] leading-relaxed"
+                />
+                <p className="flex flex-wrap items-center gap-1 pt-1 text-[10.5px] text-muted-foreground">
+                  Tags, already filled in:
+                  {['{{clinicname}}', '{{doctorname}}', '{{area}}', '{{link}}'].map((t) => (
+                    <code key={t} className="rounded bg-muted px-1 py-0.5 font-mono text-[10px] text-foreground">{t}</code>
+                  ))}
+                </p>
+              </div>
+
+              <p className="rounded-md border border-border/60 bg-muted/40 px-3 py-2 text-[11.5px] leading-relaxed text-muted-foreground">
+                This opens WhatsApp with the message ready. You still press send there,
+                so nothing goes out without you. The lead is marked as messaged the
+                moment the chat opens.
+              </p>
+            </div>
+
+            <DialogFooter className="items-center gap-2 border-t px-6 py-4 sm:justify-end">
+              <Button type="button" variant="ghost" onClick={() => setWaLead(null)}>Cancel</Button>
+              <Button type="button" onClick={sendWhatsapp} className="gap-2">
+                <MessageCircle size={14} /> Open WhatsApp
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
 
