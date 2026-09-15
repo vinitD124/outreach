@@ -108,6 +108,15 @@ const FILTERS = [
   { key: 'ready', label: 'Ready to pitch', test: (l) => l.email && !l.emailsent, tone: 'ready' },
   { key: 'sent', label: 'Pitched', test: (l) => l.emailsent, tone: 'sent' },
   { key: 'visited', label: 'Visited', test: (l) => l.demovisited, tone: 'visited' },
+  // The working queue: they opened the demo, we can reach them on WhatsApp,
+  // and nobody has yet. This is the tab to start the day on.
+  {
+    key: 'followup',
+    label: 'Follow up',
+    test: (l) => l.demovisited && !l.whatsappsent && Boolean(waNumber(l.phone)),
+    tone: 'wa',
+  },
+  { key: 'messaged', label: 'Messaged', test: (l) => Boolean(l.whatsappsent), tone: 'done' },
   { key: 'noemail', label: 'No email', test: (l) => !l.email, tone: 'blocked' },
 ];
 
@@ -127,6 +136,8 @@ const STAGE_BG = {
   ready: 'bg-stage-ready',
   sent: 'bg-stage-sent',
   visited: 'bg-stage-visited',
+  wa: 'bg-stage-wa',
+  done: 'bg-stage-done',
   blocked: 'bg-stage-blocked',
 };
 
@@ -135,13 +146,20 @@ export default function LeadTable({ leads: allLeads }) {
   const [showTests, setShowTests] = useState(false);
 
   const testCount = useMemo(() => allLeads.filter(isTestLead).length, [allLeads]);
+
+  // Local echo so a lead flips to "messaged" straight away, before the
+  // server round-trip and the refresh land. Folded into `leads` below so
+  // the chips and the counts move with it, not just the button.
+  const [waSent, setWaSent] = useState({});
+
   /* Everything below this line works off `leads`, so hiding test rows
      takes them out of the counts, the filters, the pipeline and
      select-all in one place rather than five. */
-  const leads = useMemo(
-    () => (showTests ? allLeads : allLeads.filter((l) => !isTestLead(l))),
-    [allLeads, showTests]
-  );
+  const leads = useMemo(() => {
+    const rows = showTests ? allLeads : allLeads.filter((l) => !isTestLead(l));
+    if (!Object.keys(waSent).length) return rows;
+    return rows.map((l) => (l.whatsappsent || !waSent[l.id] ? l : { ...l, whatsappsent: true }));
+  }, [allLeads, showTests, waSent]);
 
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [selectedLead, setSelectedLead] = useState(null);
@@ -165,9 +183,6 @@ export default function LeadTable({ leads: allLeads }) {
   // WhatsApp follow-up: which lead's message is open, and what it says.
   const [waLead, setWaLead] = useState(null);
   const [waText, setWaText] = useState('');
-  // Local echo so the button flips to "Sent" straight away, before the
-  // server round-trip lands.
-  const [waSent, setWaSent] = useState({});
 
   const confirmDialog = (opts) => new Promise((resolve) => setAsk({ ...opts, resolve }));
   const answer = (value) => { if (ask) { ask.resolve(value); setAsk(null); } };
@@ -605,6 +620,20 @@ export default function LeadTable({ leads: allLeads }) {
                           <p className="text-sm font-medium">No leads yet</p>
                           <p className="mt-1 text-xs text-muted-foreground">Import a list or use the scraper to find targets.</p>
                         </>
+                      ) : filter === 'followup' && !query ? (
+                        <>
+                          <p className="text-sm font-medium">Nothing waiting</p>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            No clinic is due a WhatsApp follow-up right now.
+                          </p>
+                        </>
+                      ) : filter === 'messaged' && !query ? (
+                        <>
+                          <p className="text-sm font-medium">No follow-ups sent yet</p>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            Leads you message on WhatsApp collect here.
+                          </p>
+                        </>
                       ) : (
                         <>
                           <p className="text-sm font-medium">Nothing matches this view</p>
@@ -627,6 +656,10 @@ export default function LeadTable({ leads: allLeads }) {
                     const isSent = emailStatus[lead.id] === 'sent' || lead.emailsent;
                     const failed = emailStatus[lead.id] === 'failed';
                     const sentOn = shortDate(lead.emailsentat);
+                    const messaged = waWasSent(lead);
+                    const waOn = shortDate(lead.whatsappsentat);
+                    // Opened the demo, reachable on WhatsApp, not yet messaged.
+                    const needsFollowUp = lead.demovisited && !messaged && Boolean(waNumber(lead.phone));
                     const tpl = resolveTemplate(lead.template);
 
                     return (
@@ -755,6 +788,20 @@ export default function LeadTable({ leads: allLeads }) {
                           />
                           {sentOn && <div className="nums mt-1 text-[10.5px] text-muted-foreground/70">sent {sentOn}</div>}
                           {failed && <div className="mt-1 text-[10.5px] font-medium text-destructive">send failed</div>}
+
+                          {/* The WhatsApp leg, kept under the email one so a
+                              row reads top to bottom in the order it happened. */}
+                          {messaged ? (
+                            <div className="nums mt-1 flex items-center gap-1 text-[10.5px] text-stage-done">
+                              <MessageCircle size={9} className="shrink-0" />
+                              messaged{waOn ? ` ${waOn}` : ''}
+                            </div>
+                          ) : needsFollowUp ? (
+                            <div className="mt-1 flex items-center gap-1 text-[10.5px] font-medium text-stage-wa">
+                              <MessageCircle size={9} className="shrink-0" />
+                              follow up
+                            </div>
+                          ) : null}
                         </TableCell>
 
                         <TableCell className="py-3 pr-4 text-right">
@@ -779,12 +826,16 @@ export default function LeadTable({ leads: allLeads }) {
                                     <Button
                                       size="icon"
                                       variant="ghost"
-                                      disabled={waWasSent(lead)}
+                                      disabled={messaged}
                                       onClick={() => openWhatsapp(lead)}
-                                      aria-label={waWasSent(lead) ? 'WhatsApp already sent' : `WhatsApp ${lead.clinicname}`}
+                                      aria-label={messaged ? 'WhatsApp already sent' : `WhatsApp ${lead.clinicname}`}
                                       className={cn(
-                                        'h-7 w-7 text-stage-visited',
-                                        waWasSent(lead) && 'opacity-45 disabled:opacity-45'
+                                        'h-7 w-7',
+                                        messaged
+                                          ? 'text-stage-done opacity-45 disabled:opacity-45'
+                                          : needsFollowUp
+                                            ? 'text-stage-wa ring-1 ring-stage-wa/35'
+                                            : 'text-stage-wa'
                                       )}
                                     />
                                   }
@@ -792,7 +843,11 @@ export default function LeadTable({ leads: allLeads }) {
                                   <MessageCircle size={14} />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                  {waWasSent(lead) ? 'WhatsApp already sent' : 'Send WhatsApp follow-up'}
+                                  {messaged
+                                    ? `WhatsApp sent${waOn ? ` on ${waOn}` : ''}`
+                                    : needsFollowUp
+                                      ? 'Opened the demo - send the follow-up'
+                                      : 'Send WhatsApp follow-up'}
                                 </TooltipContent>
                               </Tooltip>
                             )}
@@ -1128,6 +1183,24 @@ function Pipeline({ counts, total, visitRate }) {
     { key: 'ready', label: 'Ready to pitch', value: counts.ready, tone: 'ready' },
     { key: 'sent', label: 'Pitched', value: counts.sent, tone: 'sent' },
     { key: 'visited', label: 'Opened demo', value: counts.visited, tone: 'visited', hint: visitRate !== null ? `${visitRate}% of pitched` : null },
+    {
+      key: 'messaged',
+      label: 'Messaged',
+      value: counts.messaged,
+      tone: 'done',
+      hint: counts.followup > 0 ? `${counts.followup} waiting` : null,
+    },
+    { key: 'noemail', label: 'No email', value: counts.noemail, tone: 'blocked' },
+  ];
+
+  /* The bar is a different shape from the list. `visited` is a subset of
+     `sent` and `messaged` cuts across both, so laying the stat values end to
+     end overflowed the track and the widths meant nothing. These four are
+     disjoint and cover every lead, so the bar reads as real proportions. */
+  const bar = [
+    { key: 'ready', label: 'Ready to pitch', value: counts.ready, tone: 'ready' },
+    { key: 'sent', label: 'Pitched, not opened', value: Math.max(counts.sent - counts.visited, 0), tone: 'sent' },
+    { key: 'visited', label: 'Opened demo', value: counts.visited, tone: 'visited' },
     { key: 'noemail', label: 'No email', value: counts.noemail, tone: 'blocked' },
   ];
   const safe = Math.max(total, 1);
@@ -1159,7 +1232,7 @@ function Pipeline({ counts, total, visitRate }) {
       </div>
 
       <div className="mt-4 flex h-1.5 w-full gap-0.5 overflow-hidden rounded-full bg-muted">
-        {stages.map((s) => (
+        {bar.map((s) => (
           <div
             key={s.key}
             className={cn('h-full rounded-full transition-all duration-500', STAGE_BG[s.tone])}
