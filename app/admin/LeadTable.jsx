@@ -41,6 +41,7 @@ import {
 } from '@/components/ui/tooltip';
 
 import { TEST_INBOXES, isTestLead } from '@/lib/test-leads';
+import { waFor, subjectFor, bodyFor, fillPitch } from '@/lib/pitch';
 
 /* ---------------------------------------------------------------------------
    WhatsApp follow-up
@@ -60,35 +61,6 @@ export function waNumber(raw) {
   if (!/^[6-9]/.test(n)) return null;
   if (/^(792|2\d)/.test(n)) return null;   // Ahmedabad / nearby landline
   return '91' + n;
-}
-
-/* The locality, taken the same way the email route takes it: the segment
-   before the city, because pop() gives "Gujarat" for every lead. */
-function areaOf(address) {
-  const parts = String(address || '').split(',').map((s) => s.trim()).filter(Boolean);
-  const i = parts.findIndex((p) => /ahmedabad|gandhinagar/i.test(p));
-  return (i > 0 ? parts[i - 1] : parts[0]) || 'your area';
-}
-
-export const WA_TEMPLATE =
-  `Hello, this is Vinit Dharaiya.
-
-I had emailed you a sample website I made for {{clinicname}}. Sharing the link here again:
-{{link}}
-
-If you are up for a quick chat about it, just let me know. If not, no problem at all.`;
-
-/* No doctor name in the greeting on purpose: a clinic's WhatsApp is usually
-   answered by reception, and greeting the wrong person reads worse than
-   greeting nobody. {{doctorname}} is still available for anyone who wants it. */
-export function fillWaTemplate(text, lead, baseUrl) {
-  const bare = String(lead.doctorname || '').replace(/^\s*(dr\.?|doctor)\s+/i, '').trim();
-  return String(text || '')
-    .replace(/{{clinicname}}/gi, lead.clinicname || 'your clinic')
-    .replace(/{{doctorname}}/gi, bare ? `Dr. ${bare}` : 'there')
-    .replace(/{{area}}/gi, areaOf(lead.address))
-    .replace(/{{link}}/gi, `${baseUrl}/${lead.slug}`)
-    .replace(/{{slug}}/gi, lead.slug || '');
 }
 
 /* Pipeline stages, in the order a lead actually moves through them.
@@ -302,7 +274,7 @@ export default function LeadTable({ leads: allLeads }) {
 
   function openWhatsapp(lead) {
     setWaLead(lead);
-    setWaText(fillWaTemplate(WA_TEMPLATE, lead, APP_URL));
+    setWaText(fillPitch(waFor(lead.category), lead, APP_URL));
   }
 
   /* Opens the chat with the message already typed. The send itself happens
@@ -507,6 +479,23 @@ export default function LeadTable({ leads: allLeads }) {
     });
     return Object.entries(acc);
   }, [bulkMode, selectedLeads, selectedLead]);
+
+  /* The pitch copy is written per vertical - a designer is not greeted as
+     a doctor and does not run a practice - so the composer has to know
+     which one it is opening for. A mixed selection has no single right
+     answer, so it keeps the default category's copy and says so. */
+  const composerCategories = useMemo(() => {
+    const pool = bulkMode ? selectedLeads : (selectedLead ? [selectedLead] : []);
+    const acc = {};
+    pool.forEach((l) => {
+      const id = resolveCategory(l.category).id;
+      acc[id] = (acc[id] || 0) + 1;
+    });
+    return Object.entries(acc);
+  }, [bulkMode, selectedLeads, selectedLead]);
+
+  const composerCategory =
+    composerCategories.length === 1 ? composerCategories[0][0] : DEFAULT_CATEGORY;
 
   return (
     <TooltipProvider delay={200}>
@@ -1069,7 +1058,22 @@ export default function LeadTable({ leads: allLeads }) {
               </div>
             )}
 
-            <form onSubmit={handleSendEmail} className="space-y-5 px-6 py-5">
+            {/* One draft cannot greet a doctor and a designer at once. Say so
+                rather than quietly pitching a studio as a practice. */}
+            {composerCategories.length > 1 && (
+              <div className="flex items-center gap-2 border-b border-stage-blocked/30 bg-stage-blocked/10 px-6 py-2.5 text-[12px] text-foreground">
+                <AlertTriangle size={13} className="shrink-0 text-stage-blocked" />
+                <span>
+                  Mixed categories: {composerCategories.map(([id, n], i) => (
+                    <span key={id}>{i > 0 ? ', ' : ''}<b className="nums font-semibold">{n} {resolveCategory(id).label}</b></span>
+                  ))}. The draft below is the{' '}
+                  <b className="font-semibold">{resolveCategory(composerCategory).label}</b> pitch —
+                  send each category separately to get the copy written for it.
+                </span>
+              </div>
+            )}
+
+            <form key={composerCategory} onSubmit={handleSendEmail} className="space-y-5 px-6 py-5">
               <div className="space-y-1.5">
                 <Label htmlFor="emailSubject" className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                   Subject line
@@ -1078,7 +1082,7 @@ export default function LeadTable({ leads: allLeads }) {
                   id="emailSubject"
                   name="emailSubject"
                   required
-                  defaultValue="I built this for {{clinicname}}"
+                  defaultValue={subjectFor(composerCategory)}
                   className="text-[13px]"
                 />
                 <p className="flex flex-wrap items-center gap-1 pt-1 text-[10.5px] text-muted-foreground">
@@ -1098,7 +1102,7 @@ export default function LeadTable({ leads: allLeads }) {
                   name="emailBody"
                   required
                   rows={12}
-                  defaultValue={`Hi {{doctorname}},\n\nI came across {{clinicname}} while looking at practices in {{area}} and had an idea for how you could be presented online.\n\nRather than sending you a proposal, I actually built a private website concept specifically for your practice.\n\n[VIEW THE WEBSITE I BUILT →]\n${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/{{slug}}\n\nIt takes about 30 seconds to look through, and it was made specifically for {{clinicname}} — not a generic template.\n\nIf you like the direction, we can talk. If not, no problem at all.\n\nVinit Dharaiya\nIndependent Web Developer\nWhatsApp: +91 6356 182 998`}
+                  defaultValue={bodyFor(composerCategory, APP_URL)}
                   className="resize-none font-mono text-[12.5px] leading-relaxed"
                 />
               </div>

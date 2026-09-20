@@ -977,8 +977,8 @@
     }
 
     /* Below 1400px the theme hides .last-text, which would leave the band
-       reading just "AARAV". Both halves are kept and set naturally so the
-       name reads whole. */
+       reading just "STUDIO". Both halves are kept and set naturally so
+       the line reads whole. */
     @media (max-width: 1399px) {
       .about-area-2 .section-content .year-since {
         line-height: .92;
@@ -2130,16 +2130,15 @@
                 </div>
                 <div class="section-content section-spacing-top">
                   <div class="year-wrapper">
-                    <!-- ===== LEAD DATA: studio name. The last span is what
-                         shrinks and parks in the corner, so the brand is what
-                         survives the animation. ===== -->
-                    <!-- ===== LEAD DATA: studio name, split. The last word
-                         goes in .last-text because that is the half GSAP
-                         shrinks and parks centred over the projects header.
-                         Keep .is-fading short - it is the half that gets
-                         overlapped when the other goes absolute. ===== -->
-                    <h2 class="year-since"><span class="is-fading"><span class="first-text">Aarav</span></span>
-                      <span class="last-text">Interiors</span>
+                    <!-- Fixed for every lead, not the studio name. .last-text
+                         is the half GSAP shrinks and parks centred over the
+                         projects header, which on >=1400px renders only the
+                         word "Selected" - so this has to be the word that
+                         completes it. Both halves are boxed to one container
+                         width, and the type is huge, so neither can be longer
+                         than six characters or they spill out and collide. -->
+                    <h2 class="year-since"><span class="is-fading"><span class="first-text">Studio</span></span>
+                      <span class="last-text">Work</span>
                     </h2>
                   </div>
                   <div class="text-wrapper">
