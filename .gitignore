@@ -54,3 +54,6 @@ next-env.d.ts
 # Raw theme download the interior template was built from. Only the
 # pruned copy in public/interior/ is shipped.
 /dark-&-light-button/
+
+# local test fixtures
+/test-*.csv

@@ -4,6 +4,7 @@ import LeadTable from './LeadTable';
 import AddLeadDialog from './AddLeadDialog';
 import { normaliseTemplate } from '@/lib/templates';
 import { normaliseCategory } from '@/lib/categories';
+import { isTestLead } from '@/lib/test-leads';
 
 export const dynamic = 'force-dynamic';
 
@@ -44,7 +45,12 @@ export default async function AdminDashboard() {
     revalidatePath('/admin');
   }
 
-  const ready = leads.filter((l) => l.email && !l.emailsent).length;
+  /* The same rows the table shows, counted the same way. Test sends are
+     hidden down there, so counting them up here made the header claim a
+     pipeline the pipeline bar said was empty. */
+  const ready = leads.filter(
+    (l) => l.email && !l.emailsent && !isTestLead(l)
+  ).length;
 
   return (
     <div className="mx-auto max-w-[1400px] px-5 py-6 sm:px-8 sm:py-8">
@@ -53,7 +59,7 @@ export default async function AdminDashboard() {
           <h1 className="text-[22px] font-semibold tracking-tight">Leads</h1>
           <p className="mt-1 text-[13px] text-muted-foreground">
             {ready > 0
-              ? <>You have <b className="nums font-semibold text-foreground">{ready}</b> {ready === 1 ? 'clinic' : 'clinics'} ready to pitch.</>
+              ? <>You have <b className="nums font-semibold text-foreground">{ready}</b> {ready === 1 ? 'lead' : 'leads'} ready to pitch.</>
               : <>Nothing waiting to be pitched. Import a list to add more.</>}
           </p>
         </div>

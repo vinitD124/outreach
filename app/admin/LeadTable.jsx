@@ -40,18 +40,7 @@ import {
   Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-/* Rows addressed to one of our own inboxes are test sends, not prospects.
-   They were skewing everything: every test demo gets opened, so "opened
-   demo" and the visit rate both read higher than reality. Hidden by
-   default, countable, and one click away. */
-const TEST_INBOXES = [
-  'vedix124@gmail.com',
-  'accretevinit@gmail.com',
-  'vinitdharaiya124@gmail.com',
-  'vinit@accreteinfo.com',
-];
-const isTestLead = (lead) =>
-  TEST_INBOXES.includes((lead.email || '').trim().toLowerCase());
+import { TEST_INBOXES, isTestLead } from '@/lib/test-leads';
 
 /* ---------------------------------------------------------------------------
    WhatsApp follow-up
