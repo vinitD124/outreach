@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { normaliseTemplate, DEFAULT_TEMPLATE } from '@/lib/templates';
+import { normaliseCategory, templateForCategory, DEFAULT_CATEGORY } from '@/lib/categories';
 
 /**
  * Change which demo template a lead is pitched with.
@@ -72,7 +73,7 @@ export async function updateLead(leadId, data) {
   revalidatePath('/admin');
 }
 
-export async function bulkImportLeads(leads, batchTemplate = DEFAULT_TEMPLATE) {
+export async function bulkImportLeads(leads, batchTemplate = DEFAULT_TEMPLATE, batchCategory = DEFAULT_CATEGORY) {
   for (const lead of leads) {
     const cleanStr = (str) => {
       if (!str) return '';
@@ -90,17 +91,37 @@ export async function bulkImportLeads(leads, batchTemplate = DEFAULT_TEMPLATE) {
 
     const slug = clinicName.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.random().toString(36).substring(2, 7);
 
-    // A Template column in the sheet wins for that row; otherwise the
+    // A Category column in the sheet wins for that row; otherwise the
     // whole batch gets whatever was picked on the import screen.
-    const template = normaliseTemplate(
-      cleanStr(lead['Template'] || lead['Theme']).toLowerCase() || batchTemplate
+    const category = normaliseCategory(
+      cleanStr(lead['Category'] || lead['Type']) || batchCategory
     );
 
-    await pool.query(
-      `INSERT INTO leads (slug, clinicname, doctorname, phone, whatsapp, email, address, template)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-      [slug, clinicName, doctorName, phone, '', email, address, template]
+    // Same for the template, except that a row with no template at all
+    // falls back to whatever its category ships with rather than to
+    // classic - otherwise an interior lead would render a clinic page.
+    const rawTemplate = cleanStr(lead['Template'] || lead['Theme']).toLowerCase();
+    const template = normaliseTemplate(
+      rawTemplate || batchTemplate || templateForCategory(category)
     );
+
+    // Falls back to the pre-category shape if the column has not been
+    // added yet, so deploying before running the migration cannot break
+    // importing. 42703 is "column does not exist".
+    try {
+      await pool.query(
+        `INSERT INTO leads (slug, clinicname, doctorname, phone, whatsapp, email, address, template, category)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+        [slug, clinicName, doctorName, phone, '', email, address, template, category]
+      );
+    } catch (err) {
+      if (!err || err.code !== '42703') throw err;
+      await pool.query(
+        `INSERT INTO leads (slug, clinicname, doctorname, phone, whatsapp, email, address, template)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [slug, clinicName, doctorName, phone, '', email, address, template]
+      );
+    }
   }
   revalidatePath('/admin');
 }

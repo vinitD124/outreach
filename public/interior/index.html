@@ -1,0 +1,3455 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ===== LEAD DATA: description ===== -->
+  <meta name="description" content="Aarav Interiors — residential and commercial interior design, from first drawing to handover.">
+
+  <!-- ===== LEAD DATA: page title ===== -->
+  <title>Aarav Interiors — Interior Design Studio</title>
+
+  <!-- ===== LEAD DATA: link preview (WhatsApp, Messenger, iMessage, X) =====
+       og:image must be an absolute URL or nothing renders. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Aarav Interiors">
+  <meta property="og:title" content="Aarav Interiors — Interior Design Studio">
+  <meta property="og:description"
+    content="Residential and commercial interior design, from first drawing to handover.">
+  <meta property="og:image"
+    content="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=80">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Aarav Interiors — Interior Design Studio">
+  <meta name="twitter:description"
+    content="Residential and commercial interior design, from first drawing to handover.">
+  <meta name="twitter:image"
+    content="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=80">
+
+  <!-- Fav Icon -->
+  <link rel="icon" type="image/x-icon" href="assets/imgs/logo/favicon.png">
+
+  <!-- Vendor CSS Files -->
+  <link rel="stylesheet" href="assets/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/vendor/fontawesome.min.css">
+  <link rel="stylesheet" href="assets/vendor/swiper-bundle.min.css">
+  <link rel="stylesheet" href="assets/vendor/meanmenu.min.css">
+  <link rel="stylesheet" href="assets/vendor/magnific-popup.css">
+  <link rel="stylesheet" href="assets/vendor/animate.min.css">
+
+  <!-- Template Main CSS File -->
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <!-- set before paint so images can fade in rather than pop -->
+  <script>
+    document.documentElement.classList.add('js-imgload');
+  </script>
+
+  <!-- ============================================================
+       INTERIOR ADD-ON STYLES
+       Additions only — nothing here overrides the Redox theme.
+       Covers the image load reveal, the contact detail cards, the
+       mobile header and the mobile swipe-decks.
+       ============================================================ -->
+  <style>
+    /* ---- image reveal on load ----
+       The .js-imgload class is set by a tiny script in <head>, so if JS
+       never runs the images simply render normally instead of staying
+       invisible. */
+    html.js-imgload .hero-thumb img,
+    html.js-imgload .works-wrapper-2 .work-box .thumb img,
+    html.js-imgload .service-content .thumb img {
+      opacity: 0;
+      transform: scale(1.06);
+      transition: opacity 1s cubic-bezier(.22, .61, .36, 1), transform 1.6s cubic-bezier(.22, .61, .36, 1);
+    }
+
+    html.js-imgload .hero-thumb img.is-loaded,
+    html.js-imgload .works-wrapper-2 .work-box .thumb img.is-loaded,
+    html.js-imgload .service-content .thumb img.is-loaded {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* warm placeholder behind an image while it loads, so the layout
+       never flashes as a white hole */
+    .works-wrapper-2 .work-box .thumb,
+    .hero-thumb {
+      background-color: rgba(128, 118, 106, .12);
+      overflow: hidden;
+    }
+
+    /* ============================================================
+       SCROLL-REVEALED TEXT
+       The theme's .text-invert effect: each line carries a two-stop
+       gradient clipped to the glyphs, and main.js scrubs its position
+       across as the line moves up the viewport, so the words ink in as
+       you read them.
+
+       Applied here to the hero standfirst and the About headline. Note
+       both previously carried rr_title_anim, which runs a SplitText of
+       its own - stacking the two would have split the same node twice
+       and the gradient lines would have fought the rotate-in timeline.
+       Swapped, not added.
+
+       Tuning: the first colour is the read state, the second the waiting
+       state. The theme's default #CDC9C6 washes out on this cream, so
+       the waiting state is a touch heavier - clearly a shade of the ink
+       rather than a ghost of it.
+       ============================================================ */
+    .hero-area-2 .about-text.text-invert>div,
+    .about-area-2 .section-title.text-invert>div {
+      background-image: linear-gradient(to right, #111111 50%, #A39D97 51%);
+    }
+
+    /* the scrub is driven by scroll position, so with no scrolling there
+       is no reveal - show the finished state instead of a page of grey */
+    @media (prefers-reduced-motion: reduce) {
+
+      .hero-area-2 .about-text.text-invert>div,
+      .about-area-2 .section-title.text-invert>div {
+        background-image: none;
+        color: #111111;
+        -webkit-text-fill-color: #111111;
+      }
+    }
+
+    /* ============================================================
+       LIGHT-THEME ARTWORK
+       The theme's shape assets are white artwork drawn for the dark
+       theme, so on the light ground they were simply invisible: the
+       background rules and the curve in the headline had both vanished.
+       Inverting is what turns that white ink black - the shapes are flat
+       single-colour cut-outs, so there is no colour to damage.
+       ============================================================ */
+
+    /* The vertical rules behind the hero. The artwork's own lines are
+       already drawn at a low alpha, and invert touches RGB but not alpha,
+       so white-on-ink becomes ink-on-cream at the same weight. Dimming it
+       further here is what made them disappear entirely. */
+    .body-creative-agency .body-bg img {
+      filter: invert(1);
+    }
+
+    /* the curve in the headline, inked to match the type beside it */
+    .hero-area-2 .section-title .title-shape-1 {
+      filter: invert(1);
+    }
+
+    /* the photo set into the headline. Rounded to the same 10px as the
+       hero card so the page keeps one corner language rather than mixing
+       a hard crop with a soft one. */
+    .hero-area-2 .section-title .title-video {
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    /* ============================================================
+       BRAND WORDMARK
+       Replaces the theme's redox logo image. Text means every generated
+       demo carries the real business name with no logo file to source —
+       drop an <img> back in here when the lead supplies one.
+       ============================================================ */
+    .brand-wordmark {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 3px;
+      line-height: 1;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-wordmark .bw-name {
+      font-size: clamp(19px, 2vw, 25px);
+      letter-spacing: -.01em;
+      text-transform: uppercase;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .brand-wordmark .bw-sub {
+      font-size: 9.5px;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      opacity: .55;
+      white-space: nowrap;
+    }
+
+    /* ============================================================
+       HERO MEDIA CARD
+       Fills the empty column beside the headline. Four interiors
+       cross-fade with a slow push-in, which reads as motion without
+       shipping a video file. To use a real video instead, replace
+       .hero-media__stack with:
+         <video src="…" autoplay muted loop playsinline></video>
+       and the styling below still applies.
+       ============================================================ */
+    .hero-media {
+      position: relative;
+      margin-top: 34px;
+      border-radius: 10px;
+      overflow: hidden;
+      aspect-ratio: 16 / 10;
+      background-color: rgba(128, 118, 106, .12);
+      /* tinted to the page ground rather than pure black, so the card
+         lifts off the cream without printing a grey halo on it */
+      box-shadow: 0 18px 40px -24px rgba(64, 56, 46, .55);
+      transition: box-shadow .5s ease, transform .5s cubic-bezier(.22, .61, .36, 1);
+    }
+
+    .hero-media:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 26px 56px -26px rgba(64, 56, 46, .62);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-media {
+        transition: none;
+      }
+
+      .hero-media:hover {
+        transform: none;
+      }
+    }
+
+    .hero-media__stack {
+      position: absolute;
+      inset: 0;
+    }
+
+    .hero-media__stack img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transform: scale(1.09);
+      transition: opacity 1.5s cubic-bezier(.22, .61, .36, 1);
+    }
+
+    .hero-media__stack img.on {
+      opacity: 1;
+      animation: heroPushIn 8s linear forwards;
+    }
+
+    @keyframes heroPushIn {
+      from {
+        transform: scale(1.09);
+      }
+
+      to {
+        transform: scale(1);
+      }
+    }
+
+    .hero-media__cap {
+      position: absolute;
+      inset: auto 0 0 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 20px 22px;
+      color: #fff;
+      background: linear-gradient(to top, rgba(0, 0, 0, .68), rgba(0, 0, 0, .12) 65%, transparent);
+    }
+
+    .hero-media__meta {
+      transition: opacity .34s ease;
+    }
+
+    .hero-media__meta.is-swapping {
+      opacity: 0;
+    }
+
+    .hero-media__cap b {
+      display: block;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: .01em;
+    }
+
+    .hero-media__cap i:empty {
+      display: none;
+    }
+
+    .hero-media__cap i {
+      display: block;
+      font-style: normal;
+      font-size: 11px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      opacity: .78;
+      margin-top: 5px;
+    }
+
+    .hero-media__dots {
+      display: flex;
+      gap: 5px;
+      flex: none;
+      padding-bottom: 4px;
+    }
+
+    .hero-media__dots span {
+      display: block;
+      width: 16px;
+      height: 2px;
+      background: rgba(255, 255, 255, .38);
+      transition: background .4s ease;
+    }
+
+    /* The active tick fills across the dwell time, so the card reads as
+       something that is running rather than a static crop. */
+    .hero-media__dots span {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-media__dots span.on::after {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0;
+      background: #fff;
+      animation: dotFill 4.2s linear forwards;
+    }
+
+    @keyframes dotFill {
+      to {
+        width: 100%;
+      }
+    }
+
+    /* ============================================================
+       HERO VIDEO
+       A play control on the recent-work card. The card keeps rotating
+       underneath; opening the video stops it, the page scroll and the
+       smooth-scroller until the lightbox closes.
+       ============================================================ */
+    .hero-media__play {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 78px;
+      height: 78px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border: 1px solid rgba(255, 255, 255, .5);
+      border-radius: 50%;
+      background: rgba(20, 18, 16, .3);
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+      color: #fff;
+      cursor: pointer;
+      transition: background-color .4s ease, border-color .4s ease, transform .5s cubic-bezier(.22, .61, .36, 1);
+    }
+
+    /* the halo, kept on its own element so the button can scale without
+       dragging the ring's timing with it */
+    .hero-media__play::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, .55);
+      animation: playPulse 2.8s ease-out infinite;
+    }
+
+    .hero-media__play svg {
+      width: 20px;
+      height: 22px;
+      margin-left: 3px;
+      /* optical centring: a triangle's mass sits left of its bounding box */
+      fill: currentColor;
+    }
+
+    .hero-media__play:hover,
+    .hero-media__play:focus-visible {
+      background: rgba(20, 18, 16, .52);
+      border-color: #fff;
+      transform: translate(-50%, -50%) scale(1.07);
+    }
+
+    @keyframes playPulse {
+      0% {
+        transform: scale(1);
+        opacity: .55;
+      }
+
+      70%,
+      100% {
+        transform: scale(1.55);
+        opacity: 0;
+      }
+    }
+
+    /* while the lightbox is open the card stands still */
+    .hero-media.is-held .hero-media__stack img.on,
+    .hero-media.is-held .hero-media__dots span.on::after {
+      animation-play-state: paused;
+    }
+
+    .vbox {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-items: center;
+      padding: clamp(16px, 4vw, 48px);
+      background: rgba(18, 16, 14, .84);
+      -webkit-backdrop-filter: blur(7px);
+      backdrop-filter: blur(7px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .35s ease, visibility .35s;
+    }
+
+    .vbox.is-on {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .vbox__frame {
+      position: relative;
+      width: min(1060px, 100%);
+      aspect-ratio: 16 / 9;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 40px 90px -30px rgba(0, 0, 0, .85);
+    }
+
+    .vbox__frame iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .vbox__close {
+      position: absolute;
+      top: clamp(12px, 2.4vw, 26px);
+      right: clamp(12px, 2.4vw, 26px);
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, .3);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .1);
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color .3s ease, border-color .3s ease;
+    }
+
+    .vbox__close:hover,
+    .vbox__close:focus-visible {
+      background: rgba(255, 255, 255, .22);
+      border-color: rgba(255, 255, 255, .6);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .hero-media__play::before,
+      .vbox {
+        animation: none;
+        transition: none;
+      }
+
+      /* rotation never starts under reduced motion, so a tick that filled
+         once and stopped would be telling the viewer something untrue */
+      .hero-media__dots span.on::after {
+        animation: none;
+        width: 100%;
+      }
+    }
+
+    /* ============================================================
+       HERO STANDFIRST OFFSET
+       The theme pushes this paragraph down with a hardcoded margin
+       (474/304/204px) because in its own layout this column held only
+       the one-line sub-head: the offset was what carried the paragraph
+       clear of the headline beside it.
+
+       The media card now sits in that column and already does 284px of
+       that work, so the offset was being paid twice and left a ~300px
+       hole between the card and the paragraph - while only 94px
+       separated the paragraph from the image below it. The paragraph
+       read as part of the image rather than as its own beat.
+
+       Scaled to the viewport instead, which keeps the gap above a
+       little larger than the gap below, as a section break should be.
+       Below 992px the theme already drops to 34px and the column
+       stacks, so this deliberately starts at 992.
+       ============================================================ */
+    @media (min-width: 992px) {
+      .hero-area-2 .section-content .about-text {
+        margin-top: clamp(96px, 9vw, 170px);
+      }
+    }
+
+    /* ============================================================
+       SPECIALITY MARQUEE
+       A slim moving strip under the hero. Gives the page a pulse and
+       states the service range without another paragraph of text.
+       ============================================================ */
+    .spec-marquee {
+      border-top: 1px solid rgba(128, 128, 128, .25);
+      border-bottom: 1px solid rgba(128, 128, 128, .25);
+      overflow: hidden;
+      margin-top: clamp(56px, 7vw, 96px);
+      padding-block: 16px;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+      mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    }
+
+    .spec-marquee__track {
+      display: flex;
+      width: max-content;
+      animation: specScroll 34s linear infinite;
+    }
+
+    .spec-marquee:hover .spec-marquee__track {
+      animation-play-state: paused;
+    }
+
+    .spec-marquee__track span {
+      display: inline-flex;
+      align-items: center;
+      gap: 34px;
+      padding-right: 34px;
+      font-size: clamp(13px, 1.3vw, 15px);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      opacity: .72;
+    }
+
+    .spec-marquee__track span::after {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: .5;
+    }
+
+    @keyframes specScroll {
+      from {
+        transform: translate3d(0, 0, 0);
+      }
+
+      to {
+        transform: translate3d(-50%, 0, 0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .spec-marquee__track {
+        animation: none;
+      }
+
+      .hero-media__stack img.on {
+        animation: none;
+        transform: scale(1);
+      }
+    }
+
+    /* ============================================================
+       STATEMENT BAND — "What we design for your space"
+       main.js pins this section for 1500px of scroll and scales the
+       text 40x. It hijacks the scrollbar, and because the headline is
+       painted with a scrubbed gradient it sits half-grey until the
+       scrub completes. The pin is removed at every width by the script
+       at the end of the document; these rules put the type back to full
+       contrast and drop the decorative circle that went with it.
+       ============================================================ */
+    .actually-area .section-title {
+      will-change: transform;
+    }
+
+    .actually-area .t_line>div {
+      background-image: linear-gradient(to right, #111111 50%, #A39D97 51%);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .actually-area .t_line>div {
+        background-image: none;
+        color: #111111;
+        -webkit-text-fill-color: #111111;
+      }
+    }
+
+    .actually-area .bg-area {
+      display: none !important;
+    }
+
+    /* ============================================================
+       HEADER FLOURISHES
+       A nav underline that draws in — a small studio-site detail that
+       makes the header feel authored.
+       ============================================================ */
+
+    /* The theme ships a floating dark/light switcher. Every demo goes out
+       in the light theme, so the control has nothing to offer: it is hidden
+       rather than deleted because main.js reads the element on load and
+       would throw on a null if it were removed. */
+    #theme-toggle {
+      display: none !important;
+    }
+
+    /* ---- sticky header: hides on scroll-down, returns on scroll-up ----
+       The theme pins the header with position:absolute, so it scrolls away
+       at the top of the page and never comes back — which takes the only
+       Contact Us button with it for the rest of the site. Fixed at every
+       width instead, out of the way while reading, back the moment the
+       visitor scrolls up. */
+    .header-area-2 {
+      position: fixed;
+      z-index: 99;
+      transition: transform .45s cubic-bezier(.22, .61, .36, 1), background-color .35s ease, box-shadow .35s ease;
+      will-change: transform;
+    }
+
+    .header-area-2.is-stuck {
+      background-color: rgba(248, 248, 248, .88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 1px 0 rgba(0, 0, 0, .07);
+    }
+
+    /* on a phone the bar sits straight over the hero photo, where .88 let
+       the image smear through it; nearly opaque reads as a bar instead */
+    @media (max-width: 991px) {
+      .header-area-2.is-stuck {
+        background-color: rgba(250, 249, 247, .96);
+        box-shadow: 0 1px 0 rgba(0, 0, 0, .09);
+      }
+    }
+
+    .header-area-2.is-hidden {
+      transform: translateY(-105%);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .header-area-2 {
+        transition: none;
+      }
+    }
+
+    /* nav links: underline draws from the left, leaves to the right */
+    .header-area-2 .main-menu>ul>li>a {
+      position: relative;
+    }
+
+    .header-area-2 .main-menu>ul>li>a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 100%;
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform .45s cubic-bezier(.22, .61, .36, 1);
+    }
+
+    .header-area-2 .main-menu>ul>li>a:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    /* wordmark: the sub-line tracks open on hover */
+    .brand-wordmark .bw-sub {
+      transition: letter-spacing .5s cubic-bezier(.22, .61, .36, 1), opacity .4s ease;
+    }
+
+    .brand-wordmark:hover .bw-sub {
+      letter-spacing: .42em;
+      opacity: .8;
+    }
+
+    /* contact detail cards */
+    .interior-contact-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+
+    .interior-contact-cards .ic-card {
+      padding: 30px 28px;
+      border: 1px solid rgba(128, 128, 128, .28);
+      border-radius: 6px;
+    }
+
+    .interior-contact-cards .ic-card .ic-label {
+      display: block;
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      opacity: .6;
+      margin-bottom: 12px;
+    }
+
+    .interior-contact-cards .ic-card a,
+    .interior-contact-cards .ic-card p {
+      font-size: 19px;
+      line-height: 1.45;
+      margin: 0;
+      text-decoration: none;
+    }
+
+    /* ============================================================
+       MOBILE REFINEMENTS
+       The theme leaves .header-area-2 position:absolute (menu is gone
+       the moment you scroll), .actually-area at height:100vh, and the
+       testimonial row as a squeezed flexbox below 1200px. Everything
+       below fixes that and turns the flat stacked rows into horizontal
+       snap-scrollers, which suits an image-led interior page far better
+       than eight screens of vertical scrolling.
+       ============================================================ */
+
+    /* --- minimal hamburger trigger (mobile) --- */
+    .menu-icon-trigger {
+      display: none;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 5px;
+      width: 42px;
+      height: 42px;
+      padding: 0;
+      background: none;
+      border: 0;
+      color: inherit;
+    }
+
+    .menu-icon-trigger span {
+      display: block;
+      width: 20px;
+      height: 1.5px;
+      background: currentColor;
+      transition: width .35s cubic-bezier(.22, .61, .36, 1);
+    }
+
+    .menu-icon-trigger span:last-child {
+      width: 13px;
+    }
+
+    .menu-icon-trigger:active span:last-child,
+    .menu-icon-trigger:hover span:last-child {
+      width: 20px;
+    }
+
+    /* --- call button in the header (mobile) --- */
+    .header-call-btn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid currentColor;
+      color: inherit;
+      opacity: .85;
+      font-size: 14px;
+      text-decoration: none;
+      transition: opacity .3s ease;
+    }
+
+    .header-call-btn:active {
+      opacity: 1;
+    }
+
+    /* --- hero CTA row, mobile only --- */
+    .hero-mobile-cta {
+      display: none;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+
+    .hero-mobile-cta a {
+      flex: 1 1 auto;
+      min-width: 142px;
+      text-align: center;
+      padding: 16px 22px;
+      border-radius: 60px;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1;
+      text-decoration: none;
+      border: 1px solid currentColor;
+      transition: opacity .3s ease;
+    }
+
+    /* solid ink button rather than the theme's loud green */
+    .hero-mobile-cta .hm-primary {
+      background: #111111;
+      border-color: #111111;
+      color: #ffffff;
+    }
+
+    /* ---- projects grid ---- */
+    @media (min-width: 992px) {
+      .works-wrapper-2 {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 76px 30px;
+      }
+
+      /* the theme scatters cards with grid-column-start up to 4; on three
+         columns that would open a phantom fourth */
+      .works-wrapper-2>*:nth-child(n) {
+        grid-column-start: auto;
+      }
+
+      .works-wrapper-2>*:nth-child(3n+2) {
+        margin-top: 92px;
+      }
+
+      .works-wrapper-2>*:nth-child(3n+3) {
+        margin-top: 38px;
+      }
+
+      .works-wrapper-2 .work-box .thumb {
+        aspect-ratio: 3 / 2;
+        border-radius: 10px;
+      }
+
+      .works-wrapper-2 .work-box .thumb a {
+        display: block;
+        height: 100%;
+        transition: transform .7s cubic-bezier(.22, .61, .36, 1);
+      }
+
+      .works-wrapper-2 .work-box .thumb:hover a {
+        transform: scale(1.045);
+      }
+
+      .works-wrapper-2 .work-box .thumb img {
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .works-wrapper-2 .work-box .content {
+        margin-top: 18px;
+      }
+
+      .works-wrapper-2 .work-box .title {
+        font-size: 23px;
+      }
+    }
+
+    .cta-tile {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      aspect-ratio: 3 / 2;
+      padding: 30px 32px;
+      border-radius: 10px;
+      background: #111111;
+      color: #FCF7F3;
+      text-decoration: none;
+      transition: background-color .45s ease, transform .55s cubic-bezier(.22, .61, .36, 1);
+    }
+
+    /* the theme's global a:hover paints links --primary, which is ink:
+       without this the label turns black on a black tile */
+    .cta-tile:hover,
+    .cta-tile:focus-visible {
+      background: #1d1c1c;
+      color: #FCF7F3;
+      transform: translateY(-4px);
+    }
+
+    .cta-tile:hover .cta-tile__go,
+    .cta-tile:focus-visible .cta-tile__go {
+      opacity: 1;
+    }
+
+    .cta-tile__lead {
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      max-width: 15ch;
+    }
+
+    .cta-tile__go {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      opacity: .82;
+    }
+
+    .cta-tile__go svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.6;
+      transition: transform .45s cubic-bezier(.22, .61, .36, 1);
+    }
+
+    .cta-tile:hover .cta-tile__go svg {
+      transform: translateX(5px);
+    }
+
+    @media (max-width: 991px) {
+      .cta-tile {
+        aspect-ratio: 16 / 9;
+        padding: 26px;
+      }
+
+      .cta-tile__lead {
+        font-size: 19px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .cta-tile,
+      .cta-tile__go svg {
+        transition: none;
+      }
+
+      .cta-tile:hover {
+        transform: none;
+      }
+
+      .cta-tile:hover .cta-tile__go svg {
+        transform: none;
+      }
+    }
+
+    .works-wrapper-head .total-count a {
+      position: relative;
+    }
+
+    .works-wrapper-head .total-count a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -6px;
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .5s cubic-bezier(.22, .61, .36, 1);
+    }
+
+    .works-wrapper-head .total-count a:hover::after,
+    .works-wrapper-head .total-count a:focus-visible::after {
+      transform: scaleX(1);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .works-wrapper-2 .work-box .thumb a {
+        transition: none;
+      }
+
+      .works-wrapper-2 .work-box .thumb:hover a {
+        transform: none;
+      }
+    }
+
+    /* ---- the big name band ----
+       Theme tracking is -0.1em, which at 340px is -34px between letters:
+       fine for "Since 2015", but a studio name collides letter into
+       letter. Line-height 0.71 does the same to wrapped lines once the
+       name is long enough to break. */
+    .about-area-2 .section-content .year-since {
+      letter-spacing: -0.04em;
+    }
+
+    /* Below 1400px the theme hides .last-text, which would leave the band
+       reading just "AARAV". Both halves are kept and set naturally so the
+       name reads whole. */
+    @media (max-width: 1399px) {
+      .about-area-2 .section-content .year-since {
+        line-height: .92;
+      }
+
+      .about-area-2 .section-content .year-since .last-text {
+        display: inline;
+        width: auto;
+        text-align: left;
+      }
+    }
+
+    @media (max-width: 991px) {
+
+      .m-rise {
+        opacity: 0 !important;
+        transform: translateY(20px) !important;
+        transition: opacity .42s ease-out,
+          transform .52s cubic-bezier(.22, .61, .36, 1);
+      }
+
+      .m-rise.is-in {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+
+      .m-wipe {
+        opacity: 0 !important;
+        clip-path: inset(0 0 42% 0);
+        transform: scale(1.04) !important;
+        transition: opacity .45s ease, clip-path .72s cubic-bezier(.22, .61, .36, 1),
+          transform .9s cubic-bezier(.22, .61, .36, 1);
+      }
+
+      .m-wipe.is-in {
+        opacity: 1 !important;
+        clip-path: inset(0 0 0 0);
+        transform: none !important;
+      }
+
+      .works-wrapper-2 .work-box.m-rise {
+        transform: translateY(34px) scale(.97) !important;
+      }
+
+      .works-wrapper-2 .work-box.m-rise.is-in {
+        transform: none !important;
+      }
+
+      .m-band {
+        opacity: 0 !important;
+        transform: translateY(46px) !important;
+        clip-path: inset(0 0 100% 0);
+        transition: opacity .45s ease,
+          transform .78s cubic-bezier(.22, .61, .36, 1),
+          clip-path .78s cubic-bezier(.22, .61, .36, 1);
+      }
+
+      .m-band.is-in {
+        opacity: 1 !important;
+        transform: none !important;
+        clip-path: inset(0 0 0 0);
+      }
+
+      .services-wrapper-2>a.m-rise {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+
+      .services-wrapper-2 .service-box {
+        position: relative;
+        border-top-color: rgba(252, 247, 243, .1);
+      }
+
+      .services-wrapper-2 .service-box::before {
+        content: "";
+        position: absolute;
+        top: -1px;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: rgba(252, 247, 243, .55);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform .85s cubic-bezier(.22, .61, .36, 1);
+      }
+
+      .services-wrapper-2>a.is-in .service-box::before {
+        transform: scaleX(1);
+      }
+
+      .services-wrapper-2 .service-box .number,
+      .services-wrapper-2 .service-box .title,
+      .services-wrapper-2 .service-box .text {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity .5s ease-out,
+          transform .64s cubic-bezier(.22, .61, .36, 1);
+      }
+
+      .services-wrapper-2 .service-box .number {
+        transition-delay: .12s;
+      }
+
+      .services-wrapper-2 .service-box .title {
+        transition-delay: .22s;
+      }
+
+      .services-wrapper-2 .service-box .text {
+        transition-delay: .32s;
+      }
+
+      .services-wrapper-2>a.is-in .service-box .number,
+      .services-wrapper-2>a.is-in .service-box .title,
+      .services-wrapper-2>a.is-in .service-box .text {
+        opacity: 1;
+        transform: none;
+      }
+
+      .p-step {
+        --d: 0s !important;
+        border-top-color: rgba(17, 17, 17, .09);
+        overflow: visible;
+      }
+
+      .p-step::after {
+        content: "";
+        position: absolute;
+        top: -1px;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: rgba(17, 17, 17, .5);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform .85s cubic-bezier(.22, .61, .36, 1);
+      }
+
+      .p-step.is-on::after {
+        transform: scaleX(1);
+      }
+
+      .p-step::before {
+        transform: scale(0);
+        transition: transform .55s cubic-bezier(.34, 1.56, .64, 1),
+          background-color .5s ease;
+        transition-delay: .26s;
+      }
+
+      .p-step.is-on::before {
+        transform: scale(1.5);
+      }
+
+      .p-step__num {
+        opacity: 0 !important;
+        transform: translateX(-30px) !important;
+        transition: opacity .5s ease-out,
+          transform .72s cubic-bezier(.22, .61, .36, 1), color .5s ease !important;
+        transition-delay: .12s !important;
+      }
+
+      .p-step.is-on .p-step__num {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+
+      .p-step__title {
+        opacity: 1 !important;
+        transform: none !important;
+        clip-path: inset(0 0 108% 0);
+        transition: clip-path .78s cubic-bezier(.22, .61, .36, 1) !important;
+        transition-delay: .2s !important;
+      }
+
+      .p-step.is-on .p-step__title {
+        clip-path: inset(0 0 -14% 0);
+      }
+
+      .p-step__text {
+        opacity: 0 !important;
+        transform: translateY(20px) !important;
+        transition: opacity .55s ease-out,
+          transform .66s cubic-bezier(.22, .61, .36, 1) !important;
+        transition-delay: .36s !important;
+      }
+
+      .p-step.is-on .p-step__text {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+
+      @media (hover: none), (pointer: coarse), (max-width: 991px) {
+
+        .cb-cursor,
+        .cb-cursor-text {
+          display: none !important;
+        }
+
+        .works-wrapper-2 .work-box .thumb,
+        .works-wrapper-2 .work-box .thumb img,
+        .works-wrapper-2 .work-box .thumb a {
+          cursor: auto !important;
+        }
+      }
+
+      .m-arm,
+      .m-arm .m-line,
+      .m-arm .number,
+      .m-arm .title,
+      .m-arm .text,
+      .m-arm .service-box::before {
+        transition: none !important;
+      }
+
+      .m-lines .m-line {
+        opacity: 0 !important;
+        transform: translateY(18px) !important;
+        transition: opacity .45s ease-out,
+          transform .58s cubic-bezier(.22, .61, .36, 1);
+      }
+
+      .m-lines.is-in .m-line {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+
+      .m-cue {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 30px;
+        font-size: 10.5px;
+        letter-spacing: .24em;
+        text-transform: uppercase;
+        color: rgba(17, 17, 17, .45);
+      }
+
+      .m-cue i {
+        position: relative;
+        flex: 1;
+        height: 1px;
+        background: rgba(17, 17, 17, .16);
+        overflow: hidden;
+      }
+
+      .m-cue i::after {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 42%;
+        background: rgba(17, 17, 17, .6);
+        animation: mCue 2.1s cubic-bezier(.65, 0, .35, 1) infinite;
+      }
+
+      @keyframes mCue {
+        0% {
+          transform: translateX(-100%);
+        }
+
+        60%,
+        100% {
+          transform: translateX(240%);
+        }
+      }
+    }
+
+    @media (min-width: 992px) {
+      .m-cue {
+        display: none;
+      }
+    }
+
+    @media (max-width: 991px) and (prefers-reduced-motion: reduce) {
+
+      .m-rise,
+      .m-wipe,
+      .m-band,
+      .m-lines .m-line,
+      .works-wrapper-2 .work-box.m-rise,
+      .services-wrapper-2 .service-box .number,
+      .services-wrapper-2 .service-box .title,
+      .services-wrapper-2 .service-box .text {
+        opacity: 1 !important;
+        transform: none !important;
+        clip-path: none !important;
+        transition: none !important;
+        transition-delay: 0s !important;
+      }
+
+      .services-wrapper-2 .service-box::before {
+        transform: scaleX(1) !important;
+        transition: none !important;
+      }
+
+      .m-cue i::after {
+        animation: none;
+        width: 100%;
+      }
+    }
+
+    /* ---- FAQ toggle ----
+       The theme draws it as a "+" / "-" in the Font Awesome family, which
+       has no ASCII glyphs, so both fall back to the default font at two
+       different weights and sit off-centre from each other. Drawn instead,
+       so the vertical stroke closes as the answer opens. */
+    .faq-area-faq-page .accordion-button::after {
+      content: "";
+      flex: none;
+      width: 18px;
+      height: 18px;
+      background-image:
+        linear-gradient(currentColor, currentColor),
+        linear-gradient(currentColor, currentColor);
+      background-size: 18px 1.6px, 1.6px 18px;
+      background-position: center, center;
+      background-repeat: no-repeat;
+      opacity: .72;
+      transform: rotate(0deg);
+      transition: background-size .45s cubic-bezier(.22, .61, .36, 1),
+        transform .45s cubic-bezier(.22, .61, .36, 1), opacity .3s ease;
+    }
+
+    .faq-area-faq-page .accordion-button:hover::after {
+      opacity: 1;
+    }
+
+    .faq-area-faq-page .accordion-button:not(.collapsed)::after {
+      content: "";
+      background-size: 18px 1.6px, 1.6px 0;
+      transform: rotate(180deg);
+      opacity: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .faq-area-faq-page .accordion-button::after {
+        transition: none;
+      }
+    }
+
+    /* ---- process stepper ---- */
+    /* the theme puts 237px under .section-header; as an adjacent sibling it
+       collapses with the rail's own margin and wins, so the gap is set here
+       and the rail keeps none of its own */
+    .process-area .section-header {
+      margin-bottom: clamp(64px, 6.2vw, 124px);
+    }
+
+    .process-rail {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      margin-top: 0;
+    }
+
+    /* scoped through .process-rail so it outweighs the .is-armed entrance
+       rules below; without that, hovering step 05 waits out its 0.98s
+       entrance delay before the colour moves */
+    .process-rail .p-step:hover .p-step__num {
+      color: rgba(17, 17, 17, .78);
+      transition-delay: 0s;
+    }
+
+    .process-rail .p-step:hover::before {
+      transform: scale(1.9);
+      transition-delay: 0s;
+    }
+
+    /* arming must not itself animate: without this the copy visibly fades
+       out before it is ever meant to fade in */
+    .process-rail.no-anim .p-step,
+    .process-rail.no-anim .p-step::before,
+    .process-rail.no-anim .p-step__num,
+    .process-rail.no-anim .p-step__title,
+    .process-rail.no-anim .p-step__text {
+      transition: none !important;
+    }
+
+    .p-step {
+      position: relative;
+      padding: 34px 36px 0 0;
+      border-top: 1px solid rgba(17, 17, 17, .16);
+      transition: border-color .6s ease;
+    }
+
+    .p-step::before {
+      content: "";
+      position: absolute;
+      top: -4px;
+      left: 0;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(17, 17, 17, .22);
+      transition: background-color .6s ease, transform .6s cubic-bezier(.22, .61, .36, 1);
+    }
+
+    .p-step.is-on {
+      border-top-color: rgba(17, 17, 17, .42);
+    }
+
+    .p-step.is-on::before {
+      background: #111111;
+      transform: scale(1.5);
+    }
+
+    /* one knob per step; the line takes ~1.1s to cross, so each node fires
+       roughly as it reaches it, and the copy follows just behind */
+    .p-step {
+      --d: 0s;
+    }
+
+    .p-step:nth-child(2) {
+      --d: .22s;
+    }
+
+    .p-step:nth-child(3) {
+      --d: .44s;
+    }
+
+    .p-step:nth-child(4) {
+      --d: .66s;
+    }
+
+    .p-step:nth-child(5) {
+      --d: .88s;
+    }
+
+    .p-step,
+    .p-step::before {
+      transition-delay: var(--d);
+    }
+
+    /* the drawn line, one continuous rule across all five columns. Only
+       while they sit on a single row - below that the steps wrap and a
+       full-width line would cut through them. */
+    @media (min-width: 1200px) {
+      .process-rail {
+        position: relative;
+      }
+
+      .process-rail::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: rgba(17, 17, 17, .45);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 1.1s cubic-bezier(.33, .9, .35, 1);
+      }
+
+      .process-rail.is-live::after {
+        transform: scaleX(1);
+      }
+
+      .p-step.is-on {
+        border-top-color: rgba(17, 17, 17, .16);
+      }
+    }
+
+    /* armed by script, so with no JS the copy is simply visible */
+    .process-rail.is-armed .p-step__num,
+    .process-rail.is-armed .p-step__title,
+    .process-rail.is-armed .p-step__text {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+
+    .process-rail.is-armed .p-step__num {
+      transition: opacity .7s ease, transform .8s cubic-bezier(.22, .61, .36, 1), color .6s ease;
+      transition-delay: calc(var(--d) + .10s);
+    }
+
+    .process-rail.is-armed .p-step__title,
+    .process-rail.is-armed .p-step__text {
+      transition: opacity .7s ease, transform .8s cubic-bezier(.22, .61, .36, 1);
+    }
+
+    .process-rail.is-armed .p-step__title {
+      transition-delay: calc(var(--d) + .17s);
+    }
+
+    .process-rail.is-armed .p-step__text {
+      transition-delay: calc(var(--d) + .24s);
+    }
+
+    .process-rail.is-armed .p-step.is-on .p-step__num,
+    .process-rail.is-armed .p-step.is-on .p-step__title,
+    .process-rail.is-armed .p-step.is-on .p-step__text {
+      opacity: 1;
+      transform: none;
+    }
+
+    .p-step__num {
+      display: block;
+      font-size: clamp(30px, 3vw, 46px);
+      font-weight: 310;
+      line-height: 1;
+      letter-spacing: -0.05em;
+      color: rgba(17, 17, 17, .26);
+      transition: color .6s ease;
+    }
+
+    .p-step.is-on .p-step__num {
+      color: rgba(17, 17, 17, .6);
+    }
+
+    .p-step__title {
+      margin-top: 18px;
+      font-size: clamp(18px, 1.5vw, 22px);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .p-step__text {
+      margin-top: 9px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: rgba(17, 17, 17, .62);
+      max-width: 27ch;
+    }
+
+    @media (max-width: 1199px) {
+      .process-rail {
+        grid-template-columns: repeat(3, 1fr);
+        row-gap: 44px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .process-rail {
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: 36px;
+      }
+
+      .p-step {
+        padding-right: 20px;
+      }
+    }
+
+    @media (max-width: 479px) {
+      .process-rail {
+        grid-template-columns: 1fr;
+        row-gap: 30px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .p-step,
+      .p-step::before,
+      .p-step::after,
+      .p-step__num,
+      .p-step__title,
+      .p-step__text,
+      .process-rail::after {
+        transition: none !important;
+        transition-delay: 0s !important;
+      }
+
+      .process-rail.is-armed .p-step__num,
+      .process-rail.is-armed .p-step__title,
+      .process-rail.is-armed .p-step__text,
+      .p-step__num,
+      .p-step__title,
+      .p-step__text {
+        opacity: 1 !important;
+        transform: none !important;
+        clip-path: none !important;
+      }
+
+      .p-step::after,
+      .process-rail::after {
+        transform: scaleX(1) !important;
+      }
+
+      .p-step::before {
+        transform: scale(1.5) !important;
+      }
+    }
+
+    /* ---- service / process rows ---- */
+    @media (min-width: 992px) {
+      .services-wrapper-2 .service-box {
+        position: relative;
+      }
+
+      /* the divider draws in as the row arrives, then dissolves as the
+         row rounds off under the cursor */
+      .services-wrapper-2 .service-box::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -1px;
+        height: 1px;
+        background: rgba(252, 247, 243, .5);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 1.1s cubic-bezier(.22, .61, .36, 1), opacity .4s ease;
+      }
+
+      .services-wrapper-2 .service-box.is-ruled::before {
+        transform: scaleX(1);
+      }
+
+      .services-wrapper-2 .service-box-wrapper:hover .service-box::before {
+        opacity: 0;
+      }
+
+      /* every row is a link to the enquiry form and nothing said so */
+      /* bottom right, not centred: a three-line description would have
+         run into it. 52px clears the 120px corner radius the row takes
+         on hover, which is inset ~26px at this height. */
+      .services-wrapper-2 .service-box::after {
+        content: "→";
+        position: absolute;
+        right: 52px;
+        bottom: 44px;
+        font-size: 34px;
+        line-height: 1;
+        color: #FCF7F3;
+        opacity: 0;
+        transform: translateX(-16px);
+        transition: opacity .4s ease, transform .55s cubic-bezier(.22, .61, .36, 1);
+      }
+
+      .services-wrapper-2 .service-box-wrapper:hover .service-box::after {
+        opacity: .9;
+        transform: translateX(0);
+      }
+
+      /* the theme slides the number 60px; the title follows a little way
+         behind it so the row moves as one thing */
+      .services-wrapper-2 .service-box .title {
+        transition: transform .55s cubic-bezier(.22, .61, .36, 1);
+      }
+
+      .services-wrapper-2 .service-box-wrapper:hover .service-box .title {
+        transform: translateX(16px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .services-wrapper-2 .service-box::before {
+        transform: scaleX(1);
+        transition: none;
+      }
+
+      .services-wrapper-2 .service-box::after,
+      .services-wrapper-2 .service-box .title {
+        transition: none;
+      }
+
+      .services-wrapper-2 .service-box-wrapper:hover .service-box .title {
+        transform: none;
+      }
+    }
+
+    /* --- shared horizontal snap-scroller ---
+       The .h-scroll rules deliberately live INSIDE the mobile media query
+       below. Applied at every width they would flatten the desktop awards
+       layout and break the pinned GSAP testimonial animation. --- */
+
+    .swipe-hint {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+      font-size: 11px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      opacity: .5;
+    }
+
+    .swipe-hint::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: currentColor;
+      opacity: .35;
+    }
+
+    @media (max-width: 991px) {
+
+      /* ---- horizontal snap-scrollers (mobile only) ---- */
+      .h-scroll {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding-bottom: 20px;
+      }
+
+      .h-scroll::-webkit-scrollbar {
+        display: none;
+      }
+
+      .h-scroll>* {
+        scroll-snap-align: start;
+        flex: 0 0 auto;
+      }
+
+      /* theme's image trigger out, drawn hamburger in */
+      .header__navicon .side-toggle.dark,
+      .header__navicon .side-toggle.light {
+        display: none !important;
+      }
+
+      .menu-icon-trigger,
+      .header-call-btn {
+        display: flex;
+      }
+
+      .header__navicon {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      /* ---- hero ---- */
+      .hero-mobile-cta {
+        display: flex;
+      }
+
+      /* the rotating card is now the hero image on phones — showing the
+         static one underneath as well would mean two big photos stacked */
+      .hero-area-2 .hero-thumb {
+        display: none;
+      }
+
+      .hero-media {
+        aspect-ratio: 4 / 3;
+        margin-top: 26px;
+      }
+
+      .hero-media__cap {
+        padding: 16px 16px;
+      }
+
+      .hero-media__cap b {
+        font-size: 14.5px;
+      }
+
+      .hero-media__cap i {
+        font-size: 10px;
+      }
+
+      .brand-wordmark .bw-name {
+        font-size: 17px;
+      }
+
+      .brand-wordmark .bw-sub {
+        font-size: 8px;
+        letter-spacing: .26em;
+      }
+
+      .spec-marquee {
+        margin-top: 46px;
+        padding-block: 13px;
+      }
+
+      .spec-marquee__track span {
+        gap: 24px;
+        padding-right: 24px;
+      }
+
+      .hero-area-2 .section-content .text-wrapper .about-text {
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      /* ---- statement band ----
+         main.js pins this section with end:"bottom+=1500 top" and does NOT
+         gate it by width, so on a phone ScrollTrigger injects a ~1500px
+         pin-spacer — a whole blank screen. The pin is killed on mobile by
+         the script at the end of the document; these rules put the section
+         back to a normal block and cancel the gradient text-reveal, which
+         otherwise leaves half the headline stuck in its unread grey. */
+      .actually-area {
+        height: auto !important;
+        padding-block: 30px;
+      }
+
+      .actually-area .section-title {
+        max-width: 100%;
+        transform: none !important;
+        opacity: 1 !important;
+      }
+
+      /* ---- projects: tighter rhythm, softened corners ---- */
+      .works-wrapper-2 {
+        gap: 34px 16px !important;
+      }
+
+      .works-wrapper-2 .work-box .thumb img {
+        border-radius: 6px;
+      }
+
+      .works-wrapper-2 .work-box .content {
+        margin-top: 14px;
+      }
+
+      /* ---- services + why-choose-us + testimonials become swipe decks ---- */
+      .services-wrapper-2.h-scroll {
+        gap: 14px;
+      }
+
+      .services-wrapper-2.h-scroll>a {
+        flex: 0 0 74%;
+        max-width: 330px;
+      }
+
+      .services-wrapper-2.h-scroll .service-box-wrapper,
+      .services-wrapper-2.h-scroll .service-box {
+        height: 100%;
+      }
+
+      .award-area .awards-wrapper.h-scroll {
+        gap: 14px;
+        max-width: none;
+        margin-left: 0;
+      }
+
+      .award-area .awards-wrapper.h-scroll>.award-box {
+        flex: 0 0 68%;
+        max-width: 300px;
+      }
+
+      .moving-testimonial .testimonial-wrapper.h-scroll {
+        gap: 14px;
+        align-items: stretch;
+        justify-content: flex-start;
+        height: auto;
+      }
+
+      .moving-testimonial .testimonial-wrapper.h-scroll>.testimonial-item {
+        flex: 0 0 84%;
+        max-width: 420px;
+        transform: none !important;
+        rotate: none !important;
+      }
+
+      .testimonial-area .testimonial-wrapper-box {
+        padding-top: 40px;
+      }
+
+      .swipe-hint {
+        display: flex;
+      }
+
+      /* ---- contact ---- */
+      .interior-contact-cards {
+        gap: 12px;
+        margin-bottom: 44px;
+      }
+
+      .interior-contact-cards .ic-card {
+        padding: 20px 20px;
+      }
+
+      .interior-contact-cards .ic-card a,
+      .interior-contact-cards .ic-card p {
+        font-size: 17px;
+      }
+
+      /* ---- comfortable tap targets everywhere ---- */
+      .footer-nav-list li a,
+      .contact-meta .contact-item a {
+        display: inline-block;
+        padding-block: 4px;
+      }
+    }
+
+    @media (max-width: 575px) {
+      .interior-contact-cards {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .interior-contact-cards .ic-card:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .services-wrapper-2.h-scroll>a {
+        flex: 0 0 80%;
+      }
+
+      .award-area .awards-wrapper.h-scroll>.award-box {
+        flex: 0 0 76%;
+      }
+    }
+
+    /* respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .header-area-2 {
+        transition: none;
+      }
+
+      .h-scroll {
+        scroll-behavior: auto;
+      }
+    }
+  </style>
+
+</head>
+
+<!-- No `dark` class: the theme's dark mode is what that class turns on, and
+     every demo ships in the light theme. Hiding the switcher was not enough
+     on its own - the page still loaded dark and had to be toggled. -->
+
+<body class="body-wrapper body-creative-agency font-heading-sequelsans-romanbody">
+
+  <!-- Preloader -->
+  <div id="preloader">
+    <div id="container" class="container-preloader">
+      <div class="animation-preloader">
+        <div class="spinner"></div>
+
+      </div>
+      <div class="loader-section section-left"></div>
+      <div class="loader-section section-right"></div>
+    </div>
+  </div>
+
+  <!-- Sroll to top -->
+  <div class="progress-wrap">
+    <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+      <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"></path>
+    </svg>
+  </div>
+
+  <!-- side toggle start -->
+  <aside class="fix">
+    <div class="side-info">
+      <div class="side-info-content">
+        <div class="offset-widget offset-header">
+          <div class="offset-logo">
+            <a href="#top" class="brand-wordmark">
+              <span class="bw-name">Aarav Interiors</span>
+              <span class="bw-sub">Interior Design Studio</span>
+            </a>
+          </div>
+          <button id="side-info-close" class="side-info-close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="mobile-menu d-xl-none fix"></div>
+        <div class="offset-button">
+          <a href="#contact" class="rr-btn">
+            <span class="btn-wrap">
+              <span class="text-one">Contact Us</span>
+              <span class="text-two">Contact Us</span>
+            </span>
+          </a>
+        </div>
+        <div class="offset-widget-box">
+          <h2 class="title">Contact Us</h2>
+          <!-- ===== LEAD DATA: address / email / phone ===== -->
+          <div class="contact-meta">
+            <div class="contact-item" data-req="address">
+              <span class="icon"><i class="fa-solid fa-location-dot"></i></span>
+              <span class="text">Bopal, Ahmedabad, Gujarat</span>
+            </div>
+            <div class="contact-item" data-req="email">
+              <span class="icon"><i class="fa-solid fa-envelope"></i></span>
+              <span class="text"><a href="mailto:hello@aaravinteriors.in">hello@aaravinteriors.in</a></span>
+            </div>
+            <div class="contact-item" data-req="phone">
+              <span class="icon"><i class="fa-solid fa-phone"></i></span>
+              <span class="text"><a href="tel:+919876543210">+91 98765 43210</a></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="offcanvas-overlay"></div>
+  <!-- side toggle end -->
+
+  <!-- Header area start -->
+  <header class="header-area-2">
+    <div class="header-main">
+      <div class="container large">
+        <div class="header-area-2__inner">
+          <div class="header__logo">
+            <!-- ===== LEAD DATA: logo ===== -->
+            <a href="#top" class="brand-wordmark">
+              <span class="bw-name">Aarav Interiors</span>
+            </a>
+          </div>
+          <div class="header__nav pos-center">
+            <nav class="main-menu">
+              <ul>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#process">Process</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+              </ul>
+            </nav>
+          </div>
+          <div class="header__button">
+            <a href="#contact" class="rr-btn">
+              <span class="btn-wrap">
+                <span class="text-one">Contact Us</span>
+                <span class="text-two">Contact Us</span>
+              </span>
+            </a>
+          </div>
+          <div class="header__navicon">
+            <button class="side-toggle dark"><img src="assets/imgs/icon/icon-2.webp" alt=""></button>
+            <button class="side-toggle light"><img src="assets/imgs/icon/icon-light-2.webp" alt=""></button>
+            <a class="header-call-btn" data-req="phone" href="tel:+919876543210" aria-label="Call us"><i class="fa-solid fa-phone"></i></a>
+            <button class="side-toggle menu-icon-trigger" aria-label="Open menu"><span></span><span></span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- Header area end -->
+
+  <div class="has-smooth" id="has_smooth"></div>
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <div id="top">
+
+        <div class="body-bg">
+          <div class="container large">
+            <img src="assets/imgs/shape/shape-9.webp" alt="">
+            <img src="assets/imgs/shape/shape-9.webp" alt="">
+          </div>
+        </div>
+
+        <main>
+
+          <!-- hero area start  -->
+          <section class="hero-area-2">
+            <div class="container large">
+              <div class="hero-area-2-inner">
+                <div class="section-header">
+                  <div class="section-title-wrapper">
+                    <div class="title-wrapper">
+                      <!-- ===== LEAD DATA: hero headline ===== -->
+                      <h1 class="section-title font-sequelsans-romanbody char-anim" data-delay="0.45"
+                        data-direction="left">Spaces <br>
+                        Designed<img class="title-shape-1 fade-anim" data-delay="1.9" data-offset="100"
+                          data-direction="left" src="assets/imgs/shape/shape-7.webp" alt="img"> <br>
+                        <!-- ===== LEAD DATA: inline headline photo ===== -->
+                        <img class="title-video fade-anim" data-delay="1.9" data-offset="100" data-direction="right"
+                          src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&amp;fit=crop&amp;w=700&amp;q=80"
+                          alt="Interior detail">Around <br>
+                        You
+                      </h1>
+                    </div>
+                  </div>
+                </div>
+                <div class="section-content">
+                  <div class="text-wrapper">
+                    <!-- ===== LEAD DATA: hero sub-line (city / specialisation) ===== -->
+                    <p class="text info-text fade-anim" data-delay="2.15" data-offset="100" data-direction="right">
+                      Residential &amp; commercial <span>interior design</span>, end to end
+                    </p>
+
+                    <!-- ===== LEAD DATA: hero media — cross-fading recent work ===== -->
+                    <div class="hero-media" id="heroMedia">
+                      <div class="hero-media__stack">
+                        <img class="on"
+                          src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&amp;fit=crop&amp;w=1400&amp;q=80"
+                          alt="Modern 3BHK Residence" data-title="Modern 3BHK Residence">
+                        <img
+                          src="https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&amp;fit=crop&amp;w=1400&amp;q=80"
+                          alt="Luxury Modular Kitchen" data-title="Luxury Modular Kitchen"
+                          loading="lazy">
+                        <img
+                          src="https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&amp;fit=crop&amp;w=1400&amp;q=80"
+                          alt="Master Bedroom Suite" data-title="Master Bedroom Suite"
+                          loading="lazy">
+                        <img
+                          src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&amp;fit=crop&amp;w=1400&amp;q=80"
+                          alt="Open Living and Dining" data-title="Open Living &amp; Dining"
+                          loading="lazy">
+                      </div>
+                      <!-- Removed by the renderer when the lead has no video,
+                           so a demo never shows a control that does nothing. -->
+                      <button class="hero-media__play" id="heroPlay" type="button" aria-label="Play the studio video">
+                        <svg viewBox="0 0 18 20" aria-hidden="true">
+                          <path d="M18 10 0 20V0z" />
+                        </svg>
+                      </button>
+                      <div class="hero-media__cap">
+                        <span class="hero-media__meta">
+                          <b id="heroMediaTitle">Modern 3BHK Residence</b>
+                          <i id="heroMediaLoc"></i>
+                        </span>
+                        <span class="hero-media__dots" id="heroMediaDots"></span>
+                      </div>
+                    </div>
+                    <p class="text about-text text-invert">Layout, 3D design, materials and on-site execution —
+                      handled by one team from the first drawing to handover.</p>
+                    <!-- mobile-only CTA row: the header button is hidden on small screens -->
+                    <div class="hero-mobile-cta">
+                      <a href="#projects">View Projects</a>
+                      <a class="hm-primary" data-req="phone"
+                        href="https://wa.me/919876543210?text=Hi%20Aarav%20Interiors%2C%20I%27d%20like%20to%20discuss%20an%20interior%20project."
+                        target="_blank" rel="noopener">Contact Us</a>
+                    </div>
+                    <div class="m-cue" aria-hidden="true"><span>Scroll</span><i></i></div>
+                  </div>
+                  <div class="hero-thumb fade-anim parallax-view">
+                    <!-- ===== LEAD DATA: hero image ===== -->
+                    <img
+                      src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&amp;fit=crop&amp;w=1800&amp;q=80"
+                      alt="Interior project" data-speed="0.6">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- ===== LEAD DATA: specialities strip (duplicate list = seamless loop) ===== -->
+            <div class="spec-marquee">
+              <div class="spec-marquee__track">
+                <span>Residential Interiors</span><span>Modular Kitchens</span><span>Wardrobes &amp; Storage</span>
+                <span>Turnkey Execution</span><span>3D Visualisation</span><span>Commercial Interiors</span>
+                <span>Residential Interiors</span><span>Modular Kitchens</span><span>Wardrobes &amp; Storage</span>
+                <span>Turnkey Execution</span><span>3D Visualisation</span><span>Commercial Interiors</span>
+              </div>
+            </div>
+          </section>
+          <!-- hero area end  -->
+
+          <!-- about area start  -->
+          <section class="about-area-2" id="about">
+            <div class="container large">
+              <div class="about-area-2-inner section-spacing-top">
+                <div class="section-header">
+                  <div class="section-title-wrapper">
+                    <div class="title-wrapper">
+                      <!-- ===== LEAD DATA: about headline ===== -->
+                      <h2 class="section-title font-sequelsans-romanbody text-invert">Designing homes and
+                        workspaces that are
+                        built to be lived in</h2>
+                    </div>
+                  </div>
+                </div>
+                <div class="section-content section-spacing-top">
+                  <div class="year-wrapper">
+                    <!-- ===== LEAD DATA: studio name. The last span is what
+                         shrinks and parks in the corner, so the brand is what
+                         survives the animation. ===== -->
+                    <!-- ===== LEAD DATA: studio name, split. The last word
+                         goes in .last-text because that is the half GSAP
+                         shrinks and parks centred over the projects header.
+                         Keep .is-fading short - it is the half that gets
+                         overlapped when the other goes absolute. ===== -->
+                    <h2 class="year-since"><span class="is-fading"><span class="first-text">Aarav</span></span>
+                      <span class="last-text">Interiors</span>
+                    </h2>
+                  </div>
+                  <div class="text-wrapper">
+                    <!-- ===== LEAD DATA: about text ===== -->
+                    <p class="text">We take on apartments, villas and commercial spaces — balancing how a space looks
+                      with how it actually gets used every day. Every project runs the same path: space planning,
+                      material selection, 3D visualisation, then execution on site with one point of contact
+                      throughout.</p>
+                  </div>
+                  <div class="btn-wrapper">
+                    <a href="#projects" class="rr-btn">
+                      <span class="btn-wrap">
+                        <span class="text-one">See Our Work</span>
+                        <span class="text-two">See Our Work</span>
+                      </span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- about area end  -->
+
+          <!-- work area start  -->
+          <section class="work-area-2" id="projects">
+            <div class="container large">
+              <div class="work-area-2-inner section-spacing-top">
+                <div class="works-wrapper-box">
+                  <div class="works-wrapper-head">
+                    <div class="text-wrapper">
+                      <p class="text">Selected <span class="d-xxl-none">Projects</span></p>
+                    </div>
+                    <div class="total-count">
+                      <p class="text"><a href="#contact">start your project</a></p>
+                    </div>
+                  </div>
+                  <!-- ===== LEAD DATA: projects — duplicate or delete a .work-box to change the count ===== -->
+                  <div class="works-wrapper-2">
+                    <div class="work-box">
+                      <div class="thumb" data-cursor-text="View Project">
+                        <a href="#contact"><img
+                            src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&amp;fit=crop&amp;w=1200&amp;q=80"
+                            alt="Modern 3BHK Residence"></a>
+                      </div>
+                      <div class="content">
+                        <h3 class="title"><a href="#contact">Modern 3BHK Residence</a></h3>
+                        <div class="meta">
+                          <span class="date">3 BHK Apartment</span>
+                          <span class="tag">Complete Interior</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="work-box">
+                      <div class="thumb" data-cursor-text="View Project">
+                        <a href="#contact"><img
+                            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&amp;fit=crop&amp;w=1200&amp;q=80"
+                            alt="Contemporary Villa"></a>
+                      </div>
+                      <div class="content">
+                        <h3 class="title"><a href="#contact">Contemporary Villa</a></h3>
+                        <div class="meta">
+                          <span class="date">Villa</span>
+                          <span class="tag">Turnkey Interior</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="work-box">
+                      <div class="thumb" data-cursor-text="View Project">
+                        <a href="#contact"><img
+                            src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&amp;fit=crop&amp;w=1200&amp;q=80"
+                            alt="Minimalist Apartment"></a>
+                      </div>
+                      <div class="content">
+                        <h3 class="title"><a href="#contact">Minimalist Apartment</a></h3>
+                        <div class="meta">
+                          <span class="date">2 BHK Apartment</span>
+                          <span class="tag">Full Interior</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="work-box">
+                      <div class="thumb" data-cursor-text="View Project">
+                        <a href="#contact"><img
+                            src="https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&amp;fit=crop&amp;w=1200&amp;q=80"
+                            alt="Luxury Modular Kitchen"></a>
+                      </div>
+                      <div class="content">
+                        <h3 class="title"><a href="#contact">Luxury Modular Kitchen</a></h3>
+                        <div class="meta">
+                          <span class="date">Apartment</span>
+                          <span class="tag">Modular Kitchen</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="work-box">
+                      <div class="thumb" data-cursor-text="View Project">
+                        <a href="#contact"><img
+                            src="https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&amp;fit=crop&amp;w=1200&amp;q=80"
+                            alt="Master Bedroom Suite"></a>
+                      </div>
+                      <div class="content">
+                        <h3 class="title"><a href="#contact">Master Bedroom Suite</a></h3>
+                        <div class="meta">
+                          <span class="date">Villa</span>
+                          <span class="tag">Bedroom Design</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="work-box">
+                      <div class="thumb" data-cursor-text="View Project">
+                        <a href="#contact"><img
+                            src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&amp;fit=crop&amp;w=1200&amp;q=80"
+                            alt="Modern Office"></a>
+                      </div>
+                      <div class="content">
+                        <h3 class="title"><a href="#contact">Modern Office</a></h3>
+                        <div class="meta">
+                          <span class="date">Office</span>
+                          <span class="tag">Commercial Fit-out</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="work-box">
+                      <div class="thumb" data-cursor-text="View Project">
+                        <a href="#contact"><img
+                            src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&amp;fit=crop&amp;w=1200&amp;q=80"
+                            alt="Open Living and Dining"></a>
+                      </div>
+                      <div class="content">
+                        <h3 class="title"><a href="#contact">Open Living &amp; Dining</a></h3>
+                        <div class="meta">
+                          <span class="date">Apartment</span>
+                          <span class="tag">Living Room</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="work-box">
+                      <div class="thumb" data-cursor-text="View Project">
+                        <a href="#contact"><img
+                            src="https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?auto=format&amp;fit=crop&amp;w=1200&amp;q=80"
+                            alt="Wardrobe and Storage"></a>
+                      </div>
+                      <div class="content">
+                        <h3 class="title"><a href="#contact">Wardrobe &amp; Storage</a></h3>
+                        <div class="meta">
+                          <span class="date">Apartment</span>
+                          <span class="tag">Wardrobe &amp; Storage</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="work-box work-box--cta">
+                      <a class="cta-tile" href="#contact">
+                        <span class="cta-tile__lead">Have a space in mind?</span>
+                        <span class="cta-tile__go">Start your project
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 12h15M13 6l6 6-6 6" />
+                          </svg>
+                        </span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- work area end  -->
+
+          <!-- actually-area area start  -->
+          <section class="actually-area" id="services">
+            <div class="actually-area-inner section-spacing">
+              <div class="container">
+                <div class="bg-area"></div>
+                <h2 class="section-title font-sequelsans-romanbody t_line">
+                  What we <br>
+                  design for <br>
+                  your space</h2>
+              </div>
+            </div>
+          </section>
+          <!-- actually-area area end  -->
+
+          <!-- service area start  -->
+          <section class="service-area-2">
+            <div class="service-area-2-inner">
+              <div class="services-wrapper-box section-spacing-bottom">
+                <div class="container large">
+                  <!-- ===== LEAD DATA: services — pick the 5 that match the business type ===== -->
+                  <div class="services-wrapper-2">
+                    <a class="fade-anim" href="#contact">
+                      <div class="service-box-wrapper">
+                        <div class="service-box">
+                          <div class="number">
+                            001
+                          </div>
+                          <h3 class="title">Residential <br>
+                            Interiors</h3>
+                          <p class="text">Complete home interiors for apartments, villas and independent houses.</p>
+                        </div>
+                      </div>
+                    </a>
+                    <a class="fade-anim" href="#contact">
+                      <div class="service-box-wrapper">
+                        <div class="service-box">
+                          <div class="number">
+                            002
+                          </div>
+                          <h3 class="title">Modular <br>
+                            Kitchens</h3>
+                          <p class="text">Durable, well-planned kitchens built around the way you actually cook.</p>
+                        </div>
+                      </div>
+                    </a>
+                    <a class="fade-anim" href="#contact">
+                      <div class="service-box-wrapper">
+                        <div class="service-box">
+                          <div class="number">
+                            003
+                          </div>
+                          <h3 class="title">Wardrobes <br>
+                            &amp; Storage</h3>
+                          <p class="text">Built-in storage planned for the space you have, not the space you wish you
+                            had.</p>
+                        </div>
+                      </div>
+                    </a>
+                    <a class="fade-anim" href="#contact">
+                      <div class="service-box-wrapper">
+                        <div class="service-box">
+                          <div class="number">
+                            004
+                          </div>
+                          <h3 class="title">Commercial <br>
+                            &amp; Office</h3>
+                          <p class="text">Offices, clinics and retail spaces designed for daily use and long wear.</p>
+                        </div>
+                      </div>
+                    </a>
+                    <a class="fade-anim" href="#contact">
+                      <div class="service-box-wrapper">
+                        <div class="service-box">
+                          <div class="number">
+                            005
+                          </div>
+                          <h3 class="title">Turnkey <br>
+                            Execution</h3>
+                          <p class="text">Design, materials, fabrication and installation handled by one team.</p>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="service-content-wrapper section-spacing-top">
+              <div class="container large">
+                <div class="service-content">
+                  <div class="section-info-wrapper fade-anim" data-direction="left">
+                    <div class="thumb parallax-view">
+                      <img
+                        src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&amp;fit=crop&amp;w=1200&amp;q=80"
+                        alt="Interior detail" data-speed="0.7">
+                    </div>
+                    <div class="text-wrapper">
+                      <p class="text text-invert">Detail is where an interior holds up or starts to look tired —
+                        hinges, drawer runners, the line of a tile joint, how a door closes two years in. Those get
+                        specified in writing, not settled on site.</p>
+                      <p class="text text-invert">You sign off the plan and the costing before anything is ordered.</p>
+                    </div>
+                    <div class="btn-wrapper">
+                      <a href="#projects" class="rr-btn btn-border-white">
+                        <span class="btn-wrap">
+                          <span class="text-one">View All Projects</span>
+                          <span class="text-two">View All Projects</span>
+                        </span>
+                      </a>
+                    </div>
+                  </div>
+                  <div class="section-thumb-wrapper fade-anim" data-delay="0.45" data-direction="right">
+                    <div class="thumb parallax-view">
+                      <img
+                        src="https://images.unsplash.com/photo-1604709177225-055f99402ea3?auto=format&amp;fit=crop&amp;w=1200&amp;q=80"
+                        alt="Bathroom interior" data-speed="0.6">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- service area end  -->
+
+          <!-- process area start  -->
+          <section class="service-area-2 process-area" id="process">
+            <div class="container large">
+              <div class="section-header section-spacing-top">
+                <div class="section-title-wrapper">
+                  <div class="title-wrapper">
+                    <h2 class="section-title font-sequelsans-romanbody rr_title_anim">From concept
+                      to completion</h2>
+                  </div>
+                </div>
+              </div>
+              <div class="process-rail section-spacing-bottom" id="processRail">
+                <div class="p-step">
+                  <span class="p-step__num">01</span>
+                  <h3 class="p-step__title">Consultation</h3>
+                  <p class="p-step__text">We understand your space, lifestyle, timeline and budget.</p>
+                </div>
+                <div class="p-step">
+                  <span class="p-step__num">02</span>
+                  <h3 class="p-step__title">Planning</h3>
+                  <p class="p-step__text">Space planning, concept direction and material selection.</p>
+                </div>
+                <div class="p-step">
+                  <span class="p-step__num">03</span>
+                  <h3 class="p-step__title">Visualisation</h3>
+                  <p class="p-step__text">See the proposed space in full before anything is built.</p>
+                </div>
+                <div class="p-step">
+                  <span class="p-step__num">04</span>
+                  <h3 class="p-step__title">Execution</h3>
+                  <p class="p-step__text">Materials, fabrication and installation coordinated on site.</p>
+                </div>
+                <div class="p-step">
+                  <span class="p-step__num">05</span>
+                  <h3 class="p-step__title">Handover</h3>
+                  <p class="p-step__text">Final detailing, styling and a walkthrough of the finished space.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- process area end  -->
+
+          <!-- testimonial area start  -->
+          <!-- ===== LEAD DATA: testimonials — PLACEHOLDER COPY.
+               Replace with the business's real client quotes, or delete this
+               whole testimonial section if none are available. ===== -->
+          <section class="testimonial-area moving-testimonial">
+            <div class="container large">
+              <div class="testimonial-area-inner section-spacing-top">
+                <div class="section-header">
+                  <div class="section-title-wrapper">
+                    <div class="title-wrapper">
+                      <h2 class="section-title font-sequelsans-romanbody rr_title_anim">What our clients say
+                        after living in the
+                        spaces we designed.
+                      </h2>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="testimonial-wrapper-box section-spacing-bottom">
+              <div class="pin">
+                <div class="container full-hd">
+                  <div class="testimonial-wrapper h-scroll">
+                    <div class="testimonial-item t-card">
+                      <div class="content">
+
+                        <div class="text-wrapper">
+                          <p class="text">The design was almost exactly what we got at the end, which is what
+                            convinced us to go ahead. Storage was planned properly in every room and the site work
+                            finished close to the promised date.</p>
+                        </div>
+                        <div class="author">
+                          <div class="meta">
+                            <h3 class="name">3 BHK Apartment</h3>
+                          </div>
+                          <div class="icon">
+                            <img class="quote-icon" src="assets/imgs/icon/icon-3.webp" alt="Quote Icon">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="testimonial-item t-card light">
+                      <div class="content">
+
+                        <div class="text-wrapper">
+                          <p class="text">They worked around our budget instead of pushing us past it, and suggested
+                            material swaps that saved money without changing the look we wanted.</p>
+                        </div>
+                        <div class="author">
+                          <div class="meta">
+                            <h3 class="name">Villa</h3>
+                          </div>
+                          <div class="icon">
+                            <img class="quote-icon" src="assets/imgs/icon/icon-3-light.webp" alt="Quote Icon">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="testimonial-item t-card">
+                      <div class="content">
+
+                        <div class="text-wrapper">
+                          <p class="text">One point of contact for the whole project made a real difference. We never
+                            had to chase separate carpenters, electricians or vendors ourselves.</p>
+                        </div>
+                        <div class="author">
+                          <div class="meta">
+                            <h3 class="name">Office</h3>
+                          </div>
+                          <div class="icon">
+                            <img class="quote-icon" src="assets/imgs/icon/icon-3.webp" alt="Quote Icon">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- testimonial area end  -->
+
+
+          <!-- faq area start  -->
+          <section class="faq-area-faq-page">
+            <div class="container large">
+              <div class="faq-area-faq-page-inner section-spacing-top">
+                <div class="section-header fade-anim">
+                  <div class="section-title-wrapper">
+                    <div class="subtitle-wrapper">
+                      <span class="section-subtitle">FAQ</span>
+                    </div>
+                    <div class="title-wrapper">
+                      <h2 class="section-title font-sequelsans-romanbody">Questions we get
+                        asked before a
+                        project starts</h2>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-wrapper fade-anim">
+                  <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#faqOne" aria-expanded="true" aria-controls="faqOne">
+                          What types of interiors do you design?
+                        </button>
+                      </h2>
+                      <div id="faqOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                          Residential interiors — apartments, villas and independent homes — as well as commercial
+                          spaces such as offices, clinics and retail.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#faqTwo" aria-expanded="false" aria-controls="faqTwo">
+                          Do you provide turnkey interior services?
+                        </button>
+                      </h2>
+                      <div id="faqTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                          Yes. Design, material procurement, fabrication, installation and site coordination can all be
+                          handled together, so you deal with one team throughout the project.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#faqThree" aria-expanded="false" aria-controls="faqThree">
+                          Do you provide 3D designs before execution?
+                        </button>
+                      </h2>
+                      <div id="faqThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                          Yes. You see a 3D visualisation of the proposed space and can request changes before any work
+                          begins on site.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#faqFour" aria-expanded="false" aria-controls="faqFour">
+                          Do you handle modular kitchens and wardrobes?
+                        </button>
+                      </h2>
+                      <div id="faqFour" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                          Yes — modular kitchens, wardrobes and built-in storage are designed and executed either as
+                          part of a full-home project or as standalone work.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#faqFive" aria-expanded="false" aria-controls="faqFive">
+                          Which areas do you serve?
+                        </button>
+                      </h2>
+                      <div id="faqFive" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                          We work across the city and the surrounding areas. Send us your location on <a href="https://wa.me/919876543210?text=Hi%20Aarav%20Interiors%2C%20I%27d%20like%20to%20discuss%20an%20interior%20project." target="_blank" rel="noopener">WhatsApp</a> and
+                          we'll confirm availability straight away.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#faqSix" aria-expanded="false" aria-controls="faqSix">
+                          How do I start my interior project?
+                        </button>
+                      </h2>
+                      <div id="faqSix" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                          Send us your floor plan, or simply your location and requirement, on <a href="https://wa.me/919876543210?text=Hi%20Aarav%20Interiors%2C%20I%27d%20like%20to%20discuss%20an%20interior%20project." target="_blank" rel="noopener">WhatsApp</a>. We'll follow
+                          up with a consultation and an indicative scope.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- faq area end  -->
+
+          <!-- contact area start  -->
+          <section class="contact-area-contact-page" id="contact">
+            <div class="container large">
+              <div class="contact-area-contact-page-inner section-spacing-top">
+                <div class="section-header fade-anim">
+                  <div class="section-title-wrapper">
+                    <div class="subtitle-wrapper">
+                      <span class="section-subtitle">Contact</span>
+                    </div>
+                    <div class="title-wrapper">
+                      <h2 class="section-title font-sequelsans-romanbody">Let's design
+                        your space.</h2>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ===== LEAD DATA: phone / whatsapp / email / address ===== -->
+                <div class="interior-contact-cards fade-anim">
+                  <div class="ic-card" data-req="phone">
+                    <span class="ic-label">WhatsApp</span>
+                    <a href="https://wa.me/919876543210?text=Hi%20Aarav%20Interiors%2C%20I%27d%20like%20to%20discuss%20an%20interior%20project."
+                      target="_blank" rel="noopener">+91 98765 43210</a>
+                  </div>
+                  <div class="ic-card" data-req="phone">
+                    <span class="ic-label">Call</span>
+                    <a href="tel:+919876543210">+91 98765 43210</a>
+                  </div>
+                  <div class="ic-card" data-req="email">
+                    <span class="ic-label">Email</span>
+                    <a href="mailto:hello@aaravinteriors.in">hello@aaravinteriors.in</a>
+                  </div>
+                  <div class="ic-card" data-req="address">
+                    <span class="ic-label">Studio</span>
+                    <p>Bopal, Ahmedabad<br>Gujarat 380058</p>
+                  </div>
+                </div>
+
+                <div class="section-content-wrapper fade-anim">
+                  <div class="section-content">
+                    <div class="contact-mail">
+                      <p class="title">Start a project</p>
+                      <p class="text">Tell us about your space and we'll come back with a plan that fits your
+                        timeline and budget. <br>
+                        <a data-req="email" href="mailto:hello@aaravinteriors.in">hello@aaravinteriors.in</a>
+                      </p>
+                    </div>
+                    <div class="contact-social">
+                      <p class="title">Follow</p>
+                      <!-- ===== LEAD DATA: social profiles. No href by
+                           design - they would otherwise land the visitor on
+                           a bare instagram.com, away from the demo. Add the
+                           real profile URLs to make them live. ===== -->
+                      <div class="social-links">
+                        <a>Instagram</a>
+                        <a>Facebook</a>
+                        <a>Pinterest</a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="contact-wrap">
+                    <form id="enquiry__form" novalidate>
+                      <div class="contact-formwrap">
+                        <div class="contact-formfield">
+                          <input type="text" name="name" id="name" placeholder="Name*">
+                        </div>
+                        <div class="contact-formfield">
+                          <input type="text" name="phone" id="phone" placeholder="Phone / WhatsApp*">
+                        </div>
+                        <div class="contact-formfield">
+                          <input type="text" name="email" id="email" placeholder="Email">
+                        </div>
+                        <div class="contact-formfield">
+                          <input type="text" name="location" id="location" placeholder="Area / Locality*">
+                        </div>
+                        <div class="contact-formfield">
+                          <select name="property" id="property">
+                            <option value="0" disabled selected>Property type*</option>
+                            <option value="1">1 BHK</option>
+                            <option value="2">2 BHK</option>
+                            <option value="3">3 BHK</option>
+                            <option value="4">4 BHK / Villa</option>
+                            <option value="5">Office / Commercial</option>
+                            <option value="6">Kitchen only</option>
+                          </select>
+                        </div>
+                        <div class="contact-formfield">
+                          <select name="scope" id="scope">
+                            <option value="0" disabled selected>Scope*</option>
+                            <option value="1">Full home interior</option>
+                            <option value="2">Modular kitchen</option>
+                            <option value="3">Wardrobes &amp; storage</option>
+                            <option value="4">Single room</option>
+                            <option value="5">Not sure yet</option>
+                          </select>
+                        </div>
+                        <div class="contact-formfield message">
+                          <input type="text" name="message" id="message" placeholder="Tell us about your space">
+                        </div>
+                      </div>
+                      <div class="submit-btn">
+                        <button type="button" class="rr-btn">
+                          <span class="btn-wrap">
+                            <span class="text-one">Book a Consultation</span>
+                            <span class="text-two">Book a Consultation</span>
+                          </span>
+                        </button>
+                      </div>
+                      <div id="response-message"></div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- contact area end  -->
+
+          <!-- cta area start  -->
+          <section class="cta-area-2">
+            <div class="cta-area-2-inner">
+              <div class="section-header">
+                <div class="section-title-wrapper">
+                  <div class="title-wrapper fade-anim">
+                    <h2 class="section-title font-sequelsans-romanbody"><a
+                        href="https://wa.me/919876543210?text=Hi%20Aarav%20Interiors%2C%20I%27d%20like%20to%20discuss%20an%20interior%20project."
+                        target="_blank" rel="noopener">Let's design your space
+                        <span class="line"></span>
+                        Let's design
+                        your space <span class="line"></span> Let's design your space <span class="line"></span> Let's
+                        design
+                        your space <span class="line"></span> Let's design your space</a></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- cta area end  -->
+
+        </main>
+
+        <!-- footer area start  -->
+        <footer class="footer-area-2">
+          <div class="container large">
+            <div class="footer-widget-wrapper-box">
+              <div class="footer-widget-wrapper">
+                <!-- ===== LEAD DATA: company name / phone / email / address ===== -->
+                <div class="footer-widget-box">
+                  <h2 class="title">Aarav Interiors</h2>
+                  <ul class="footer-nav-list">
+                    <li data-req="phone"><a href="tel:+919876543210">+91 98765 43210</a></li>
+                    <li data-req="email"><a href="mailto:hello@aaravinteriors.in">hello@aaravinteriors.in</a></li>
+                    <li data-req="address"><a href="#contact">Bopal, Ahmedabad</a></li>
+                  </ul>
+                </div>
+                <div class="footer-widget-box">
+                  <h2 class="title">Explore</h2>
+                  <ul class="footer-nav-list">
+                    <li><a href="#projects">Projects</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#process">Process</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                  </ul>
+                </div>
+                <div class="footer-widget-box">
+                  <h2 class="title">Services</h2>
+                  <ul class="footer-nav-list">
+                    <li><a href="#services">Residential Interiors</a></li>
+                    <li><a href="#services">Modular Kitchens</a></li>
+                    <li><a href="#services">Wardrobes &amp; Storage</a></li>
+                    <li><a href="#services">Commercial Interiors</a></li>
+                    <li><a href="#services">Turnkey Execution</a></li>
+                  </ul>
+                </div>
+                <div class="footer-widget-box">
+                  <h2 class="title">Spaces</h2>
+                  <ul class="footer-nav-list">
+                    <li><a href="#contact">Apartments</a></li>
+                    <li><a href="#contact">Villas</a></li>
+                    <li><a href="#contact">Bungalows</a></li>
+                    <li><a href="#contact">Offices</a></li>
+                    <li><a href="#contact">Retail</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="copyright-area">
+            <div class="copyright-area-inner">
+              <div class="copyright-text">
+                <p class="text">© 2026 Aarav Interiors. All rights reserved</p>
+              </div>
+            </div>
+          </div>
+        </footer>
+        <!-- footer area end  -->
+
+      </div>
+    </div>
+  </div>
+
+  <div class="vbox" id="vbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Studio video">
+    <button class="vbox__close" id="vboxClose" type="button" aria-label="Close video">
+      <i class="fas fa-times" aria-hidden="true"></i>
+    </button>
+    <div class="vbox__frame">
+      <!-- src is set on open and cleared on close: clearing it is what
+           actually stops playback, hiding the frame does not -->
+      <iframe id="vboxFrame" title="Studio video" allow="autoplay; encrypted-media; picture-in-picture"
+        allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <div id="theme-toggle" class="switcher-button" title="Toggle Dark/Light Mode">
+    <div class="switcher-button-inner">
+      <i class="fas fa-sun icon-light"></i>
+      <i class="fas fa-moon icon-dark"></i>
+    </div>
+  </div>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/jquery-3.7.1.min.js"></script>
+  <script src="assets/vendor/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/jquery.magnific-popup.min.js"></script>
+  <script src="assets/vendor/swiper-bundle.min.js"></script>
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script src="assets/vendor/ScrollTrigger.min.js"></script>
+  <script src="assets/vendor/ScrollSmoother.min.js"></script>
+  <script src="assets/vendor/ScrollToPlugin.min.js"></script>
+  <script src="assets/vendor/SplitText.min.js"></script>
+  <script src="assets/vendor/TextPlugin.js"></script>
+  <script src="assets/vendor/customEase.js"></script>
+  <script src="assets/vendor/Flip.min.js"></script>
+  <script src="assets/vendor/jquery.meanmenu.min.js"></script>
+  <script src="assets/vendor/backToTop.js"></script>
+  <script src="assets/vendor/matter.js"></script>
+  <script src="assets/vendor/throwable.js"></script>
+  <script src="assets/js/magiccursor.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/main.js"></script>
+
+  <!-- ============================================================
+       HEADER BEHAVIOUR
+       The theme's header is position:absolute, so it scrolls away at the
+       top of the page and never comes back. It is fixed at every width
+       instead: a blurred background once you leave the hero, hidden while
+       you scroll down, back the moment you scroll up.
+       ScrollSmoother keeps native body scrolling and only transforms
+       #smooth-content — and the header sits outside that wrapper — so
+       reading window.scrollY is correct on desktop as well as on a phone.
+       ============================================================ -->
+  <script>
+    (function () {
+      var hdr = document.querySelector('.header-area-2');
+      if (!hdr) return;
+
+      var last = 0, ticking = false;
+
+      function scrollY() {
+        return window.scrollY || document.documentElement.scrollTop || 0;
+      }
+
+      function update() {
+        ticking = false;
+        var y = scrollY();
+        hdr.classList.toggle('is-stuck', y > 60);
+        // ignore jitter, and never hide near the top of the page
+        if (Math.abs(y - last) > 8) {
+          hdr.classList.toggle('is-hidden', y > last && y > 240);
+          last = y;
+        }
+      }
+
+      function onScroll() {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+      }
+
+      addEventListener('scroll', onScroll, { passive: true });
+      addEventListener('resize', update, { passive: true });
+
+      // opening the offcanvas menu must always reveal the header
+      document.addEventListener('click', function (e) {
+        if (e.target.closest('.side-toggle')) hdr.classList.remove('is-hidden');
+      });
+
+      update();
+    })();
+  </script>
+
+  <!-- ============================================================
+       STATEMENT BAND — RETUNED ZOOM TRANSITION
+       The zoom-through into the next section is worth keeping, but the
+       theme's own version (main.js) pins for "bottom+=1500 top" with no
+       width guard: the scrollbar feels stuck for ~1500px on desktop and
+       on a phone it just leaves a blank screen.
+       So the theme's trigger is killed and rebuilt here with a much
+       shorter travel, and only on screens wide enough to enjoy it.
+       Tune SCROLL_LEN (how long the pin lasts) and ZOOM below.
+       ============================================================ -->
+  <script>
+    (function () {
+      var SCROLL_LEN = 700;   // px of scroll the pin holds for (was ~1500)
+      var ZOOM = 14;          // how far the headline scales up
+
+      function retuneStatementBand() {
+        if (!window.ScrollTrigger || !window.gsap) return;
+
+        var el = document.querySelector('.actually-area');
+        if (!el || el.dataset.retuned) return;
+        var title = el.querySelector('.section-title');
+        if (!title) return;
+
+        // 1. remove the theme's pin and anything it wrote inline
+        ScrollTrigger.getAll().forEach(function (st) {
+          if (st.trigger && (st.trigger === el || el.contains(st.trigger))) st.kill(true);
+        });
+        gsap.set(el, { clearProps: 'all' });
+        gsap.set(el.querySelectorAll('.section-title, .t_line, .t_line > div'), { clearProps: 'all' });
+        el.dataset.retuned = '1';
+
+        // the kill above took the theme's line-by-line ink-in with it;
+        // rebuilt here so it finishes before the pin engages
+        var lines = el.querySelectorAll('.t_line > div');
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          Array.prototype.forEach.call(lines, function (ln) {
+            gsap.to(ln, {
+              backgroundPositionX: 0,
+              ease: 'none',
+              scrollTrigger: { trigger: ln, scrub: 0.6, start: 'top 88%', end: 'top 42%' }
+            });
+          });
+        }
+
+        // 2. rebuild it, desktop only, and never for reduced-motion visitors
+        var wideEnough = window.matchMedia('(min-width: 992px)').matches;
+        var motionOK = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (wideEnough && motionOK) {
+          var tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: el,
+              start: 'top top',
+              end: '+=' + SCROLL_LEN,
+              pin: true,
+              scrub: 0.6,
+              anticipatePin: 1,
+              invalidateOnRefresh: true
+            }
+          });
+          tl.to(title, { scale: ZOOM, opacity: 0, ease: 'power2.in', duration: 1 });
+          tl.to(el, { backgroundColor: '#111111', duration: 0.45 }, '-=0.45');
+        }
+
+        ScrollTrigger.refresh();
+      }
+
+      if (document.readyState === 'complete') setTimeout(retuneStatementBand, 150);
+      else addEventListener('load', function () { setTimeout(retuneStatementBand, 150); });
+    })();
+  </script>
+
+  <!-- ============================================================
+       IMAGE REVEAL
+       Each photo fades and settles from a slight scale once it has
+       actually decoded, instead of snapping in line by line. A safety
+       timer marks anything still pending after 3s so a slow or failed
+       image can never be left invisible.
+       ============================================================ -->
+  <script>
+    (function () {
+      var imgs = document.querySelectorAll(
+        '.hero-thumb img, .works-wrapper-2 .work-box .thumb img, .service-content .thumb img'
+      );
+      if (!imgs.length) { document.documentElement.classList.remove('js-imgload'); return; }
+
+      function reveal(img) { img.classList.add('is-loaded'); }
+
+      Array.prototype.forEach.call(imgs, function (img) {
+        if (img.complete && img.naturalWidth) { reveal(img); return; }
+        img.addEventListener('load', function () { reveal(img); }, { once: true });
+        img.addEventListener('error', function () { reveal(img); }, { once: true });
+      });
+
+      // failsafe: never leave a photo hidden
+      setTimeout(function () {
+        Array.prototype.forEach.call(imgs, reveal);
+      }, 3000);
+    })();
+  </script>
+
+  <!-- ============================================================
+       HERO MEDIA ROTATION
+       Cross-fades the recent-work card and keeps its caption and tick
+       marks in sync. Pauses while the tab is hidden, and stands down
+       entirely if the visitor prefers reduced motion.
+       ============================================================ -->
+  <script>
+    (function () {
+      var box = document.getElementById('heroMedia');
+      if (!box) return;
+
+      var slides = box.querySelectorAll('.hero-media__stack img');
+      var dotBox = document.getElementById('heroMediaDots');
+      var titleEl = document.getElementById('heroMediaTitle');
+      var locEl = document.getElementById('heroMediaLoc');
+      if (slides.length < 2) return;
+
+      // ===== LEAD DATA: city shown after the locality =====
+      var CITY = '';
+      var DWELL = 4200;
+
+      var dots = [];
+      for (var i = 0; i < slides.length; i++) {
+        var d = document.createElement('span');
+        if (i === 0) d.className = 'on';
+        dotBox.appendChild(d);
+        dots.push(d);
+      }
+
+      var metaEl = box.querySelector('.hero-media__meta');
+      var cur = 0, timer = null, capTimer = null;
+
+      function setCaption(img) {
+        if (titleEl) titleEl.textContent = img.dataset.title || '';
+        if (locEl) locEl.textContent = (img.dataset.loc ? img.dataset.loc + ', ' : '') + CITY;
+      }
+
+      // held to the midpoint of the 1.5s crossfade, so the caption never
+      // names a photo that is not on screen yet
+      function swapCaption(img) {
+        if (!metaEl) { setCaption(img); return; }
+        clearTimeout(capTimer);
+        metaEl.classList.add('is-swapping');
+        capTimer = setTimeout(function () {
+          setCaption(img);
+          metaEl.classList.remove('is-swapping');
+        }, 420);
+      }
+
+      function show(n) {
+        slides[cur].classList.remove('on');
+        dots[cur].classList.remove('on');
+        cur = n;
+        var img = slides[cur];
+        // restart the push-in animation on the incoming image
+        img.style.animation = 'none';
+        void img.offsetWidth;
+        img.style.animation = '';
+        img.classList.add('on');
+        dots[cur].classList.add('on');
+        swapCaption(img);
+      }
+
+      function tick() { show((cur + 1) % slides.length); }
+
+      function start() {
+        if (timer) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        timer = setInterval(tick, DWELL);
+      }
+
+      function stop() { clearInterval(timer); timer = null; }
+
+      document.addEventListener('visibilitychange', function () {
+        document.hidden ? stop() : start();
+      });
+
+      /* The video lightbox holds the rotation while it is open, so the
+         card is not quietly changing behind the overlay. Events rather
+         than a shared global keep the two scripts independent. */
+      document.addEventListener('hero:hold', stop);
+      document.addEventListener('hero:release', function () {
+        if (!document.hidden) start();
+      });
+
+      start();
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var rows = document.querySelectorAll('.services-wrapper-2 .service-box');
+      var rail = document.querySelector('#processRail');
+      var steps = rail ? rail.querySelectorAll('.p-step') : [];
+
+      var ruleRow = function (el) { el.classList.add('is-ruled'); };
+      // the whole rail lights at once; the per-step transition-delays in CSS
+      // are what turn that into a left-to-right cascade
+      var lightRail = function () {
+        if (rail) rail.classList.add('is-live');
+        Array.prototype.forEach.call(steps, function (s) { s.classList.add('is-on'); });
+      };
+
+      if (!('IntersectionObserver' in window) ||
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        Array.prototype.forEach.call(rows, ruleRow);
+        lightRail();
+        return;
+      }
+
+      // only hide the copy once we know we can bring it back, and hide it
+      // instantly - a transitioned fade-out here would be visible
+      if (rail) {
+        rail.classList.add('no-anim', 'is-armed');
+        void rail.offsetWidth;
+        rail.classList.remove('no-anim');
+      }
+
+      if (rows.length) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (!e.isIntersecting) return;
+            ruleRow(e.target);
+            io.unobserve(e.target);
+          });
+        }, { rootMargin: '0px 0px -18% 0px' });
+        Array.prototype.forEach.call(rows, function (r) { io.observe(r); });
+      }
+
+      if (rail) {
+        if (window.matchMedia('(max-width: 991px)').matches) {
+          var ioStep = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+              e.target.classList.toggle('is-on', e.isIntersecting);
+            });
+          }, { rootMargin: '0px 0px -8% 0px', threshold: 0 });
+          Array.prototype.forEach.call(steps, function (s) { ioStep.observe(s); });
+        } else {
+          var ioRail = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+              if (!e.isIntersecting) return;
+              lightRail();
+              ioRail.disconnect();
+            });
+          }, { rootMargin: '0px 0px -22% 0px' });
+          ioRail.observe(rail);
+        }
+      }
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var MQ = window.matchMedia('(max-width: 991px)');
+      var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (!MQ.matches) return;
+
+      function run() {
+        var hasGsap = window.gsap && window.ScrollTrigger;
+
+        if (hasGsap) {
+          ScrollTrigger.getAll().forEach(function (st) {
+            var t = st.trigger;
+            if (!t || !t.classList) return;
+            if (t.classList.contains('works-wrapper-2')) st.kill(true);
+          });
+          gsap.set('.works-wrapper-2 .work-box', { clearProps: 'all' });
+
+          var lines = document.querySelectorAll('.text-invert > div, .t_line > div');
+          ScrollTrigger.getAll().forEach(function (st) {
+            var t = st.trigger;
+            if (t && t.parentElement &&
+              (t.parentElement.classList.contains('text-invert') ||
+                t.parentElement.classList.contains('t_line'))) st.kill(false);
+          });
+          if (!REDUCED.matches) {
+            Array.prototype.forEach.call(lines, function (ln) {
+              gsap.set(ln, { backgroundPositionX: '100%' });
+              gsap.to(ln, {
+                backgroundPositionX: '0%',
+                ease: 'none',
+                duration: .7,
+                scrollTrigger: { trigger: ln, start: 'top 97%', toggleActions: 'play none none none' }
+              });
+            });
+          } else {
+            Array.prototype.forEach.call(lines, function (ln) {
+              gsap.set(ln, { backgroundPositionX: '0%' });
+            });
+          }
+        }
+
+        var groups = [
+          ['.about-area-2 .year-wrapper', 'm-band', 0],
+          ['.about-area-2 .section-content .btn-wrapper', 'm-rise', 180],
+          ['.works-wrapper-head .text-wrapper', 'm-rise', 0],
+          ['.works-wrapper-head .total-count', 'm-rise', 80],
+          ['.hero-area-2 .hero-mobile-cta', 'm-rise', 0],
+          ['.services-wrapper-2 > a', 'm-rise', 0],
+          ['.works-wrapper-2 .work-box', 'm-rise', 45],
+          ['.interior-contact-cards .ic-card', 'm-rise', 50],
+          ['.faq-area-faq-page .accordion-item', 'm-rise', 35],
+          ['.footer-widget-wrapper .footer-widget-box', 'm-rise', 45],
+          ['.testimonial-item', 'm-rise', 45],
+          ['.service-content-wrapper .thumb', 'm-wipe', 0],
+          ['.hero-area-2 .hero-media', 'm-wipe', 0]
+        ];
+
+        var seen = [];
+        groups.forEach(function (g) {
+          var els = document.querySelectorAll(g[0]);
+          Array.prototype.forEach.call(els, function (el, i) {
+            if (seen.indexOf(el) > -1) return;
+            seen.push(el);
+            el.classList.add(g[1]);
+            el.dataset.mrDelay = els.length > 1 ? (i % 3) * g[2] : g[2];
+          });
+        });
+
+        var lineHosts = document.querySelectorAll(
+          '.about-area-2 .section-content .text-wrapper .text, .service-content-wrapper .section-info-wrapper .btn-wrapper'
+        );
+        Array.prototype.forEach.call(lineHosts, function (el) {
+          if (seen.indexOf(el) > -1) return;
+          var lines = null;
+          if (window.SplitText && el.classList.contains('text')) {
+            try { lines = new SplitText(el, { type: 'lines' }).lines; } catch (err) { lines = null; }
+          }
+          if (lines && lines.length) {
+            lines.forEach(function (ln, i) {
+              ln.classList.add('m-line');
+              ln.style.transitionDelay = (i * 70) + 'ms';
+            });
+            el.classList.add('m-lines');
+          } else {
+            el.classList.add('m-rise');
+          }
+          el.dataset.mrDelay = 0;
+          seen.push(el);
+        });
+
+        if (hasGsap) {
+          var sideFades = document.querySelectorAll(
+            '.fade-anim[data-direction="left"], .fade-anim[data-direction="right"]'
+          );
+          Array.prototype.forEach.call(sideFades, function (el) {
+            if (seen.indexOf(el) > -1) return;
+            ScrollTrigger.getAll().forEach(function (st) { if (st.trigger === el) st.kill(false); });
+            gsap.set(el, { clearProps: 'all' });
+            el.classList.add('m-rise');
+            el.dataset.mrDelay = 0;
+            seen.push(el);
+          });
+        }
+
+        if (!seen.length) return;
+
+        var showAll = function () {
+          seen.forEach(function (el) { el.classList.add('is-in'); });
+        };
+
+        if (!('IntersectionObserver' in window) || REDUCED.matches) { showAll(); return; }
+
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            var el = e.target;
+            if (e.isIntersecting) {
+              var d = parseInt(el.dataset.mrDelay || 0, 10);
+              if (el._mrT) clearTimeout(el._mrT);
+              if (d) el._mrT = setTimeout(function () { el.classList.add('is-in'); }, d);
+              else el.classList.add('is-in');
+            } else {
+              if (el._mrT) clearTimeout(el._mrT);
+              el.classList.remove('is-in');
+            }
+          });
+        }, { rootMargin: '0px 0px 10% 0px', threshold: 0 });
+
+        seen.forEach(function (el) { el.classList.add('m-arm'); });
+        void document.body.offsetWidth;
+        seen.forEach(function (el) { el.classList.remove('m-arm'); });
+
+        var onScreen = seen.filter(function (el) {
+          var r = el.getBoundingClientRect();
+          return r.top < window.innerHeight && r.bottom > 0;
+        });
+
+        onScreen.sort(function (x, y) {
+          return x.getBoundingClientRect().top - y.getBoundingClientRect().top;
+        });
+
+        void document.body.offsetWidth;
+
+        setTimeout(function () {
+          onScreen.forEach(function (el, i) {
+            setTimeout(function () { el.classList.add('is-in'); }, i * 110);
+          });
+          setTimeout(function () {
+            seen.forEach(function (el) { io.observe(el); });
+          }, 160 + onScreen.length * 110);
+        }, 60);
+
+        setTimeout(function () {
+          seen.forEach(function (el) {
+            var r = el.getBoundingClientRect();
+            if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('is-in');
+          });
+        }, 2600);
+      }
+
+      if (document.readyState === 'complete') setTimeout(run, 260);
+      else addEventListener('load', function () { setTimeout(run, 260); });
+    })();
+  </script>
+
+  <script>
+    (function () {
+      function inkAboveFold() {
+        if (!window.gsap || !window.ScrollTrigger) return;
+        var vh = window.innerHeight;
+        ScrollTrigger.getAll().forEach(function (st) {
+          var t = st.trigger;
+          if (!t || !t.parentElement) return;
+          var p = t.parentElement.classList;
+          if (!p.contains('text-invert') && !p.contains('t_line')) return;
+          var r = t.getBoundingClientRect();
+          if (r.top < vh * 0.94 && r.bottom > 0) {
+            st.kill(false);
+            gsap.set(t, { backgroundPositionX: '0%' });
+          }
+        });
+      }
+      if (document.readyState === 'complete') setTimeout(inkAboveFold, 420);
+      else addEventListener('load', function () { setTimeout(inkAboveFold, 420); });
+    })();
+  </script>
+
+  <!-- ============================================================
+       HERO VIDEO LIGHTBOX
+       Opens the studio video over the page. The iframe src is set on
+       open and cleared on close, which is what stops playback; the
+       smooth-scroller and the card rotation are both held meanwhile.
+       ============================================================ -->
+  <script>
+    (function () {
+      var play = document.getElementById('heroPlay');
+      var card = document.getElementById('heroMedia');
+      var box = document.getElementById('vbox');
+      var frame = document.getElementById('vboxFrame');
+      var shut = document.getElementById('vboxClose');
+      if (!play || !box || !frame) return;
+
+      // ===== LEAD DATA: YouTube id for the studio video =====
+      // Empty string = no video, and the control removes itself.
+      var VIDEO = 'XHOmBV4js_E';
+
+      if (!VIDEO) { play.remove(); return; }
+
+      function smoother() {
+        return (window.ScrollSmoother && ScrollSmoother.get) ? ScrollSmoother.get() : null;
+      }
+
+      function open() {
+        frame.src = 'https://www.youtube-nocookie.com/embed/' + VIDEO + '?autoplay=1&rel=0';
+        box.classList.add('is-on');
+        box.setAttribute('aria-hidden', 'false');
+        if (card) card.classList.add('is-held');
+        document.dispatchEvent(new CustomEvent('hero:hold'));
+        document.body.style.overflow = 'hidden';
+        var sm = smoother();
+        if (sm) sm.paused(true);
+        if (shut) shut.focus();
+      }
+
+      function close() {
+        box.classList.remove('is-on');
+        box.setAttribute('aria-hidden', 'true');
+        frame.src = '';
+        if (card) card.classList.remove('is-held');
+        document.dispatchEvent(new CustomEvent('hero:release'));
+        document.body.style.overflow = '';
+        var sm = smoother();
+        if (sm) sm.paused(false);
+        play.focus();
+      }
+
+      play.addEventListener('click', open);
+      if (shut) shut.addEventListener('click', close);
+      // click the backdrop, not the player
+      box.addEventListener('click', function (e) { if (e.target === box) close(); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && box.classList.contains('is-on')) close();
+      });
+    })();
+  </script>
+
+</body>
+
+</html>

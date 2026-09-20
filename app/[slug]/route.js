@@ -3,6 +3,7 @@ import pool from '@/lib/db';
 import { resolveTemplate } from '@/lib/templates';
 import { renderClassic } from '@/lib/render/classic';
 import { renderMicare } from '@/lib/render/micare';
+import { renderInterior } from '@/lib/render/interior';
 import { loadTemplateHtml } from '@/lib/render/load';
 
 export const dynamic = 'force-dynamic';
@@ -10,6 +11,7 @@ export const dynamic = 'force-dynamic';
 const RENDERERS = {
   classic: renderClassic,
   micare: renderMicare,
+  interior: renderInterior,
 };
 
 const SECURITY_HEADERS = {

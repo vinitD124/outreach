@@ -10,6 +10,7 @@ import {
 import { toast } from 'sonner';
 import { updateLead, setLeadTemplate, setTemplateForLeads, markWhatsappSent } from './actions';
 import { TEMPLATE_LIST, resolveTemplate } from '@/lib/templates';
+import { CATEGORY_LIST, resolveCategory, DEFAULT_CATEGORY } from '@/lib/categories';
 import { cn } from '@/lib/utils';
 
 import { Button } from '@/components/ui/button';
@@ -155,11 +156,20 @@ export default function LeadTable({ leads: allLeads }) {
   /* Everything below this line works off `leads`, so hiding test rows
      takes them out of the counts, the filters, the pipeline and
      select-all in one place rather than five. */
+  /* Category is a different axis from the pipeline stage: a lead is a
+     clinic or a studio regardless of whether it has been pitched. It is
+     folded in here so every chip count, the pipeline strip and select-all
+     all follow the chosen category. */
+  const [category, setCategory] = useState('all');
+
   const leads = useMemo(() => {
-    const rows = showTests ? allLeads : allLeads.filter((l) => !isTestLead(l));
+    let rows = showTests ? allLeads : allLeads.filter((l) => !isTestLead(l));
+    if (category !== 'all') {
+      rows = rows.filter((l) => (l.category || DEFAULT_CATEGORY) === category);
+    }
     if (!Object.keys(waSent).length) return rows;
     return rows.map((l) => (l.whatsappsent || !waSent[l.id] ? l : { ...l, whatsappsent: true }));
-  }, [allLeads, showTests, waSent]);
+  }, [allLeads, showTests, waSent, category]);
 
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [selectedLead, setSelectedLead] = useState(null);
@@ -517,6 +527,31 @@ export default function LeadTable({ leads: allLeads }) {
 
         {/* ---------- Filters + search ---------- */}
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-1 rounded-lg border bg-card p-1 shadow-xs">
+            {[{ id: 'all', code: 'ALL', label: 'All' }, ...CATEGORY_LIST].map((c) => {
+              const on = category === c.id;
+              const n = c.id === 'all'
+                ? allLeads.filter((l) => showTests || !isTestLead(l)).length
+                : allLeads.filter((l) => (showTests || !isTestLead(l)) && (l.category || DEFAULT_CATEGORY) === c.id).length;
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => { setCategory(c.id); setSelectedIds(new Set()); }}
+                  aria-pressed={on}
+                  title={c.label}
+                  className={cn(
+                    'nums rounded-md px-2.5 py-1.5 text-[11.5px] font-semibold tracking-[0.06em] transition-colors',
+                    on ? 'bg-foreground text-background shadow-xs'
+                      : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                  )}
+                >
+                  {c.code}
+                  <span className={cn('ml-1.5 font-normal', on ? 'text-background/60' : 'text-muted-foreground/60')}>{n}</span>
+                </button>
+              );
+            })}
+          </div>
           <div className="flex flex-wrap items-center gap-1 rounded-lg border bg-card p-1 shadow-xs">
             {FILTERS.map((f) => {
               const active = filter === f.key;
@@ -543,6 +578,7 @@ export default function LeadTable({ leads: allLeads }) {
                 </button>
               );
             })}
+          </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -600,7 +636,7 @@ export default function LeadTable({ leads: allLeads }) {
                       aria-label={sendable.length ? `Select ${sendable.length} pitchable leads` : 'Nothing pitchable in this view'}
                     />
                   </TableHead>
-                  <Th>Clinic</Th>
+                  <Th>Business</Th>
                   <Th>Contact</Th>
                   <Th>Demo</Th>
                   <Th>Stage</Th>
@@ -684,6 +720,12 @@ export default function LeadTable({ leads: allLeads }) {
                         <TableCell className="py-3">
                           <div className="w-[260px] max-w-full xl:w-[300px]">
                             <div className="line-clamp-2 break-words text-[13px] font-medium leading-snug">
+                              <span
+                                title={resolveCategory(lead.category).label}
+                                className="nums mr-1.5 rounded-[4px] border px-1 py-px align-[2px] text-[9.5px] font-semibold tracking-[0.08em] text-muted-foreground"
+                              >
+                                {resolveCategory(lead.category).code}
+                              </span>
                               {lead.clinicname}
                             </div>
                             {lead.doctorname && (

@@ -7,8 +7,8 @@ const nextConfig = {
   // is listed: css/, js/ and image/ are fetched by the browser from the
   // CDN and have no business inside the function bundle.
   outputFileTracingIncludes: {
-    '/[slug]': ['./index.html', './public/micare/index.html'],
-    '/admin/preview/[template]': ['./index.html', './public/micare/index.html'],
+    '/[slug]': ['./index.html', './public/micare/index.html', './public/interior/index.html'],
+    '/admin/preview/[template]': ['./index.html', './public/micare/index.html', './public/interior/index.html'],
   },
 
   async headers() {

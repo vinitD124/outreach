@@ -5,6 +5,7 @@ import * as XLSX from 'xlsx';
 import { UploadCloud, CheckCircle2, AlertCircle, FileSpreadsheet, Loader2, ArrowRight, X, Layout } from 'lucide-react';
 import { bulkImportLeads } from '../actions';
 import { TEMPLATE_LIST, DEFAULT_TEMPLATE, normaliseTemplate } from '@/lib/templates';
+import { CATEGORY_LIST, DEFAULT_CATEGORY, normaliseCategory, templateForCategory } from '@/lib/categories';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -35,6 +36,15 @@ export default function BulkImportPage() {
   // Template for the whole batch. A "Template" column in the sheet
   // overrides this per row.
   const [template, setTemplate] = useState(DEFAULT_TEMPLATE);
+  /* Picking a category also moves the template picker, because that is
+     what you almost always want: an interior batch on the classic clinic
+     layout is a mistake, not a choice. The template picker stays live so
+     it can still be overridden afterwards. */
+  const [category, setCategory] = useState(DEFAULT_CATEGORY);
+  const chooseCategory = (id) => {
+    setCategory(id);
+    setTemplate(templateForCategory(id));
+  };
   const router = useRouter();
 
   const handleFileUpload = (e) => {
@@ -74,7 +84,7 @@ export default function BulkImportPage() {
     try {
       // Ensure data is completely stripped of any XLSX prototype methods before sending to Server Action
       const plainData = JSON.parse(JSON.stringify(previewData));
-      await bulkImportLeads(plainData, template);
+      await bulkImportLeads(plainData, template, category);
       setSuccess(true);
       setTimeout(() => {
         router.push('/admin');
@@ -190,6 +200,27 @@ export default function BulkImportPage() {
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
+              <Select value={category} onValueChange={chooseCategory} disabled={isImporting}>
+                <SelectTrigger
+                  className="gap-1.5 text-[13px]"
+                  title="What kind of business this batch is. Rows with their own Category column override it."
+                >
+                  {CATEGORY_LIST.find((c) => c.id === category)?.label}
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORY_LIST.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      <div className="flex flex-col">
+                        <span>{c.label}</span>
+                        <span className="text-[11px] text-muted-foreground">
+                          {c.code} · defaults to the {c.template} template
+                        </span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
               {/* When every row carries its own Template, this picker does
                   nothing. Leaving it live showed a value that was about to
                   be ignored, which reads as a bug. */}

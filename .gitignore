@@ -50,3 +50,7 @@ next-env.d.ts
 
 # leftover from the About image swap
 /public/img/bg-img-2-old.webp
+
+# Raw theme download the interior template was built from. Only the
+# pruned copy in public/interior/ is shipped.
+/dark-&-light-button/

@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import LeadTable from './LeadTable';
 import AddLeadDialog from './AddLeadDialog';
 import { normaliseTemplate } from '@/lib/templates';
+import { normaliseCategory } from '@/lib/categories';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,20 +15,32 @@ export default async function AdminDashboard() {
     'use server';
     const slug = formData.get('clinicName').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.random().toString(36).substr(2, 5);
 
-    await pool.query(
-      `INSERT INTO leads (slug, clinicname, doctorname, phone, whatsapp, email, address, template)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-      [
-        slug,
-        formData.get('clinicName'),
-        formData.get('doctorName'),
-        formData.get('phone'),
-        formData.get('whatsapp'),
-        formData.get('email'),
-        formData.get('address'),
-        normaliseTemplate(formData.get('template'))
-      ]
-    );
+    const values = [
+      slug,
+      formData.get('clinicName'),
+      formData.get('doctorName'),
+      formData.get('phone'),
+      formData.get('whatsapp'),
+      formData.get('email'),
+      formData.get('address'),
+      normaliseTemplate(formData.get('template')),
+    ];
+
+    try {
+      await pool.query(
+        `INSERT INTO leads (slug, clinicname, doctorname, phone, whatsapp, email, address, template, category)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+        [...values, normaliseCategory(formData.get('category'))]
+      );
+    } catch (err) {
+      // 42703 is "column does not exist" - the migration has not run yet
+      if (!err || err.code !== '42703') throw err;
+      await pool.query(
+        `INSERT INTO leads (slug, clinicname, doctorname, phone, whatsapp, email, address, template)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        values
+      );
+    }
     revalidatePath('/admin');
   }
 
