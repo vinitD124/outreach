@@ -44,6 +44,7 @@ next-env.d.ts
 # Nothing in the app reads from here, and anything pushed stays in git
 # history even after the files are deleted. Keep a backup off-repo.
 /doc/
+/leads-*.csv
 
 # stale duplicate of public/micare, which is the copy the renderer reads
 /micare/
