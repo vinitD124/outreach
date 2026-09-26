@@ -3,7 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 import { MapPin, Search, Plus, Loader2 } from 'lucide-react';
-import { TEMPLATE_LIST, DEFAULT_TEMPLATE } from '@/lib/templates';
+import { resolveTemplate } from '@/lib/templates';
+import {
+  CATEGORY_LIST, DEFAULT_CATEGORY, resolveCategory, templatesFor, templateForCategory,
+} from '@/lib/categories';
+import { cn } from '@/lib/utils';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +19,21 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger,
 } from '@/components/ui/select';
+
+/* Example values per category. The form is the same shape for every
+   vertical, so only the words that describe the business change. */
+const PLACEHOLDERS = {
+  clinic: {
+    name: 'e.g. Aashu Dental Clinic',
+    person: 'e.g. Dr. K. K. Shah',
+    email: 'reception@clinic.com',
+  },
+  interior: {
+    name: 'e.g. Aarav Interiors',
+    person: 'e.g. Aarav Shah',
+    email: 'studio@example.in',
+  },
+};
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -42,7 +61,20 @@ export default function AddLeadDialog({ action }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [template, setTemplate] = useState(DEFAULT_TEMPLATE);
+  /* The form had no category field at all, so every lead added here was
+     saved as a clinic - and once the template is resolved through the
+     category, picking Interior here would silently store Classic. The
+     category is the first thing chosen now, and it drives the rest. */
+  const [category, setCategory] = useState(DEFAULT_CATEGORY);
+  const [template, setTemplate] = useState(templateForCategory(DEFAULT_CATEGORY));
+
+  const chooseCategory = (id) => {
+    setCategory(id);
+    setTemplate(templateForCategory(id));
+  };
+
+  const cat = resolveCategory(category);
+  const hints = PLACEHOLDERS[cat.id] || PLACEHOLDERS.clinic;
   const [formData, setFormData] = useState({
     clinicName: '',
     doctorName: '',
@@ -95,7 +127,7 @@ export default function AddLeadDialog({ action }) {
   async function handleSubmit(fd) {
     await action(fd);
     setIsOpen(false);
-    setTemplate(DEFAULT_TEMPLATE);
+    chooseCategory(DEFAULT_CATEGORY);
     setFormData({
       clinicName: '', doctorName: '', phone: '', whatsapp: '', email: '', address: '',
     });
@@ -116,6 +148,31 @@ export default function AddLeadDialog({ action }) {
         </DialogHeader>
 
         <form action={handleSubmit} className="space-y-5">
+          {/* What kind of business this is. Chosen first because it decides
+              the labels below, which demos are on offer, and which pitch
+              copy the email will use. */}
+          <FieldRow label="Category">
+            <input type="hidden" name="category" value={category} />
+            <div className="flex items-center gap-1 rounded-lg border bg-card p-1 shadow-xs">
+              {CATEGORY_LIST.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => chooseCategory(c.id)}
+                  className={cn(
+                    'flex-1 rounded-md px-3 py-1.5 text-[12px] font-medium transition-colors',
+                    category === c.id
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                  )}
+                >
+                  <span className="font-mono text-[11px] opacity-70">{c.code}</span>{' '}
+                  {c.label}
+                </button>
+              ))}
+            </div>
+          </FieldRow>
+
           {/* Auto-fill from OpenStreetMap */}
           <div className="relative z-20">
             <FieldRow label="Auto-fill from map">
@@ -123,7 +180,7 @@ export default function AddLeadDialog({ action }) {
                 <Search size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   type="text"
-                  placeholder="Search clinics…"
+                  placeholder={`Search ${cat.label.toLowerCase()} businesses…`}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="bg-muted/50 pl-9 text-[13px]"
@@ -158,14 +215,14 @@ export default function AddLeadDialog({ action }) {
 
           <div className="h-px bg-border" />
 
-          <FieldRow label="Clinic name">
+          <FieldRow label={cat.nameLabel}>
             <Input name="clinicName" required value={formData.clinicName} onChange={handleChange}
-              placeholder="e.g. Aashu Dental Clinic" className="text-[13px]" />
+              placeholder={hints.name} className="text-[13px]" />
           </FieldRow>
 
-          <FieldRow label="Doctor name">
+          <FieldRow label={cat.personLabel}>
             <Input name="doctorName" value={formData.doctorName} onChange={handleChange}
-              placeholder="e.g. Dr. K. K. Shah" className="text-[13px]" />
+              placeholder={hints.person} className="text-[13px]" />
           </FieldRow>
 
           <div className="grid grid-cols-2 gap-3">
@@ -181,7 +238,7 @@ export default function AddLeadDialog({ action }) {
 
           <FieldRow label="Email">
             <Input type="email" name="email" value={formData.email} onChange={handleChange}
-              placeholder="reception@clinic.com" className="font-mono text-[13px]" />
+              placeholder={hints.email} className="font-mono text-[13px]" />
           </FieldRow>
 
           <FieldRow label="Address">
@@ -191,17 +248,17 @@ export default function AddLeadDialog({ action }) {
 
           <FieldRow
             label="Demo template"
-            hint={TEMPLATE_LIST.find((t) => t.id === template)?.blurb}
+            hint={resolveTemplate(template).blurb}
           >
             {/* Base UI Select does not post a form value, so the choice is
                 mirrored into a hidden input the server action can read. */}
             <input type="hidden" name="template" value={template} />
             <Select value={template} onValueChange={setTemplate}>
               <SelectTrigger className="w-full text-[13px]">
-                {TEMPLATE_LIST.find((t) => t.id === template)?.label}
+                {resolveTemplate(template).label}
               </SelectTrigger>
               <SelectContent>
-                {TEMPLATE_LIST.map((t) => (
+                {templatesFor(category).map((t) => (
                   <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>
                 ))}
               </SelectContent>
