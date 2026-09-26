@@ -2,8 +2,7 @@ import pool from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import LeadTable from './LeadTable';
 import AddLeadDialog from './AddLeadDialog';
-import { normaliseTemplate } from '@/lib/templates';
-import { normaliseCategory } from '@/lib/categories';
+import { normaliseCategory, templateFor } from '@/lib/categories';
 import { isTestLead } from '@/lib/test-leads';
 
 export const dynamic = 'force-dynamic';
@@ -16,6 +15,7 @@ export default async function AdminDashboard() {
     'use server';
     const slug = formData.get('clinicName').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.random().toString(36).substr(2, 5);
 
+    const category = normaliseCategory(formData.get('category'));
     const values = [
       slug,
       formData.get('clinicName'),
@@ -24,14 +24,14 @@ export default async function AdminDashboard() {
       formData.get('whatsapp'),
       formData.get('email'),
       formData.get('address'),
-      normaliseTemplate(formData.get('template')),
+      templateFor(category, formData.get('template')),
     ];
 
     try {
       await pool.query(
         `INSERT INTO leads (slug, clinicname, doctorname, phone, whatsapp, email, address, template, category)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-        [...values, normaliseCategory(formData.get('category'))]
+        [...values, category]
       );
     } catch (err) {
       // 42703 is "column does not exist" - the migration has not run yet

@@ -4,36 +4,75 @@ import pool from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { normaliseTemplate, DEFAULT_TEMPLATE } from '@/lib/templates';
-import { normaliseCategory, templateForCategory, DEFAULT_CATEGORY } from '@/lib/categories';
+import { DEFAULT_TEMPLATE } from '@/lib/templates';
+import {
+  normaliseCategory, templateFor, DEFAULT_CATEGORY,
+} from '@/lib/categories';
+
+/**
+ * Read the categories of some leads.
+ *
+ * Falls back to the default if the column is not there yet - 42703 is
+ * "column does not exist" - so a deploy that lands before the migration
+ * degrades to the old single-vertical behaviour instead of throwing.
+ */
+async function categoriesOf(ids) {
+  try {
+    const { rows } = await pool.query(
+      'SELECT id, category FROM leads WHERE id::text = ANY($1::text[])',
+      [ids.map(String)]
+    );
+    return new Map(rows.map((r) => [String(r.id), r.category || DEFAULT_CATEGORY]));
+  } catch (err) {
+    if (!err || err.code !== '42703') throw err;
+    return new Map(ids.map((id) => [String(id), DEFAULT_CATEGORY]));
+  }
+}
 
 /**
  * Change which demo template a lead is pitched with.
  *
- * normaliseTemplate turns anything we do not serve into 'classic', so a
- * stale form value can never write a template that would 404.
+ * The lead's own category decides what it is allowed to be, so a stale
+ * form value cannot put a clinic on the interior demo. Anything the
+ * category does not serve falls back to what that category ships with.
  */
-export async function setLeadTemplate(leadId, template) {
-  await pool.query('UPDATE leads SET template = $1 WHERE id = $2', [
-    normaliseTemplate(template),
-    leadId,
-  ]);
+export async function setLeadTemplate(leadId, wanted) {
+  const category = (await categoriesOf([leadId])).get(String(leadId)) || DEFAULT_CATEGORY;
+  const template = templateFor(category, wanted);
+
+  await pool.query('UPDATE leads SET template = $1 WHERE id = $2', [template, leadId]);
   revalidatePath('/admin');
+  return { template, corrected: template !== String(wanted || '').toLowerCase() };
 }
 
-/** Same, for everything currently selected in the table. */
-export async function setTemplateForLeads(leadIds, template) {
+/**
+ * Same, for everything currently selected in the table.
+ *
+ * Applied per row against that row's category rather than as one blanket
+ * UPDATE. A selection spanning categories used to write the chosen
+ * template to all of them; now the rows whose category cannot use it are
+ * left alone and counted, so the toast reports what really happened.
+ */
+export async function setTemplateForLeads(leadIds, wanted) {
   const ids = (leadIds || []).filter(Boolean);
-  if (!ids.length) return { updated: 0 };
+  if (!ids.length) return { updated: 0, skipped: 0 };
+
+  const cats = await categoriesOf(ids);
+  const eligible = ids.filter(
+    (id) => templateFor(cats.get(String(id)) || DEFAULT_CATEGORY, wanted)
+      === String(wanted || '').toLowerCase()
+  );
+  const skipped = ids.length - eligible.length;
+  if (!eligible.length) return { updated: 0, skipped };
 
   // id::text so this works whether the column is text, uuid or an int -
   // the schema file in this repo does not match the live table.
   const result = await pool.query(
     'UPDATE leads SET template = $1 WHERE id::text = ANY($2::text[])',
-    [normaliseTemplate(template), ids.map(String)]
+    [String(wanted).toLowerCase(), eligible.map(String)]
   );
   revalidatePath('/admin');
-  return { updated: result.rowCount };
+  return { updated: result.rowCount, skipped };
 }
 
 /**
@@ -97,13 +136,12 @@ export async function bulkImportLeads(leads, batchTemplate = DEFAULT_TEMPLATE, b
       cleanStr(lead['Category'] || lead['Type']) || batchCategory
     );
 
-    // Same for the template, except that a row with no template at all
-    // falls back to whatever its category ships with rather than to
-    // classic - otherwise an interior lead would render a clinic page.
+    // The category decides what the row is allowed to be. A Template
+    // column it cannot use is corrected to whatever the category ships
+    // with rather than stored, so a sheet cannot put a clinic on the
+    // interior demo. The import preview shows the corrections first.
     const rawTemplate = cleanStr(lead['Template'] || lead['Theme']).toLowerCase();
-    const template = normaliseTemplate(
-      rawTemplate || batchTemplate || templateForCategory(category)
-    );
+    const template = templateFor(category, rawTemplate || batchTemplate);
 
     // Falls back to the pre-category shape if the column has not been
     // added yet, so deploying before running the migration cannot break

@@ -45,6 +45,7 @@ next-env.d.ts
 # history even after the files are deleted. Keep a backup off-repo.
 /doc/
 /leads-*.csv
+/do-not-resend-*.csv
 
 # stale duplicate of public/micare, which is the copy the renderer reads
 /micare/

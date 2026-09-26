@@ -9,8 +9,8 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { updateLead, setLeadTemplate, setTemplateForLeads, markWhatsappSent } from './actions';
-import { TEMPLATE_LIST, resolveTemplate } from '@/lib/templates';
-import { CATEGORY_LIST, resolveCategory, DEFAULT_CATEGORY } from '@/lib/categories';
+import { resolveTemplate } from '@/lib/templates';
+import { CATEGORY_LIST, resolveCategory, templatesFor, DEFAULT_CATEGORY } from '@/lib/categories';
 import { cn } from '@/lib/utils';
 
 import { Button } from '@/components/ui/button';
@@ -190,6 +190,17 @@ export default function LeadTable({ leads: allLeads }) {
   const selectedNoEmail = selectedLeads.filter((l) => !l.email).length;
   const selectedPitched = selectedLeads.filter((l) => l.email && wasPitched(l)).length;
 
+  /* Only templates every selected lead can actually use. A selection
+     spanning categories has no overlap, so the picker offers nothing and
+     says why, rather than listing a template that would skip most rows. */
+  const bulkTemplates = useMemo(() => {
+    if (!selectedLeads.length) return [];
+    const cats = [...new Set(selectedLeads.map((l) => resolveCategory(l.category).id))];
+    return templatesFor(cats[0]).filter((t) =>
+      cats.every((c) => templatesFor(c).some((x) => x.id === t.id))
+    );
+  }, [selectedLeads]);
+
   /* Select-all reflects the sendable rows it actually controls. Comparing it
      against every row is why the box never looked checked. */
   const allSendableSelected = sendable.length > 0 && sendable.every((l) => selectedIds.has(l.id));
@@ -248,8 +259,19 @@ export default function LeadTable({ leads: allLeads }) {
     if (!ids.length) return;
     setTemplateBusy('bulk');
     try {
-      const { updated } = await setTemplateForLeads(ids, template);
-      toast.success(`${updated} lead${updated === 1 ? '' : 's'} set to ${resolveTemplate(template).label}`);
+      const { updated, skipped } = await setTemplateForLeads(ids, template);
+      const label = resolveTemplate(template).label;
+      /* A row whose category cannot use this template is left alone rather
+         than quietly given something else, so the count has to say so. */
+      if (updated && skipped) {
+        toast.success(`${updated} set to ${label}`, {
+          description: `${skipped} skipped - wrong category for ${label}.`,
+        });
+      } else if (!updated) {
+        toast.warning(`Nothing changed - ${label} is not available for ${skipped === 1 ? 'that lead' : 'those leads'}.`);
+      } else {
+        toast.success(`${updated} lead${updated === 1 ? '' : 's'} set to ${label}`);
+      }
       router.refresh();
     } catch (err) {
       toast.error('Could not change the template', { description: err.message });
@@ -772,7 +794,7 @@ export default function LeadTable({ leads: allLeads }) {
                                 {tpl.label}
                               </SelectTrigger>
                               <SelectContent>
-                                {TEMPLATE_LIST.map((t) => (
+                                {templatesFor(lead.category).map((t) => (
                                   <SelectItem key={t.id} value={t.id}>
                                     <div className="flex flex-col">
                                       <span className="text-[13px] font-medium">{t.label}</span>
@@ -931,19 +953,19 @@ export default function LeadTable({ leads: allLeads }) {
             <Select
               value=""
               onValueChange={(v) => v && bulkChangeTemplate(v)}
-              disabled={templateBusy === 'bulk'}
+              disabled={templateBusy === 'bulk' || !bulkTemplates.length}
             >
               <SelectTrigger
                 size="sm"
-                className="h-7 w-auto gap-1.5 border-primary-foreground/20 bg-primary-foreground/10 px-2.5 text-[12px] text-primary-foreground hover:bg-primary-foreground/15"
+                className="h-7 w-auto gap-1.5 border-primary-foreground/20 bg-primary-foreground/10 px-2.5 text-[12px] text-primary-foreground hover:bg-primary-foreground/15 disabled:opacity-50"
               >
                 {templateBusy === 'bulk'
                   ? <Loader2 size={12} className="animate-spin" />
                   : <Layout size={12} />}
-                Set template
+                {bulkTemplates.length ? 'Set template' : 'No shared template'}
               </SelectTrigger>
               <SelectContent>
-                {TEMPLATE_LIST.map((t) => (
+                {bulkTemplates.map((t) => (
                   <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>
                 ))}
               </SelectContent>
