@@ -2,10 +2,13 @@
 
 import { useState, useMemo } from 'react';
 import * as XLSX from 'xlsx';
-import { UploadCloud, CheckCircle2, AlertCircle, FileSpreadsheet, Loader2, ArrowRight, X, Layout } from 'lucide-react';
+import { UploadCloud, CheckCircle2, AlertCircle, FileSpreadsheet, Loader2, ArrowRight, X, Layout, Download } from 'lucide-react';
 import { bulkImportLeads } from '../actions';
-import { TEMPLATE_LIST, DEFAULT_TEMPLATE, normaliseTemplate } from '@/lib/templates';
-import { CATEGORY_LIST, DEFAULT_CATEGORY, normaliseCategory, templateForCategory } from '@/lib/categories';
+import { DEFAULT_TEMPLATE, resolveTemplate } from '@/lib/templates';
+import {
+  CATEGORY_LIST, DEFAULT_CATEGORY, resolveCategory, normaliseCategory,
+  templateForCategory, templateFor, templatesFor, isTemplateMismatch,
+} from '@/lib/categories';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -25,6 +28,38 @@ const cell = (row, ...keys) => {
   }
   return '';
 };
+
+/* The columns bulkImportLeads actually reads, in the order the sample
+   writes them. Kept here so the hint below and the downloadable file
+   cannot describe different things. */
+const COLUMNS = ['Clinic Name', 'Doctor Name', 'Phone', 'Email', 'Address', 'Category', 'Template'];
+
+const SAMPLE_ROWS = {
+  clinic: ['Shreeji Dental Care', 'Dr. Nishit Shah', '+91 98250 11223', 'hello@example.com', 'Satellite, Ahmedabad, Gujarat 380015'],
+  interior: ['Aarav Interiors', 'Aarav Shah', '+91 98250 44556', 'studio@example.com', 'Bopal, Ahmedabad, Gujarat 380058'],
+};
+
+/* Built from the registry rather than written out, so adding a vertical
+   updates the sample instead of leaving it quietly wrong. One correctly
+   filled row per category, each showing a template that category can
+   actually use. */
+function sampleCsv() {
+  const quote = (v) => (/[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v);
+  const rows = CATEGORY_LIST.map((c) => {
+    const base = SAMPLE_ROWS[c.id] || ['Example Business', 'Owner Name', '+91 98250 00000', 'name@example.com', 'Area, Ahmedabad, Gujarat'];
+    return [...base, c.code, templateForCategory(c.id)].map(quote).join(',');
+  });
+  return [COLUMNS.join(','), ...rows].join('\n') + '\n';
+}
+
+function downloadSample() {
+  const url = URL.createObjectURL(new Blob([sampleCsv()], { type: 'text/csv;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'lead-import-sample.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 export default function BulkImportPage() {
   const [file, setFile] = useState(null);
@@ -97,18 +132,46 @@ export default function BulkImportPage() {
     }
   };
 
+  /* Exactly what a row becomes, resolved the same way the server will.
+     Worth doing here rather than only on the server: a sheet that names a
+     template its category cannot use is corrected either way, and you
+     should find that out before the import, not after. */
+  const resolveRow = (row) => {
+    const rowCategory = normaliseCategory(cell(row, 'Category', 'Type') || category);
+    const wanted = cell(row, 'Template', 'Theme').toLowerCase();
+    return {
+      category: rowCategory,
+      template: templateFor(rowCategory, wanted || template),
+      own: Boolean(wanted),
+      corrected: isTemplateMismatch(rowCategory, wanted),
+    };
+  };
+
   /* What the import will actually do, worked out before you commit to it.
      The old screen only said how many rows were in the file, which is not
      the same number as the leads you end up with. */
   const audit = useMemo(() => {
-    let named = 0, withEmail = 0, overridden = 0;
+    let named = 0, withEmail = 0, overridden = 0, corrected = 0;
+    const cats = {};
     previewData.forEach((r) => {
-      if (cell(r, 'Clinic Name')) named++;
+      if (!cell(r, 'Clinic Name')) return;
+      named++;
       if (cell(r, 'Email', 'Public Email', 'Email Address')) withEmail++;
-      if (cell(r, 'Template', 'Theme')) overridden++;
+      const res = resolveRow(r);
+      if (res.own) overridden++;
+      if (res.corrected) corrected++;
+      cats[res.category] = (cats[res.category] || 0) + 1;
     });
-    return { rows: previewData.length, named, skipped: previewData.length - named, withEmail, overridden };
-  }, [previewData]);
+    return {
+      rows: previewData.length,
+      named,
+      skipped: previewData.length - named,
+      withEmail,
+      overridden,
+      corrected,
+      categories: Object.entries(cats),
+    };
+  }, [previewData, category, template]);
 
   // Every importable row sets its own template, so the batch picker has
   // nothing left to apply to.
@@ -173,11 +236,26 @@ export default function BulkImportPage() {
               <FileSpreadsheet size={14} /> Columns read from the sheet
             </p>
             <p className="mt-2 flex flex-wrap items-center justify-center gap-1.5">
-              {['Clinic Name', 'Doctor Name', 'Email', 'Phone', 'Address', 'Template'].map((c) => (
+              {COLUMNS.map((c) => (
                 <code key={c} className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10.5px] text-foreground">{c}</code>
               ))}
             </p>
-            <p className="mt-2">Only <b className="text-foreground">Clinic Name</b> is required. Rows without one are skipped.</p>
+            <p className="mt-2">
+              Only <b className="text-foreground">Clinic Name</b> is required. Rows without one are skipped.
+            </p>
+            <p className="mt-1">
+              <b className="text-foreground">Category</b> takes {CATEGORY_LIST.map((c) => c.code).join(' or ')}, and decides
+              which templates the row may use. Leave <b className="text-foreground">Template</b> blank to get the
+              category&rsquo;s own.
+            </p>
+
+            <button
+              type="button"
+              onClick={downloadSample}
+              className="mt-4 inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-[11.5px] font-medium text-foreground transition-colors hover:bg-accent"
+            >
+              <Download size={13} /> Download a sample sheet
+            </button>
           </div>
         </div>
       )}
@@ -238,10 +316,10 @@ export default function BulkImportPage() {
                   <Layout size={13} className="text-muted-foreground" />
                   {allRowsCarryTemplate
                     ? 'Set per row'
-                    : TEMPLATE_LIST.find((t) => t.id === template)?.label}
+                    : resolveTemplate(template).label}
                 </SelectTrigger>
                 <SelectContent>
-                  {TEMPLATE_LIST.map((t) => (
+                  {templatesFor(category).map((t) => (
                     <SelectItem key={t.id} value={t.id}>
                       <div className="flex flex-col">
                         <span className="text-[13px] font-medium">{t.label}</span>
@@ -273,6 +351,18 @@ export default function BulkImportPage() {
             </div>
           )}
 
+          {/* A corrected row still imports, so the only way this is not a
+              silent change is to say it before the button is pressed. */}
+          {audit.corrected > 0 && (
+            <div className="flex items-start gap-2 border-b border-stage-blocked/25 bg-stage-blocked/10 px-5 py-2.5 text-[12px]">
+              <AlertCircle size={13} className="mt-0.5 shrink-0 text-stage-blocked" />
+              <span className="nums">
+                <b>{audit.corrected}</b> row{audit.corrected === 1 ? '' : 's'} name a template their category
+                cannot use. Those rows import with their category&rsquo;s own template instead — marked below.
+              </span>
+            </div>
+          )}
+
           <div className="max-h-[460px] overflow-auto">
             <Table>
               <TableHeader className="sticky top-0 z-10 bg-card">
@@ -287,8 +377,7 @@ export default function BulkImportPage() {
               <TableBody>
                 {previewData.slice(0, 25).map((row, i) => {
                   const name = cell(row, 'Clinic Name');
-                  const own = cell(row, 'Template', 'Theme');
-                  const resolved = normaliseTemplate(own.toLowerCase() || template);
+                  const res = resolveRow(row);
                   return (
                     <TableRow key={i} className={cn(!name && 'opacity-45')}>
                       <TableCell className="max-w-[260px] pl-5 text-[12.5px] font-medium">
@@ -302,9 +391,21 @@ export default function BulkImportPage() {
                         {cell(row, 'Phone', 'Phone Number', 'Contact') || '—'}
                       </TableCell>
                       <TableCell className="pr-5 text-right">
-                        <Badge variant={own ? 'default' : 'outline'} className="text-[10.5px] font-medium">
-                          {TEMPLATE_LIST.find((t) => t.id === resolved)?.label}
-                        </Badge>
+                        <span className="inline-flex items-center gap-1.5">
+                          <Badge variant="outline" className="text-[10.5px] font-medium text-muted-foreground">
+                            {resolveCategory(res.category).code}
+                          </Badge>
+                          <Badge
+                            variant={res.own && !res.corrected ? 'default' : 'outline'}
+                            className={cn(
+                              'text-[10.5px] font-medium',
+                              res.corrected && 'border-stage-blocked/40 text-stage-blocked'
+                            )}
+                          >
+                            {res.corrected && <AlertCircle size={10} className="mr-1" />}
+                            {resolveTemplate(res.template).label}
+                          </Badge>
+                        </span>
                       </TableCell>
                     </TableRow>
                   );
