@@ -2,12 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
-import { MapPin, Search, Plus, Loader2 } from 'lucide-react';
+import { MapPin, Search, Plus, Loader2, Layout } from 'lucide-react';
 import { resolveTemplate } from '@/lib/templates';
 import {
   CATEGORY_LIST, DEFAULT_CATEGORY, resolveCategory, templatesFor, templateForCategory,
 } from '@/lib/categories';
-import { cn } from '@/lib/utils';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -148,30 +147,51 @@ export default function AddLeadDialog({ action }) {
         </DialogHeader>
 
         <form action={handleSubmit} className="space-y-5">
-          {/* What kind of business this is. Chosen first because it decides
-              the labels below, which demos are on offer, and which pitch
-              copy the email will use. */}
-          <FieldRow label="Category">
-            <input type="hidden" name="category" value={category} />
-            <div className="flex items-center gap-1 rounded-lg border bg-card p-1 shadow-xs">
-              {CATEGORY_LIST.map((c) => (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => chooseCategory(c.id)}
-                  className={cn(
-                    'flex-1 rounded-md px-3 py-1.5 text-[12px] font-medium transition-colors',
-                    category === c.id
-                      ? 'bg-primary text-primary-foreground'
-                      : 'text-muted-foreground hover:bg-accent hover:text-foreground'
-                  )}
-                >
-                  <span className="font-mono text-[11px] opacity-70">{c.code}</span>{' '}
-                  {c.label}
-                </button>
-              ))}
-            </div>
-          </FieldRow>
+          {/* Both answered before anything else: the category decides the
+              labels below and which demos are on offer, so the template
+              list is a consequence of it rather than a free choice.
+              Dropdowns rather than tabs because a row of tabs stops
+              working the moment there are more than about three. */}
+          <div className="grid grid-cols-2 gap-3">
+            <FieldRow label="Category">
+              {/* Base UI Select does not post a form value, so both choices
+                  are mirrored into hidden inputs the action can read. */}
+              <input type="hidden" name="category" value={category} />
+              <Select value={category} onValueChange={chooseCategory}>
+                <SelectTrigger className="w-full text-[13px]">
+                  <span className="font-mono text-[11px] text-muted-foreground">{cat.code}</span>
+                  {cat.label}
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORY_LIST.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      <span className="font-mono text-[11px] text-muted-foreground">{c.code}</span>{' '}
+                      {c.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FieldRow>
+
+            <FieldRow label="Demo template">
+              <input type="hidden" name="template" value={template} />
+              <Select value={template} onValueChange={setTemplate}>
+                <SelectTrigger className="w-full text-[13px]">
+                  <Layout size={13} className="text-muted-foreground" />
+                  {resolveTemplate(template).label}
+                </SelectTrigger>
+                <SelectContent>
+                  {templatesFor(category).map((t) => (
+                    <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FieldRow>
+          </div>
+
+          <p className="-mt-3 text-[11px] text-muted-foreground">
+            {resolveTemplate(template).blurb}
+          </p>
 
           {/* Auto-fill from OpenStreetMap */}
           <div className="relative z-20">
@@ -244,25 +264,6 @@ export default function AddLeadDialog({ action }) {
           <FieldRow label="Address">
             <Textarea name="address" rows={2} value={formData.address} onChange={handleChange}
               placeholder="Naranpura, Ahmedabad, Gujarat" className="resize-none text-[13px]" />
-          </FieldRow>
-
-          <FieldRow
-            label="Demo template"
-            hint={resolveTemplate(template).blurb}
-          >
-            {/* Base UI Select does not post a form value, so the choice is
-                mirrored into a hidden input the server action can read. */}
-            <input type="hidden" name="template" value={template} />
-            <Select value={template} onValueChange={setTemplate}>
-              <SelectTrigger className="w-full text-[13px]">
-                {resolveTemplate(template).label}
-              </SelectTrigger>
-              <SelectContent>
-                {templatesFor(category).map((t) => (
-                  <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </FieldRow>
 
           <SubmitButton />

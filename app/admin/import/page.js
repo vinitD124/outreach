@@ -291,7 +291,7 @@ export default function BulkImportPage() {
                       <div className="flex flex-col">
                         <span>{c.label}</span>
                         <span className="text-[11px] text-muted-foreground">
-                          {c.code} · defaults to the {c.template} template
+                          {c.code} · defaults to {resolveTemplate(templateForCategory(c.id)).label}
                         </span>
                       </div>
                     </SelectItem>
