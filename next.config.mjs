@@ -1,14 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Both demo templates are read off disk at request time. Vercel only
+  // Every demo template is read off disk at request time. Vercel only
   // ships files the build traced into the function, and a file living
   // under public/ is normally treated as a CDN asset rather than
   // something the server reads - so name them explicitly. Only the HTML
   // is listed: css/, js/ and image/ are fetched by the browser from the
   // CDN and have no business inside the function bundle.
   outputFileTracingIncludes: {
-    '/[slug]': ['./index.html', './public/micare/index.html', './public/interior/index.html'],
-    '/admin/preview/[template]': ['./index.html', './public/micare/index.html', './public/interior/index.html'],
+    '/[slug]': ['./index.html', './public/micare/index.html', './public/interior/index.html', './public/forma/index.html'],
+    '/admin/preview/[template]': ['./index.html', './public/micare/index.html', './public/interior/index.html', './public/forma/index.html'],
   },
 
   async headers() {

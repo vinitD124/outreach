@@ -32,19 +32,48 @@ body.hero-dimmed header {
 .pt-anchor {
   position: relative;
   display: inline-block;
+  transform-origin: 0 0;
+  will-change: transform;
 }
 
+/* Invisible. Its only job is to mark where the word is going, on the
+   vertical line the phrase settles on. The horizontal position is
+   computed from the phrase width so it centres. */
+.pt-dock {
+  position: absolute;
+  left: 0;
+  top: 44%;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+
+/* Same size, same family, upright against the italic: one line that
+   reads as a single sentence rather than a stacked lockup. */
 .pt-become {
   position: absolute;
-  left: .06em;
-  top: 88%;
+  left: 100%;
+  top: 0;
   white-space: nowrap;
   font-style: normal;
-  font-size: .34em;
-  letter-spacing: -.02em;
-  line-height: 1;
+  font-size: 1em;
+  letter-spacing: -.055em;
+  padding-left: .26em;
   opacity: 0;
-  will-change: clip-path, opacity, transform;
+  will-change: clip-path, opacity;
+}
+
+/* The one piece of colour in the hero, and it lands last, so the
+   sentence reads as finished rather than merely revealed. Hung outside
+   the measure: a full stop sitting inside the right edge pushes the
+   letters out of alignment with the word above. */
+.pt-mark {
+  display: inline-block;
+  font-style: normal;
+  color: var(--accent, #d44830);
+  transform-origin: 50% 84%;
+  will-change: transform;
 }
 
 .motion-off .pt-become {
@@ -62,8 +91,8 @@ body.hero-dimmed header {
   .motion-enabled .portal-title > span {
     animation: statement-rise 1.4s cubic-bezier(.19, 1, .22, 1) backwards;
   }
-  .motion-enabled .portal-title > span:nth-child(1) { animation-delay: .3s; }
-  .motion-enabled .portal-title > span:nth-child(2) { animation-delay: .44s; }
+  .motion-enabled .portal-title > span:nth-child(1) { animation-delay: 1.3s; }
+  .motion-enabled .portal-title > span:nth-child(2) { animation-delay: 1.44s; }
 }
 
 @keyframes statement-rise {
@@ -77,4 +106,1116 @@ body.hero-dimmed header {
     transform: none;
     clip-path: inset(0 0 -18% 0);
   }
+}
+
+.hero {
+  --dock-max: .82;
+  --dock-fit: .84;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    --dock-max: 1;
+    --dock-fit: .82;
+  }
+
+  .pt-dock {
+    top: 46%;
+  }
+
+
+}
+
+@media (max-width: 560px) {
+}
+
+/* The studio statement. */
+.statement-word {
+  display: inline-block;
+  transform-origin: 0 62%;
+  will-change: transform;
+}
+
+/* The paragraph and its link were a flex row with space-between, which
+   threw the link into the far corner with nothing between them. They are
+   one left-aligned block now; the open right side is the composition. */
+.intro-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 32px;
+  will-change: transform, opacity;
+}
+
+.intro-bottom p {
+  max-width: 44ch;
+}
+
+@media (max-width: 900px) {
+  .intro-bottom {
+    gap: 26px;
+  }
+}
+
+/* atelier.css re-clips .image-wrap to a static polygon at the same
+   specificity as the reveal, which killed the wipe. Restored here, and
+   the card now arrives in two beats: the picture opens, the title follows. */
+@media (max-width: 900px) {
+  .motion-enabled .project-panel .image-wrap {
+    clip-path: inset(15% 0 15% 0);
+    opacity: .55;
+    transition: clip-path 1.1s cubic-bezier(.2, .8, .2, 1), opacity .8s ease;
+  }
+
+  .motion-enabled .project-panel.panel-in .image-wrap {
+    clip-path: inset(0);
+    opacity: 1;
+  }
+
+  .motion-enabled .project-panel {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity .85s ease, transform 1.05s cubic-bezier(.2, .8, .2, 1);
+    will-change: transform, opacity;
+  }
+
+  .motion-enabled .project-panel.panel-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  .motion-enabled .project-panel .project-meta {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity .6s ease .22s, transform .7s cubic-bezier(.2, .8, .2, 1) .22s;
+  }
+
+  .motion-enabled .project-panel.panel-in .project-meta {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* atelier.js already marks this block .is-inview, but nothing listened
+   for it, so the index simply appeared. The rows arrive in order now. */
+.motion-enabled .project-directory > .eyebrow {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .6s ease, transform .7s cubic-bezier(.2, .8, .2, 1);
+}
+
+.motion-enabled .project-directory.is-inview > .eyebrow {
+  opacity: 1;
+  transform: none;
+}
+
+.motion-enabled .project-directory > a {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity .75s ease, transform .9s cubic-bezier(.2, .8, .2, 1);
+}
+
+.motion-enabled .project-directory.is-inview > a {
+  opacity: 1;
+  transform: none;
+}
+
+.motion-enabled .project-directory.is-inview > a:nth-of-type(1) { transition-delay: .12s; }
+.motion-enabled .project-directory.is-inview > a:nth-of-type(2) { transition-delay: .23s; }
+.motion-enabled .project-directory.is-inview > a:nth-of-type(3) { transition-delay: .34s; }
+.motion-enabled .project-directory.is-inview > a:nth-of-type(4) { transition-delay: .45s; }
+.motion-enabled .project-directory.is-inview > a:nth-of-type(5) { transition-delay: .56s; }
+.motion-enabled .project-directory.is-inview > a:nth-of-type(6) { transition-delay: .67s; }
+
+/* The index rows carry a photo that flies in on hover. A phone has no
+   hover, so it was switched off and the section became a plain list.
+   The row nearest the middle of the screen shows its space instead. */
+@media (max-width: 900px) {
+  .project-directory > a > img {
+    display: block;
+    position: absolute;
+    right: 46px;
+    top: 50%;
+    width: 108px;
+    height: 78px;
+    object-fit: cover;
+    opacity: 0;
+    transform: translateY(-50%) rotate(-9deg) scale(.78);
+    transition: opacity .45s ease, transform .6s cubic-bezier(.2, .8, .2, 1);
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .motion-enabled .project-directory > a.row-near > img {
+    opacity: 1;
+    transform: translateY(-50%) rotate(4deg) scale(1);
+  }
+
+  .project-directory > a h3 {
+    transition: transform .5s cubic-bezier(.2, .8, .2, 1), color .4s ease;
+  }
+
+  .motion-enabled .project-directory > a.row-near h3 {
+    transform: translateX(10px);
+    color: #c2d1b7;
+  }
+
+  .motion-off .project-directory > a > img {
+    display: none;
+  }
+}
+
+/* Same gradient wipe the studio statement uses, tuned for the dark
+   section: filled words read paper, unfilled sit back in the ground. */
+.philosophy-content .fill-word {
+  background: linear-gradient(
+    90deg,
+    #eef1e8 var(--word-fill, 100%),
+    #5c6a57 var(--word-fill, 100%)
+  );
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.motion-off .philosophy-content .fill-word {
+  background: none;
+  color: var(--paper, #f0f0e9);
+}
+
+/* The atmosphere control was a range slider, which is a poor thing to
+   drag on a phone. It is a read-out now; the scroll is the control. */
+.light-read {
+  margin-top: 34px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.light-read > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.light-read span {
+  font-size: 10px;
+  letter-spacing: 1.4px;
+  color: #6b715f;
+}
+
+.light-read b {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 19px;
+  color: #873c2c;
+}
+
+.light-track {
+  display: block;
+  height: 2px;
+  background: #a39f9355;
+  overflow: hidden;
+}
+
+.light-track em {
+  display: block;
+  height: 100%;
+  background: #873c2c;
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* The section arrives and leaves, on every screen. atelier.js already
+   toggles .is-inview on it, and that toggle is two-way now. */
+.motion-enabled .material-atelier .material-board,
+.motion-enabled .material-atelier .atelier-heading,
+.motion-enabled .material-atelier .material-description {
+  opacity: 0;
+  transform: translateY(34px);
+  transition: opacity .85s ease, transform 1s cubic-bezier(.2, .8, .2, 1);
+}
+
+.motion-enabled .material-atelier.is-inview .material-board,
+.motion-enabled .material-atelier.is-inview .atelier-heading,
+.motion-enabled .material-atelier.is-inview .material-description {
+  opacity: 1;
+  transform: none;
+}
+
+.motion-enabled .material-atelier.is-inview .atelier-heading { transition-delay: .06s; }
+.motion-enabled .material-atelier.is-inview .material-board { transition-delay: .16s; }
+.motion-enabled .material-atelier.is-inview .material-description { transition-delay: .26s; }
+
+/* The material line, in place of the atmosphere slider. */
+.material-use {
+  margin: 34px 0 0;
+  font-size: 12px;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: #873c2c;
+  border-top: 1px solid #a39f9355;
+  padding-top: 18px;
+}
+
+/* --sc is the section's own scroll. Composed into the transform rather
+   than set inline, so the pointer tilt keeps working alongside it. */
+.material-board .board-main {
+  transform:
+    rotate(calc(-7deg + var(--sc, 0) * 6deg))
+    translateY(calc(var(--sc, 0) * -26px))
+    scale(calc(1 + var(--sc, 0) * .05))
+    rotateX(var(--rx))
+    rotateY(var(--ry));
+}
+
+.material-board .board-crop {
+  transform:
+    rotate(calc(7deg - var(--sc, 0) * 5deg))
+    translate(calc(var(--sc, 0) * -30px), calc(var(--sc, 0) * -22px))
+    rotateX(var(--rx))
+    rotateY(var(--ry));
+}
+
+.material-board .board-lines {
+  transform: translateY(calc(var(--sc, 0) * 34px));
+}
+
+.palette {
+  transform: rotate(-7deg) translateY(calc(var(--sc, 0) * -14px));
+}
+
+/* The chips restack whenever the material changes. */
+.material-switch .palette span {
+  animation: chip-in .5s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.material-switch .palette span:nth-child(2) { animation-delay: .07s; }
+.material-switch .palette span:nth-child(3) { animation-delay: .14s; }
+
+@keyframes chip-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (max-width: 900px) {
+  .material-use {
+    margin-top: 26px;
+    font-size: 11px;
+  }
+}
+
+/* ---- From drawing to room ---- */
+.reveal-study {
+  padding: 95px 6% 110px;
+  background: #e7e1d9;
+  color: #303129;
+  position: relative;
+  overflow: hidden;
+}
+
+.rs-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #a39f9360;
+  padding-top: 20px;
+}
+
+.rs-top > span {
+  font-size: 10px;
+  letter-spacing: 1.4px;
+  color: #6b715f;
+}
+
+.rs-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8%;
+  margin: 52px 0 46px;
+}
+
+.rs-head h2 {
+  font-size: clamp(45px, 5.8vw, 92px);
+  letter-spacing: -.055em;
+  line-height: 1.02;
+  margin: 0;
+  font-weight: 400;
+}
+
+.rs-head p {
+  margin: 0 0 10px;
+  max-width: 34ch;
+  color: #666957;
+  line-height: 1.75;
+}
+
+.rs-stage {
+  --split: 92%;
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  touch-action: pan-y;
+  cursor: ew-resize;
+  background: #08386f;
+  user-select: none;
+}
+
+.rs-shot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Clipped, never resized: resizing the layer crops it differently from
+   the layer beneath and the two halves stop being the same view. */
+.rs-drawn {
+  position: absolute;
+  inset: 0;
+  background: #08386f;
+  clip-path: inset(0 calc(100% - var(--split)) 0 0);
+  will-change: clip-path;
+}
+
+/* A hairline of light on the cut edge, so the drawing reads as a sheet
+   laid over the photograph rather than a hole punched through it. */
+.rs-drawn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset -1px 0 0 #ffffff3d;
+}
+
+.rs-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--split);
+  width: 2px;
+  background: #f2ece2;
+  transform: translateX(-1px);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.rs-bar b {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60px;
+  height: 60px;
+  margin: -30px 0 0 -30px;
+  border-radius: 50%;
+  background: #f2ece2;
+  box-shadow: 0 8px 26px #10202c44;
+}
+
+.rs-bar b::before,
+.rs-bar b::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 0;
+  height: 0;
+  margin-top: -5px;
+  border: 5px solid transparent;
+}
+
+.rs-bar b::before { left: 13px; border-right-color: #2b3a2c; }
+.rs-bar b::after { right: 13px; border-left-color: #2b3a2c; }
+
+.rs-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: ew-resize;
+  z-index: 5;
+}
+
+/* The captions sit under the picture, not on it: a label on the built
+   half is unreadable the moment the photograph goes pale. */
+.rs-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #a39f9350;
+}
+
+.rs-tag {
+  font-size: 10px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: #8c8f7d;
+  transition: color .45s ease, opacity .45s ease;
+}
+
+.rs-tag b {
+  font-weight: 400;
+  color: #303129;
+}
+
+.rs-tag-l b { color: #1d4f8f; }
+.rs-tag-r { text-align: right; }
+
+/* Whichever half is nearly gone lets its caption recede. */
+.rs-lo .rs-tag-l,
+.rs-hi .rs-tag-r { opacity: .28; }
+
+.motion-enabled .reveal-study .rs-stage,
+.motion-enabled .reveal-study .rs-head {
+  opacity: 0;
+  transform: translateY(34px);
+  transition: opacity .85s ease, transform 1s cubic-bezier(.2, .8, .2, 1);
+}
+
+.motion-enabled .reveal-study.is-inview .rs-stage,
+.motion-enabled .reveal-study.is-inview .rs-head {
+  opacity: 1;
+  transform: none;
+}
+
+.motion-enabled .reveal-study.is-inview .rs-stage { transition-delay: .14s; }
+
+@media (max-width: 900px) {
+  .reveal-study { padding: 62px 6% 74px; }
+  .rs-head { flex-direction: column; align-items: flex-start; gap: 22px; margin: 34px 0 30px; }
+  .rs-head h2 { font-size: 11vw; }
+  .rs-head p { max-width: none; font-size: 15px; }
+  .rs-stage { aspect-ratio: 1 / 1; }
+  .rs-bar b { width: 48px; height: 48px; margin: -24px 0 0 -24px; }
+  .rs-foot { margin-top: 13px; padding-top: 11px; gap: 12px; }
+  .rs-tag { font-size: 9px; letter-spacing: 1.2px; }
+}
+
+/* ---- How a room gets made ---- */
+.services .service-list { padding-top: 0; }
+
+.process {
+  --run: 0%;
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 78px;
+  position: relative;
+}
+
+/* One continuous rule down the stages, filled to wherever you have read. */
+.process-spine {
+  position: absolute;
+  left: 25px;
+  top: 14px;
+  bottom: 14px;
+  width: 2px;
+  background: #ccd0c5;
+}
+
+.process-spine i {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--run);
+  background: var(--accent);
+  transition: height .18s linear;
+}
+
+.step {
+  position: relative;
+  padding: 0 0 54px;
+}
+
+.step:last-child { padding-bottom: 0; }
+
+.step-no {
+  position: absolute;
+  left: -78px;
+  top: 2px;
+  width: 53px;
+  height: 53px;
+  border: 1px solid #bfc2b8;
+  border-radius: 50%;
+  background: #f0f0e9;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #8a8e83;
+  transition: color .45s ease, border-color .45s ease, background .45s ease;
+}
+
+.step h3 {
+  margin: 0 0 12px;
+  font-weight: 400;
+  font-size: clamp(24px, 3vw, 44px);
+  letter-spacing: -1.3px;
+  line-height: 1.05;
+  transition: color .45s ease;
+}
+
+.step p {
+  margin: 0;
+  max-width: 44ch;
+  color: #6f746a;
+  font-size: 16px;
+  line-height: 1.8;
+  transition: color .45s ease;
+}
+
+.step-when {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 10px;
+  letter-spacing: 1.8px;
+  color: #9a9e92;
+  transition: color .45s ease;
+}
+
+.step-active .step-no {
+  color: #f0f0e9;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.step-active h3 { color: var(--accent); }
+.step-active p { color: #4f5449; }
+.step-active .step-when { color: var(--accent); }
+
+/* In and out, both ways, one stage after another. */
+.motion-enabled .step {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity .8s ease, transform .9s cubic-bezier(.2, .8, .2, 1);
+}
+
+.motion-enabled .step.is-inview {
+  opacity: 1;
+  transform: none;
+}
+
+@media (max-width: 900px) {
+  .services .service-list { padding-top: 34px; }
+  .process { padding-left: 58px; }
+  .process-spine { left: 19px; }
+  .step { padding-bottom: 38px; }
+  .step-no { left: -58px; width: 41px; height: 41px; font-size: 11px; }
+  .step h3 { font-size: 27px; }
+  .step p { font-size: 15px; line-height: 1.75; }
+}
+
+/* ---- The room, drawn ---- */
+.room-plan {
+  margin: 44px 0 0;
+  max-width: 520px;
+  position: relative;
+}
+
+.room-plan svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.room-plan [data-stage] {
+  opacity: 0;
+  transition: opacity .5s ease;
+}
+
+.room-plan [data-stage].on { opacity: 1; }
+
+/* pathLength normalises every line to 1, so one dash covers the whole
+   run and the offset is what draws it. Stroke widths stay in user units
+   because non-scaling-stroke breaks that normalisation in Chrome. */
+.room-plan .ln {
+  fill: none;
+  stroke: #767b6f;
+  stroke-width: .028;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset .8s cubic-bezier(.35, .8, .3, 1), stroke .5s ease;
+  transition-delay: calc(var(--i) * 16ms);
+}
+
+.room-plan .on .ln { stroke-dashoffset: 0; }
+
+.room-plan .slab { stroke: #9a9e92; stroke-width: .038; }
+.room-plan .dim { stroke: #b4b8ac; stroke-width: .02; }
+.room-plan .open { stroke: #9a9e92; }
+.room-plan .grain { stroke: #c6cabd; stroke-width: .018; }
+.room-plan .flute { stroke: #b9beb0; stroke-width: .018; }
+.room-plan .rug { stroke: #b4b9ab; stroke-width: .022; }
+
+.room-plan .top,
+.room-plan .side {
+  fill: #dfded3;
+  fill-opacity: 0;
+  transition: stroke-dashoffset .8s cubic-bezier(.35, .8, .3, 1),
+              fill-opacity .7s ease, stroke .5s ease;
+  transition-delay: calc(var(--i) * 16ms);
+}
+
+.room-plan .top { stroke: #3c4139; stroke-width: .034; }
+.room-plan .side { stroke: #858a7d; fill: #eae9e0; }
+.room-plan .on .top,
+.room-plan .on .side { fill-opacity: 1; }
+
+.room-plan .fl {
+  stroke: none;
+  opacity: 0;
+  transition: opacity .9s ease .25s;
+}
+
+.room-plan .on .fl { opacity: 1; }
+.room-plan .plaster { fill: #8b9081; }
+.room-plan .on .plaster { opacity: .1; }
+.room-plan .void { fill: #f0f0e9; }
+.room-plan .on .void { opacity: 1; }
+.room-plan .light { fill: #c98a3c; }
+.room-plan .on .light { opacity: .16; }
+
+.room-plan .tx {
+  font-size: .36px;
+  letter-spacing: .035px;
+  fill: #a2a698;
+  font-family: 'DM Sans', Arial, sans-serif;
+  opacity: 0;
+  transition: opacity .6s ease;
+  transition-delay: calc(var(--i) * 16ms + .3s);
+}
+
+.room-plan .on .tx { opacity: 1; }
+
+/* The stage you are reading is the one still in ink. */
+.room-plan[data-at="0"] [data-stage="0"] .slab,
+.room-plan[data-at="1"] [data-stage="1"] .ln,
+.room-plan[data-at="2"] [data-stage="2"] .flute,
+.room-plan[data-at="3"] [data-stage="3"] .top { stroke: var(--accent); }
+
+.room-plan figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 8px;
+  padding-top: 14px;
+  border-top: 1px solid #b7bbb0;
+  font-size: 10px;
+  letter-spacing: 1.7px;
+  color: #9a9e92;
+}
+
+.room-plan .plan-step { color: var(--accent); }
+
+/* Reduced motion drops the drawing-on, not the stages themselves. */
+@media (prefers-reduced-motion: reduce) {
+  .room-plan *,
+  .room-plan *::before {
+    transition-duration: .01ms !important;
+    transition-delay: 0s !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .room-plan { margin: 26px 0 0; max-width: none; }
+  .room-plan figcaption { padding-top: 11px; font-size: 9px; letter-spacing: 1.2px; }
+}
+
+/* ---- The card already says it is a link ---- */
+/* #projects sets a near-white text colour, so the paper-backed chip was
+   white on white. On a phone there is no hover for it to belong to
+   either, so the affordance moves into the title where it reads. */
+.view-project { color: var(--ink); }
+
+@media (max-width: 640px) {
+  .atelier-edition .project-panel .view-project { display: none; }
+
+  .atelier-edition .project-panel .project-meta h3::after {
+    content: '↗';
+    color: var(--accent);
+    font-size: .58em;
+    margin-left: .35em;
+    vertical-align: .45em;
+  }
+}
+
+/* ---- Stacked project cards, on the way in and on the way out ---- */
+@media (max-width: 900px) {
+  .motion-enabled .project-panel {
+    opacity: 0;
+    transform: translateY(58px);
+    transition: opacity .9s ease, transform 1.05s cubic-bezier(.2, .8, .2, 1);
+  }
+
+  .motion-enabled .project-panel.panel-in {
+    opacity: 1;
+    transform: translateY(var(--lift, 0px));
+    transition: opacity .9s ease, transform .25s linear;
+  }
+
+  /* The mobile sheet pins this with !important to stop the desktop track
+     leaking in, so the scroll drive has to outrank it. */
+  .motion-enabled .project-panel .image-wrap > img {
+    transform: translate3d(0, var(--py, 0%), 0) scale(var(--ps, 1.2)) !important;
+    transition: none !important;
+  }
+
+  .motion-enabled .project-panel .image-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: #141a15;
+    opacity: var(--dim, 0);
+    transition: opacity .2s linear;
+    z-index: 2;
+  }
+
+  .motion-enabled .project-panel .project-giant {
+    opacity: 0;
+    transition: opacity 1s ease .12s;
+    will-change: transform;
+  }
+
+  .motion-enabled .project-panel.panel-in .project-giant { opacity: 1; }
+
+  .motion-enabled .project-panel .project-meta {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity .85s ease .2s, transform .95s cubic-bezier(.2, .8, .2, 1) .2s;
+  }
+
+  .motion-enabled .project-panel.panel-in .project-meta {
+    opacity: 1;
+    transform: none;
+  }
+
+  .motion-enabled .project-panel .project-caption {
+    opacity: 0;
+    transition: opacity .8s ease .34s;
+  }
+
+  .motion-enabled .project-panel.panel-in .project-caption { opacity: 1; }
+}
+
+/* ---- Sections that had nothing on the way in or out ---- */
+
+/* The studio copy under the statement. */
+.atelier-edition.motion-enabled .intro-bottom > * {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .85s ease, transform .95s cubic-bezier(.2, .8, .2, 1);
+}
+
+.atelier-edition.motion-enabled .intro-bottom > *:nth-child(2) { transition-delay: .14s; }
+
+.atelier-edition.motion-enabled .intro-bottom.is-inview > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* The closing section: the heading already travels, the rest did not. */
+.atelier-edition.motion-enabled .contact-grid > * {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity .85s ease, transform 1s cubic-bezier(.2, .8, .2, 1);
+}
+
+.atelier-edition.motion-enabled .contact-grid > *:nth-child(2) { transition-delay: .16s; }
+
+.atelier-edition.motion-enabled .contact-grid.is-inview > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* The philosophy photograph, given the wipe the project images get. */
+.motion-enabled .philosophy > img {
+  clip-path: inset(15% 0 15% 0);
+  opacity: .55;
+  transition: clip-path 1.15s cubic-bezier(.2, .8, .2, 1), opacity .95s ease;
+}
+
+.motion-enabled .philosophy > img.image-entered {
+  clip-path: inset(0);
+  opacity: 1;
+}
+
+/* The journal track is a horizontal swipe on a phone, so the cards are
+   dealt out on the way in rather than parallaxed. The mobile sheet pins
+   their transform for the desktop tilt, so this has to outrank it. */
+@media (max-width: 900px) {
+  .motion-enabled .journal-card {
+    opacity: 0;
+    transform: translateY(52px) !important;
+    transition: opacity .8s ease, transform .95s cubic-bezier(.2, .8, .2, 1);
+    transition-delay: calc(var(--card-index, 0) * .11s);
+  }
+
+  .motion-enabled .journal-track.is-inview .journal-card {
+    opacity: 1;
+    transform: none !important;
+  }
+}
+
+/* Nothing should be able to hide behind a missing observer. */
+.motion-off .intro-bottom > *,
+.motion-off .contact-grid > *,
+.motion-off .journal-card {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-bottom > *,
+  .contact-grid > *,
+  .journal-card {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .philosophy > img {
+    clip-path: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* The stamp used a keyframe with fill:both, so it held its end state and
+   snapped back when the class left. A transition goes both ways. */
+.motion-enabled .manifesto-stamp,
+.motion-enabled .manifesto-stamp.is-inview {
+  animation: none;
+}
+
+.motion-enabled .manifesto-stamp {
+  opacity: 0;
+  transform: rotate(-52deg) scale(.8);
+  transition: opacity .9s ease, transform 1.25s cubic-bezier(.2, .7, .2, 1);
+}
+
+.motion-enabled .manifesto-stamp.is-inview {
+  opacity: 1;
+  transform: rotate(-18deg) scale(1);
+}
+
+/* ---- The title sheet ---- */
+/* Painted by the stylesheet, not by script, so a refresh never flashes
+   the hero before the sheet arrives. The failsafe animation lifts it
+   even if boot.js never runs at all. */
+.boot {
+  --p: 0%;
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: #1d241e;
+  color: #e9ece3;
+  overflow: hidden;
+  clip-path: inset(0 0 0 0);
+  animation: boot-failsafe .01s linear 2.9s forwards;
+}
+
+.boot.is-out {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path .8s cubic-bezier(.76, 0, .24, 1);
+  animation: none;
+  pointer-events: none;
+}
+
+@keyframes boot-failsafe { to { clip-path: inset(0 0 100% 0); pointer-events: none; } }
+
+.boot-sheet {
+  position: absolute;
+  inset: 0;
+  padding: 30px 5%;
+  transition: transform .8s cubic-bezier(.76, 0, .24, 1);
+}
+
+/* The sheet drifts up a touch faster than the cut, so the lift has depth. */
+.boot.is-out .boot-sheet { transform: translateY(-14%); }
+
+.boot-meta {
+  position: absolute;
+  font-size: 10px;
+  letter-spacing: 1.7px;
+  color: #8e9a8b;
+  animation: boot-meta .65s ease .16s both;
+}
+
+.boot-tl { top: 30px; left: 5%; }
+.boot-tr { top: 30px; right: 5%; }
+.boot-bl { bottom: 46px; left: 5%; color: #cfd6c9; }
+.boot-br { bottom: 46px; right: 5%; }
+.boot-count { font-weight: 400; color: #e9ece3; margin-right: 10px; }
+
+@keyframes boot-meta { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
+
+.boot-mark {
+  position: absolute;
+  top: 50%;
+  left: 5%;
+  right: 5%;
+  transform: translateY(-50%);
+}
+
+/* A rule is struck first, then the name is wiped up out of it. */
+.boot-rule {
+  display: block;
+  height: 1px;
+  width: 0;
+  background: #5d6b5a;
+  margin-bottom: 26px;
+  animation: boot-rule .7s cubic-bezier(.2, .8, .2, 1) .04s forwards;
+}
+
+@keyframes boot-rule { to { width: 100%; } }
+
+.boot-word {
+  display: block;
+  white-space: nowrap;
+  font-family: 'Manrope', Arial, sans-serif;
+  font-weight: 600;
+  /* --len is the studio name's length, written in by the renderer. The
+     second term is what a name of that length can be and still fit. */
+  font-size: min(clamp(58px, 15vw, 210px), calc(88vw / (var(--len, 5) * .46)));
+  letter-spacing: -.085em;
+  line-height: .9;
+  clip-path: inset(0 0 100% 0);
+  animation: boot-word .72s cubic-bezier(.2, .8, .2, 1) .2s forwards;
+}
+
+.boot-word sup { font-size: .13em; vertical-align: top; letter-spacing: 0; }
+
+@keyframes boot-word { to { clip-path: inset(0 0 -12% 0); } }
+
+.boot-bar {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  bottom: 30px;
+  height: 1px;
+  background: #3a4639;
+}
+
+.boot-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--p);
+  background: var(--accent, #ac402d);
+  transition: width .16s linear;
+}
+
+/* The hero used to hold its entrance behind a class the script removed.
+   That made the headline's visibility depend on boot.js finishing - if it
+   ever did not, the page had no headline at all. The delays below line up
+   with the sheet lifting and need nobody's permission to run. */
+
+@media (max-width: 640px) {
+  .boot-sheet { padding: 24px 6%; }
+  .boot-tl, .boot-tr { top: 24px; }
+  .boot-bl, .boot-br { bottom: 40px; }
+  .boot-meta { font-size: 9px; letter-spacing: 1.1px; }
+  .boot-tr, .boot-br { max-width: 42%; text-align: right; line-height: 1.5; }
+  .boot-rule { margin-bottom: 18px; }
+  .boot-bar { bottom: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot { display: none; }
+}
+
+/* ---- Contact details ---- */
+.contact-lines {
+  list-style: none;
+  margin: 34px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+  max-width: 340px;
+}
+
+.contact-lines li {
+  display: grid;
+  grid-template-columns: 82px 1fr;
+  gap: 14px;
+  align-items: baseline;
+  padding-bottom: 13px;
+  border-bottom: 1px solid currentColor;
+  border-color: color-mix(in srgb, currentColor 22%, transparent);
+  font-size: 15px;
+}
+
+.contact-lines span {
+  font-size: 9px;
+  letter-spacing: 1.6px;
+  opacity: .62;
+}
+
+.contact-lines a { border-bottom: 1px solid transparent; transition: border-color .3s; }
+.contact-lines a:hover { border-bottom-color: currentColor; }
+
+/* ---- Projects open here instead of on a page we cannot personalise ---- */
+.dialog-shot {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  margin: 26px 0 30px;
+  display: block;
+}
+
+.dialog-facts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin: 0 0 30px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #bfc2b8;
+}
+
+.dialog-facts span {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 1.6px;
+  opacity: .6;
+  margin-bottom: 7px;
+}
+
+@media (max-width: 640px) {
+  .contact-lines { margin-top: 26px; }
+  .contact-lines li { grid-template-columns: 70px 1fr; gap: 10px; font-size: 14px; }
+  .dialog-shot { height: 200px; margin: 20px 0 24px; }
+  .dialog-facts { grid-template-columns: 1fr 1fr; gap: 14px; }
+}
+
+/* ---- Wordmarks that have to survive a real studio name ---- */
+/* Every display mark here was drawn for FORMA — five characters. --len
+   carries the length of the name actually on the page, so each one scales
+   to it instead of running off the edge. The floors stop a very long name
+   shrinking into nothing. */
+.brand {
+  font-size: max(15px, min(29px, calc(310px / (var(--len, 5) * .5))));
+  letter-spacing: -.07em;
+}
+
+.footer-signature {
+  font-size: max(38px, min(27vw, calc(106vw / (var(--len, 5) * .46)))) !important;
+  letter-spacing: -.072em !important;
+  margin-left: -.06em !important;
+}
+
+.page-curtain span {
+  font-size: max(34px, min(18vw, calc(88vw / (var(--len, 5) * .46))));
+}
+
+.edition-index .brand { font-size: max(15px, min(26px, calc(280px / (var(--len, 5) * .5)))); }
+
+@media (max-width: 640px) {
+  .brand { font-size: max(15px, min(46px, calc(300px / (var(--len, 5) * .55)))); }
 }

@@ -3,11 +3,12 @@ import { resolveTemplate, isTemplateId } from '@/lib/templates';
 import { renderClassic } from '@/lib/render/classic';
 import { renderMicare } from '@/lib/render/micare';
 import { renderInterior } from '@/lib/render/interior';
+import { renderForma } from '@/lib/render/forma';
 import { loadTemplateHtml } from '@/lib/render/load';
 
 export const dynamic = 'force-dynamic';
 
-const RENDERERS = { classic: renderClassic, micare: renderMicare, interior: renderInterior };
+const RENDERERS = { classic: renderClassic, micare: renderMicare, interior: renderInterior, forma: renderForma };
 
 /**
  * Look at a template without spending a lead on it.
