@@ -1219,3 +1219,15 @@ body.hero-dimmed header {
 @media (max-width: 640px) {
   .brand { font-size: max(15px, min(46px, calc(300px / (var(--len, 5) * .55)))); }
 }
+
+/* ---- Three lines that only earn their space on a wide screen ---- */
+@media (max-width: 640px) {
+  /* the studio/availability line in the hero, in both hero layouts */
+  .hero-editorial > span:nth-child(2),
+  .hero-top > span:last-child,
+  /* the caption row under the hero image; its second half was already
+     hidden here, so the row was left empty */
+  .portal-caption,
+  /* the footer tagline beside the mark */
+  footer .brand + span { display: none; }
+}
