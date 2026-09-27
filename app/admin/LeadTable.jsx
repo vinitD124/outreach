@@ -296,7 +296,7 @@ export default function LeadTable({ leads: allLeads }) {
 
   function openWhatsapp(lead) {
     setWaLead(lead);
-    setWaText(fillPitch(waFor(lead.category), lead, APP_URL));
+    setWaText(fillPitch(waFor(lead.category, Boolean(lead.email?.trim())), lead, APP_URL));
   }
 
   /* Opens the chat with the message already typed. The send itself happens
