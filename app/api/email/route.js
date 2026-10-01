@@ -4,6 +4,7 @@ import nodemailer from 'nodemailer';
 import pool from '@/lib/db';
 import { COOKIE_NAME, verifySession } from '@/lib/auth';
 import { renderPitchEmail } from './render';
+import { categoryHasTemplate, resolveCategory } from '@/lib/categories';
 
 export async function POST(request) {
   try {
@@ -36,6 +37,11 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
     }
     const lead = result.rows[0];
+    if (!categoryHasTemplate(lead.category)) {
+      return NextResponse.json({
+        error: `${resolveCategory(lead.category).label} does not have a demo template yet. The lead is saved, but pitching is blocked until a matching template is registered.`
+      }, { status: 409 });
+    }
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,

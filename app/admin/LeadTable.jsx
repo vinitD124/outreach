@@ -93,6 +93,14 @@ function shortDate(value) {
   return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}`;
 }
 
+/* Same rules, plus the year, for dates that are not read in context. */
+function dayAndYear(value) {
+  if (!value) return null;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return null;
+  return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} '${String(d.getUTCFullYear()).slice(-2)}`;
+}
+
 const STAGE_BG = {
   new: 'bg-stage-new',
   ready: 'bg-stage-ready',
@@ -519,6 +527,21 @@ export default function LeadTable({ leads: allLeads }) {
   const composerCategory =
     composerCategories.length === 1 ? composerCategories[0][0] : DEFAULT_CATEGORY;
 
+  const categoryCounts = useMemo(() => {
+    const counts = { all: 0 };
+    allLeads.forEach((lead) => {
+      if (!showTests && isTestLead(lead)) return;
+      const id = resolveCategory(lead.category).id;
+      counts.all += 1;
+      counts[id] = (counts[id] || 0) + 1;
+    });
+    return counts;
+  }, [allLeads, showTests]);
+
+  const selectedCategory = category === 'all'
+    ? { code: 'ALL', label: 'All categories' }
+    : resolveCategory(category);
+
   return (
     <TooltipProvider delay={200}>
       <div className="relative w-full space-y-5 pb-28">
@@ -528,30 +551,36 @@ export default function LeadTable({ leads: allLeads }) {
         {/* ---------- Filters + search ---------- */}
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-1 rounded-lg border bg-card p-1 shadow-xs">
-            {[{ id: 'all', code: 'ALL', label: 'All' }, ...CATEGORY_LIST].map((c) => {
-              const on = category === c.id;
-              const n = c.id === 'all'
-                ? allLeads.filter((l) => showTests || !isTestLead(l)).length
-                : allLeads.filter((l) => (showTests || !isTestLead(l)) && (l.category || DEFAULT_CATEGORY) === c.id).length;
-              return (
-                <button
-                  key={c.id}
-                  onClick={() => { setCategory(c.id); setSelectedIds(new Set()); }}
-                  aria-pressed={on}
-                  title={c.label}
-                  className={cn(
-                    'nums rounded-md px-2.5 py-1.5 text-[11.5px] font-semibold tracking-[0.06em] transition-colors',
-                    on ? 'bg-foreground text-background shadow-xs'
-                      : 'text-muted-foreground hover:bg-accent hover:text-foreground'
-                  )}
-                >
-                  {c.code}
-                  <span className={cn('ml-1.5 font-normal', on ? 'text-background/60' : 'text-muted-foreground/60')}>{n}</span>
-                </button>
-              );
-            })}
-          </div>
+          <Select
+            value={category}
+            onValueChange={(id) => { setCategory(id); setSelectedIds(new Set()); }}
+          >
+            <SelectTrigger className="h-9 min-w-48 gap-2 bg-card px-3 text-[12px] shadow-xs">
+              <span className="font-mono text-[10.5px] font-semibold tracking-[0.06em] text-muted-foreground">
+                {selectedCategory.code}
+              </span>
+              <span className="font-medium">{selectedCategory.label}</span>
+              <span className="nums ml-auto text-muted-foreground">{categoryCounts[category] || 0}</span>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">
+                <span className="inline-flex w-full items-center gap-2">
+                  <span className="w-7 font-mono text-[10.5px] text-muted-foreground">ALL</span>
+                  <span>All categories</span>
+                  <span className="nums ml-auto pl-4 text-[11px] text-muted-foreground">{categoryCounts.all}</span>
+                </span>
+              </SelectItem>
+              {CATEGORY_LIST.map((c) => (
+                <SelectItem key={c.id} value={c.id}>
+                  <span className="inline-flex w-full items-center gap-2">
+                    <span className="w-7 font-mono text-[10.5px] text-muted-foreground">{c.code}</span>
+                    <span>{c.label}</span>
+                    <span className="nums ml-auto pl-4 text-[11px] text-muted-foreground">{categoryCounts[c.id] || 0}</span>
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <div className="flex flex-wrap items-center gap-1 rounded-lg border bg-card p-1 shadow-xs">
             {FILTERS.map((f) => {
               const active = filter === f.key;
@@ -640,6 +669,7 @@ export default function LeadTable({ leads: allLeads }) {
                   <Th>Contact</Th>
                   <Th>Demo</Th>
                   <Th>Stage</Th>
+                  <Th>Added</Th>
                   <Th className="pr-4 text-right">Actions</Th>
                 </TableRow>
               </TableHeader>
@@ -647,7 +677,7 @@ export default function LeadTable({ leads: allLeads }) {
               <TableBody>
                 {visible.length === 0 ? (
                   <TableRow className="hover:bg-transparent">
-                    <TableCell colSpan={6} className="py-20 text-center">
+                    <TableCell colSpan={7} className="py-20 text-center">
                       <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl border bg-muted/50">
                         <FileText className="text-muted-foreground/60" size={18} />
                       </div>
@@ -692,6 +722,7 @@ export default function LeadTable({ leads: allLeads }) {
                     const isSent = emailStatus[lead.id] === 'sent' || lead.emailsent;
                     const failed = emailStatus[lead.id] === 'failed';
                     const sentOn = shortDate(lead.emailsentat);
+                    const addedOn = dayAndYear(lead.createdat);
                     const messaged = waWasSent(lead);
                     const waOn = shortDate(lead.whatsappsentat);
                     // Opened the demo, reachable on WhatsApp, not yet messaged.
@@ -844,6 +875,14 @@ export default function LeadTable({ leads: allLeads }) {
                               follow up
                             </div>
                           ) : null}
+                        </TableCell>
+
+                        <TableCell className="py-3">
+                          {addedOn ? (
+                            <span className="nums text-[11px] text-muted-foreground">{addedOn}</span>
+                          ) : (
+                            <span className="text-[11px] text-muted-foreground/40">&mdash;</span>
+                          )}
                         </TableCell>
 
                         <TableCell className="py-3 pr-4 text-right">
