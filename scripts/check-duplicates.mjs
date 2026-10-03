@@ -14,6 +14,12 @@
  * loosely: "Clinic Name" / "Studio Name" / "Business Name" / "name" all
  * work, same for Phone / Email.
  *
+ * It also flags call-tracking numbers. Directories like Justdial publish a
+ * virtual number that forwards to the business rather than the business's
+ * own line, so a scrape of one directory yields numbers drawn from that
+ * directory's pool. They look fine one at a time; the giveaway is that they
+ * share number blocks far more than real numbers do.
+ *
  * Reads only. It never writes to the database.
  */
 
@@ -158,8 +164,43 @@ async function main() {
   console.log(`NEW (${fresh.length}) - safe to work on:`);
   for (const f of fresh) console.log(`  - ${f.name}${f.phone ? '  ' + f.phone : ''}`);
 
+  warnAboutTrackingNumbers(candidates);
+
   // non-zero exit when nothing survives, so a pipeline can stop early
   process.exit(fresh.length ? 0 : 1);
+}
+
+/**
+ * Real businesses pick their numbers independently, so a healthy list has
+ * almost as many distinct operator blocks as it has numbers. A list scraped
+ * from one directory's call-tracking pool collapses into a handful. The
+ * threshold is deliberately loose - this prints a warning to go and check,
+ * it does not reject anything.
+ */
+function warnAboutTrackingNumbers(candidates) {
+  const nums = candidates.map((c) => localPhone(c.phone)).filter(Boolean);
+  if (nums.length < 8) return;
+
+  const blocks = new Map();
+  for (const n of nums) {
+    const k = n.slice(0, 4);
+    blocks.set(k, (blocks.get(k) || 0) + 1);
+  }
+  const shared = [...blocks.entries()].filter(([, v]) => v > 1).sort((a, b) => b[1] - a[1]);
+  const inShared = shared.reduce((sum, [, v]) => sum + v, 0);
+  const ratio = inShared / nums.length;
+
+  if (ratio < 0.4) return;
+
+  console.log('');
+  console.log('WARNING - these numbers may not belong to the businesses.');
+  console.log(`  ${nums.length} numbers, but only ${blocks.size} distinct operator blocks.`);
+  console.log(`  ${inShared} of them (${Math.round(ratio * 100)}%) sit in a shared block: ` +
+    shared.map(([k, v]) => `${k} x${v}`).join(', '));
+  console.log('  Independent businesses do not cluster like this. A directory that');
+  console.log('  publishes a forwarding number instead of the real one does.');
+  console.log('  Check each against a source the business controls - its own site,');
+  console.log('  an Instagram bio, a Facebook about page - before using these.');
 }
 
 main().catch((err) => { console.error(err.message); process.exit(2); });
