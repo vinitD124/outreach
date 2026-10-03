@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="--len:15">
 
 <head>
   <meta charset="UTF-8">
@@ -153,7 +153,13 @@
        demo carries the real business name with no logo file to source —
        drop an <img> back in here when the lead supplies one.
        ============================================================ */
+    .header__logo {
+      max-width: 34%;
+      min-width: 0;
+    }
+
     .brand-wordmark {
+      max-width: 100%;
       display: inline-flex;
       flex-direction: column;
       gap: 3px;
@@ -163,7 +169,9 @@
     }
 
     .brand-wordmark .bw-name {
-      font-size: clamp(19px, 2vw, 25px);
+      /* second term is what a name of this length can be and still clear
+         the centred nav; uppercase averages ~.62em per character here */
+      font-size: max(13px, min(clamp(19px, 2vw, 25px), calc(26vw / (var(--len, 15) * .62))));
       letter-spacing: -.01em;
       text-transform: uppercase;
       font-weight: 500;
@@ -1734,7 +1742,7 @@
       }
 
       .brand-wordmark .bw-name {
-        font-size: 17px;
+        font-size: max(11px, min(17px, calc(46vw / (var(--len, 15) * .62))));
       }
 
       .brand-wordmark .bw-sub {
